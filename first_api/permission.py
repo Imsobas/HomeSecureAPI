@@ -1,21 +1,47 @@
 from rest_framework import permissions
+from first_api.user_role import user_role_list
 
+
+## General Permissions
+
+class ReadOnly(permissions.BasePermission):
+
+    def has_permission(self, request, view):
+        return request.method in permissions.SAFE_METHODS
+
+## Home Secure Permissions
+
+class UpdateAllVillage(permissions.BasePermission):
+    """Allow user where user_role is 'Admin' for (GET,POST,PATCH,PUT,DELETE)"""
+    def has_object_permission(self, request, view, obj):
+        """Check user is trying to edit their own profle"""
+        if(request.user.user_role == user_role_list[0]):
+            return True
+
+        print("Status is: "+str(request.user.user_role == user_role_list[0]))
+        
+        return request.user.user_role == user_role_list[0] ## id of profile model is equal to user id 
+
+
+## User permissions 
 class UpdateOwnProfile(permissions.BasePermission):
     """Allow user to edit their own profile"""
 
     def has_object_permission(self, request, view, obj):
         """Check user is trying to edit their own profle"""
-        if request.method in permissions.SAFE_METHODS:
+        if(request.user.user_role == user_role_list[0]):
             return True
+        # print(request.user.user_role==user_role_list[2]) ## work
+        
+        return obj.id == request.user.id ## id of profile model is equal to user id 
 
-        return obj.id == request.user.id
 
 class UpdatedOwnStatus(permissions.BasePermission):
     """Allow users to update their own status"""
 
-
     # Note: The instance-level has_object_permission method will only be called if the view-level has_permission checks have already passed.
-    
+    # Custom permissions will raise a PermissionDenied exception if the test fails.
+    #implement a message attribute directly on your custom permission.
     def has_object_permission(self, request, view, obj):
         """Check user is trying to edit their own status"""
         if request.method in permissions.SAFE_METHODS:
@@ -23,7 +49,7 @@ class UpdatedOwnStatus(permissions.BasePermission):
         
         ##user_profile = email 
         ##user_profile.id = number eg. 1 
-        print(request.user.is_active)
+        print(request.user.user_role)
 
         # {
         # '_request': <WSGIRequest: POST '/api/feed/'>, 
@@ -50,6 +76,7 @@ class UpdatedOwnStatus(permissions.BasePermission):
         # 'versioning_scheme': None
         # }
 
+        print(request.user.username)
 
         return obj.user_profile.id == request.user.id ## return true, if allow 
 

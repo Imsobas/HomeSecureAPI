@@ -2,6 +2,50 @@ from rest_framework import serializers
 
 from first_api import models
 
+
+## Home Secure main serializers 
+
+class CompanySerializer(serializers.ModelSerializer):
+    """Serializes company items"""
+    class Meta:
+        model = models.Company
+        fields = ('id','name','address','phone')
+
+class VillageSerializer(serializers.ModelSerializer):
+    """Serializes village items"""
+    class Meta:
+        model = models.Village
+        ## return value in request are missing if not fill in field
+        fields = ('id','village_name','village_address','village_company','village_lat','village_lon')
+
+
+## User serializer
+
+class UserProfileSerializer(serializers.ModelSerializer):
+    """Serializer for user profile objecft"""
+
+    class Meta:
+        model = models.UserProfile
+        fields = ('id','username','user_role','password')
+        extra_kwargs = {
+             'password':{
+                 'write_only': True,
+                 'style': {'input_type': 'password'}
+             }
+        }
+
+    def create(self, validated_data):
+        """Create and return a new user"""
+        user = models.UserProfile.objects.create_user(
+            username=validated_data['username'],
+            user_role=validated_data['user_role'],
+            password=validated_data['password']
+        )
+
+        return user 
+
+
+
 class ProfileFeedItemSerializer(serializers.ModelSerializer):
     """Serializes profile feed items"""
     class Meta:
@@ -36,25 +80,3 @@ class HelloSerializer(serializers.Serializer):
     """Serializes a name field for testing our APIView"""
     name = serializers.CharField(max_length=10)
 
-class UserProfileSerializer(serializers.ModelSerializer):
-    """Serializer for user profile objecft"""
-
-    class Meta:
-        model = models.UserProfile
-        fields = ('id','email','name','password')
-        extra_kwargs = {
-             'password':{
-                 'write_only': True,
-                 'style': {'input_type': 'password'}
-             }
-        }
-
-    def create(self, validated_data):
-        """Create and return a new user"""
-        user = models.UserProfile.objects.create_user(
-            email=validated_data['email'],
-            name=validated_data['name'],
-            password=validated_data['password']
-        )
-
-        return user 

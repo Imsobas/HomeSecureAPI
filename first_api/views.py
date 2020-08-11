@@ -8,13 +8,45 @@ from rest_framework import filters
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.settings import api_settings
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework.permissions import IsAuthenticated
 
 from first_api import serializers 
 from first_api import models
 from first_api import permission
 
 
-# Create your views here.
+# Home Secure main views 
+
+class CompanyViewSet(viewsets.ModelViewSet):
+    serializer_class = serializers.CompanySerializer
+    queryset = models.Company.objects.all() ## if not change this, get wrong url 
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+
+class VillageViewSet(viewsets.ModelViewSet):
+    serializer_class = serializers.VillageSerializer
+    queryset = models.Village.objects.all()
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated, permission.UpdateAllVillage,)
+    
+
+
+## User views
+
+class UserLoginApiView(ObtainAuthToken):
+    """Handle creating user authentication tokens"""
+    renderer_classes = api_settings.DEFAULT_RENDERER_CLASSES
+
+class UserProfileViewSet(viewsets.ModelViewSet):
+    """Handle creating and updating profile"""
+    serializer_class = serializers.UserProfileSerializer
+    ## contains the standard CRUD operation of View Set such list, create ...
+    queryset = models.UserProfile.objects.all()
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (permission.UpdateOwnProfile,)
+
+
+# old views.
 
 class HelloApiView(APIView):
     """ Test API View"""
@@ -108,17 +140,9 @@ class HelloViewSet(viewsets.ViewSet):
 
         return Response({'http_method': 'DELETE'})
 
-class UserProfileViewSet(viewsets.ModelViewSet):
-    """Handle creating and updating profile"""
-    serializer_class = serializers.UserProfileSerializer
-    ## contains the standard CRUD operation of View Set such list, create ...
-    queryset = models.UserProfile.objects.all()
-    authentication_classes = (TokenAuthentication,)
-    permission_classes = (permission.UpdateOwnProfile,)
 
-class UserLoginApiView(ObtainAuthToken):
-    """Handle creating user authentication tokens"""
-    renderer_classes = api_settings.DEFAULT_RENDERER_CLASSES
+
+
 
 class UserProfileFeedViewSet(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication,)
