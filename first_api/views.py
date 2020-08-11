@@ -28,6 +28,15 @@ class VillageViewSet(viewsets.ModelViewSet):
     queryset = models.Village.objects.all()
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated, permission.UpdateAllVillage,)
+
+    def list(self, request):
+        """Return all Village"""
+        villages = {village.village_name: village.id for village in models.Village.objects.all()}
+        print(villages)
+        
+        return Response(villages)
+
+    
     
 
 
