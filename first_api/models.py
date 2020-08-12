@@ -49,7 +49,7 @@ class Home(models.Model):
     home_number = models.CharField(max_length=100)
     home_address = models.CharField(max_length=200, null=True, blank=True)
     ## fk zone
-    home_zone = models.ForeignKey(Zone, null=True, blank=True) 
+    home_zone = models.ForeignKey(Zone, null=True, blank=True, on_delete=models.DO_NOTHING) 
     home_lat = models.DecimalField(max_digits=11, decimal_places=7, default=0.000000)
     home_lon = models.DecimalField(max_digits=11, decimal_places=7, default=0.00000)
     ##
@@ -76,9 +76,9 @@ class SecureGuard(models.Model):
     secure_lastname = models.CharField(max_length=100)
     secure_username = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.DO_NOTHING)
     secure_type = models.CharField(max_length=100)
-    secure_zone = models.ForeignKey(Zone, null=True, blank=True)
-    secure_village = models.ForeignKey(Village, null=True, blank=True)
-    secure_company = models.ForeignKey(Company, null=True, blank=True)
+    secure_zone = models.ForeignKey(Zone, null=True, blank=True, on_delete=models.DO_NOTHING)
+    secure_village = models.ForeignKey(Village, null=True, blank=True, on_delete=models.DO_NOTHING)
+    secure_company = models.ForeignKey(Company, null=True, blank=True, on_delete=models.DO_NOTHING)
     secure_join_date = models.DateTimeField(null=True, blank=True)
     secure_left_date = models.DateTimeField(null=True, blank=True)
     secure_work_start_time = models.DateTimeField(null=True, blank=True)
@@ -95,7 +95,7 @@ class SecureGuard(models.Model):
 
 
 
-class QRcode(models.Model):
+class Qrcode(models.Model):
     qr_content = models.CharField(max_length=200)
     qr_type = models.CharField(max_length=20)
     qr_format = models.CharField(max_length=20)
@@ -107,34 +107,35 @@ class QRcode(models.Model):
 
     qr_home = models.ForeignKey(Home,null=True, blank=True, on_delete=models.DO_NOTHING)
     qr_user = models.ForeignKey(GeneralUser,null=True, blank=True, on_delete=models.DO_NOTHING)
-    qr_village = models.ForeignKey(Village,null=True, blank=True, on_delete=models.SET_NULL)
+    qr_village = models.ForeignKey(Village,null=True, blank=True, on_delete=models.DO_NOTHING)
     ## security who check this in village
 
-    qr_enter_check_guard = models.ForeignKey(Village,null=True, blank=True, on_delete=models.SET_NULL) 
-    qr_inside_check_guard = models.ForeignKey(Village,null=True, blank=True, on_delete=models.SET_NULL) 
-    qr_exit_check_guard = models.ForeignKey(Village,null=True, blank=True, on_delete=models.SET_NULL) 
-
-    qr_enter_check_time = models.DateTimeField(null=True, blank=True)
-    qr_inside_check_time = models.DateTimeField(null=True, blank=True)
-    qr_user_check_time = models.DateTimeField(null=True, blank=True)
-    qr_exit_check_time = models.DateTimeField(null=True, blank=True)
-
-    qr_enter_check_status = models.BooleanField(default=False)
-    qr_inside_check_status = models.BooleanField(default=False)
-    qr_user_check_status = models.BooleanField(default=False)
-    qr_exit_check_status = models.BooleanField(default=False)
-
-    qr_enter_check_lat = models.DecimalField(max_digits=11, decimal_places=7, default=0.000000)
-    qr_enter_check_lon = models.DecimalField(max_digits=11, decimal_places=7, default=0.000000)
+    qr_enter_secure = models.ForeignKey(SecureGuard,null=True, blank=True, on_delete=models.DO_NOTHING, related_name='qr_enter_secure') 
+    qr_inside_secure = models.ForeignKey(SecureGuard,null=True, blank=True, on_delete=models.DO_NOTHING, related_name='qr_inside_secure') 
+    qr_exit_secure = models.ForeignKey(SecureGuard,null=True, blank=True, on_delete=models.DO_NOTHING, related_name='qr_exit_secure') 
     
-    qr_inside_check_lat = models.DecimalField(max_digits=11, decimal_places=7, default=0.000000)
-    qr_inside_check_lon = models.DecimalField(max_digits=11, decimal_places=7, default=0.000000)
 
-    qr_user_check_lat = models.DecimalField(max_digits=11, decimal_places=7, default=0.000000)
-    qr_user_check_lon = models.DecimalField(max_digits=11, decimal_places=7, default=0.000000)
+    qr_enter_time = models.DateTimeField(null=True, blank=True)
+    qr_inside_time = models.DateTimeField(null=True, blank=True)
+    qr_user_time = models.DateTimeField(null=True, blank=True)
+    qr_exit_time = models.DateTimeField(null=True, blank=True)
 
-    qr_exit_check_lat = models.DecimalField(max_digits=11, decimal_places=7, default=0.000000)
-    qr_exit_check_lon = models.DecimalField(max_digits=11, decimal_places=7, default=0.000000)
+    qr_enter_status = models.BooleanField(default=False)
+    qr_inside_status = models.BooleanField(default=False)
+    qr_user_status = models.BooleanField(default=False)
+    qr_exit_status = models.BooleanField(default=False)
+
+    qr_enter_lat = models.DecimalField(max_digits=11, decimal_places=7, default=0.000000)
+    qr_enter_lon = models.DecimalField(max_digits=11, decimal_places=7, default=0.000000)
+    
+    qr_inside_lat = models.DecimalField(max_digits=11, decimal_places=7, default=0.000000)
+    qr_inside_lon = models.DecimalField(max_digits=11, decimal_places=7, default=0.000000)
+
+    qr_user_lat = models.DecimalField(max_digits=11, decimal_places=7, default=0.000000)
+    qr_user_lon = models.DecimalField(max_digits=11, decimal_places=7, default=0.000000)
+
+    qr_exit_lat = models.DecimalField(max_digits=11, decimal_places=7, default=0.000000)
+    qr_exit_lon = models.DecimalField(max_digits=11, decimal_places=7, default=0.000000)
 
     qr_complete_status = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
