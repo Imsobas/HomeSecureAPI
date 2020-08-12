@@ -22,7 +22,7 @@ class Village(models.Model):
     village_name = models.CharField(max_length=100)
     village_address = models.CharField(max_length=200, null=True, blank=True)
     ## fk company
-    village_company = models.ForeignKey(Company,null=True, blank=True, on_delete=models.SET_NULL) 
+    village_company = models.ForeignKey(Company,null=True, blank=True, on_delete=models.DO_NOTHING) 
     village_lat = models.DecimalField(max_digits=11, decimal_places=7, null=True, blank=True)
     village_lon = models.DecimalField(max_digits=11, decimal_places=7, null=True, blank=True)
     is_active = models.BooleanField(default=True)
@@ -35,7 +35,7 @@ class Zone(models.Model):
     zone_name = models.CharField(max_length=100)
     zone_number = models.IntegerField(default=0)
     ## fk village
-    zone_village = models.ForeignKey(Village,null=True, blank=True, on_delete=models.SET_NULL) 
+    zone_village = models.ForeignKey(Village,null=True, blank=True, on_delete=models.DO_NOTHING) 
     zone_lat = models.DecimalField(max_digits=11, decimal_places=7, default=0.000000)
     zone_lon = models.DecimalField(max_digits=11, decimal_places=7, default=0.00000)
     zone_last_update = models.DateTimeField(null=True, blank=True)
@@ -45,24 +45,74 @@ class Zone(models.Model):
         """Return the model as a string"""
         return self.zone_name
 
+class Home(models.Model):
+    home_number = models.CharField(max_length=100)
+    home_address = models.CharField(max_length=200, null=True, blank=True)
+    ## fk zone
+    home_zone = models.ForeignKey(Zone, null=True, blank=True) 
+    home_lat = models.DecimalField(max_digits=11, decimal_places=7, default=0.000000)
+    home_lon = models.DecimalField(max_digits=11, decimal_places=7, default=0.00000)
+    ##
+    is_active = models.BooleanField(default=True)
+
+    def __str__(self):
+        """Return the model as a string"""
+        return self.home_number
+
+class GeneralUser(models.Model):
+    ## keep firs, last name in this cause 1.easier when list all user 
+    ## 2. one user can be both general and secure
+    general_user_first_name = models.CharField(max_length=100)
+    general_user_last_name = models.CharField(max_length=100)
+    general_user_username = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.DO_NOTHING) 
+    general_user_type = models.CharField(max_length=100)
+
+    def __str__(self):
+        """Return the model as a string"""
+        return str(self.general_userfirst_name)+" "+str(self.general_userlast_name)
+
+class SecureGuard(models.Model):
+    secure_firstname = models.CharField(max_length=100)
+    secure_lastname = models.CharField(max_length=100)
+    secure_username = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.DO_NOTHING)
+    secure_type = models.CharField(max_length=100)
+    secure_zone = models.ForeignKey(Zone, null=True, blank=True)
+    secure_village = models.ForeignKey(Village, null=True, blank=True)
+    secure_company = models.ForeignKey(Company, null=True, blank=True)
+    secure_join_date = models.DateTimeField(null=True, blank=True)
+    secure_left_date = models.DateTimeField(null=True, blank=True)
+    secure_work_start_time = models.DateTimeField(null=True, blank=True)
+    secure_work_end_time = models.DateTimeField(null=True, blank=True)
+    secure_work_period = models.DateTimeField(null=True, blank=True)
+    secure_current_location = models.DecimalField(max_digits=11, decimal_places=7, default=0.00000)
+    secure_current_location_time = models.DateTimeField(null=True, blank=True)
+    is_active = models.BooleanField(default=True)
+
+
+    def __str__(self):
+        """Return the model as a string"""
+        return str(self.secure_firstname)+" "+str(self.secure_lastname)
+
+
+
 class QRcode(models.Model):
-    qr_content = 
-    qr_type = 
-    qr_format = 
+    qr_content = models.CharField(max_length=200)
+    qr_type = models.CharField(max_length=20)
+    qr_format = models.CharField(max_length=20)
+    qr_format_detail = models.CharField(max_length=100)
+    qr_car_number = models.CharField(max_length=200)
+    qr_car_color = models.CharField(max_length=100)
+    qr_car_brand = models.CharField(max_length=100)
+    
 
-    qr_car = 
-    qr_car_color =
-    qr_car_digit = 
-
-    qr_home = models.
-    ## can add multiple user
-    qr_user = models.ManyToManyField(null=True, blank=True)
-
+    qr_home = models.ForeignKey(Home,null=True, blank=True, on_delete=models.DO_NOTHING)
+    qr_user = models.ForeignKey(GeneralUser,null=True, blank=True, on_delete=models.DO_NOTHING)
+    qr_village = models.ForeignKey(Village,null=True, blank=True, on_delete=models.SET_NULL)
     ## security who check this in village
 
-    # qr_enter_check_guard = models.ForeignKey(Village,null=True, blank=True, on_delete=models.SET_NULL) 
-    # qr_inside_check_guard = models.ForeignKey(Village,null=True, blank=True, on_delete=models.SET_NULL) 
-    # qr_exit_check_guard = models.ForeignKey(Village,null=True, blank=True, on_delete=models.SET_NULL) 
+    qr_enter_check_guard = models.ForeignKey(Village,null=True, blank=True, on_delete=models.SET_NULL) 
+    qr_inside_check_guard = models.ForeignKey(Village,null=True, blank=True, on_delete=models.SET_NULL) 
+    qr_exit_check_guard = models.ForeignKey(Village,null=True, blank=True, on_delete=models.SET_NULL) 
 
     qr_enter_check_time = models.DateTimeField(null=True, blank=True)
     qr_inside_check_time = models.DateTimeField(null=True, blank=True)
@@ -87,25 +137,12 @@ class QRcode(models.Model):
     qr_exit_check_lon = models.DecimalField(max_digits=11, decimal_places=7, default=0.000000)
 
     qr_complete_status = models.BooleanField(default=False)
-    is_active = models.BooleanField(default=False)
-
-
-
-
-class Home(models.Model):
-    home_number = models.CharField(max_length=100)
-    home_address = models.CharField(max_length=200, null=True, blank=True)
-    ## fk zone
-    home_zone = models.ForeignKey(Zone, null=True, blank=True) 
-    home_lat = models.DecimalField(max_digits=11, decimal_places=7, default=0.000000)
-    home_lon = models.DecimalField(max_digits=11, decimal_places=7, default=0.00000)
-    ## 
-    # user_model = 
     is_active = models.BooleanField(default=True)
 
     def __str__(self):
         """Return the model as a string"""
-        return self.home_number
+        return self.qr_content
+
 
 # class Checkpoint(models.Model):
 #     point_name = models.CharField(max_length=100)
@@ -115,15 +152,13 @@ class Home(models.Model):
 #     point_zone = models.ForeignKey(Zone, null=True, blank=True) 
 #     point_lat = models.DecimalField(max_digits=11, decimal_places=7, default=0.000000)
 #     point_lon = models.DecimalField(max_digits=11, decimal_places=7, default=0.000000)
-#     is_active = models.BooleanField(default=True)
-
-# class GeneralUser(models.Model):
-#     general_first_name = models.CharField(max_length=100)
-#     general_last_name = models.CharField(max_length=100)
-#     general_username = models.ForeignKey(settings.AUTH_USER_MODEL) 
+#     is_active = models.BooleanField(default=True
 
 
-# class SecureGuard(models.Model):
+
+
+
+
 
     
 ## User model

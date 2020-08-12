@@ -12,3 +12,8 @@ admin.site.register(models.ProfileFeedItem)
 admin.site.register(models.Company)
 admin.site.register(models.Village)
 admin.site.register(models.Zone)
+admin.site.register(models.Home)
+admin.site.register(models.GeneralUser)
+admin.site.register(models.SecureGuard)
+admin.site.register(models.QRcode)
+
