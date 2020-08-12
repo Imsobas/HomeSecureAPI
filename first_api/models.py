@@ -41,7 +41,6 @@ class Zone(models.Model):
     zone_last_update = models.DateTimeField(null=True, blank=True)
     ## not have is_active due to you need to delete every home incase want to delete zone
 
-
     def __str__(self):
         """Return the model as a string"""
         return self.zone_name
