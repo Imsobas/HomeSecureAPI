@@ -13,6 +13,7 @@ router.register(r'profile',views.UserProfileViewSet)
 router.register(r'feed',views.UserProfileFeedViewSet)
 router.register(r'company',views.CompanyViewSet)
 router.register(r'all_village',views.VillageViewSet)
+router.register(r'zone_by_village',views.ZoneViewSet)
 
 # Home Secure main routers
 

@@ -9,14 +9,21 @@ class CompanySerializer(serializers.ModelSerializer):
     """Serializes company items"""
     class Meta:
         model = models.Company
-        fields = ('id','name','address','phone')
+        fields = ('id','company_name','company_address','company_phone')
 
 class VillageSerializer(serializers.ModelSerializer):
     """Serializes village items"""
     class Meta:
         model = models.Village
         ## return value in request are missing if not fill in field
+        ## also receive value from post 
         fields = ('id','village_name','village_address','village_company','village_lat','village_lon')
+
+class ZoneSerializer(serializers.ModelSerializer):
+    """Serializes zone items"""
+    class Meta:
+        model = models.Zone
+        fields = ('id','zone_name','zone_number','zone_village','zone_lat','zone_lon','zone_last_update')
 
 
 ## User serializer

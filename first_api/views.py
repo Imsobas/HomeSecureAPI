@@ -9,10 +9,13 @@ from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.settings import api_settings
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.permissions import IsAuthenticated
+# from django.core.serializers.json import DjangoJSONEncoder
+# from django.core import serializers 
 
 from first_api import serializers 
 from first_api import models
 from first_api import permission
+import json
 
 
 # Home Secure main views 
@@ -33,14 +36,55 @@ class VillageViewSet(viewsets.ModelViewSet):
         """Return all Village"""
         villages = {village.village_name: village.id for village in models.Village.objects.all()}
         print(villages)
+        print(type(villages))
 
-        return Response(villages)
-    
+        return Response(villages)   
 
-    
-    
+class ZoneViewSet(viewsets.ModelViewSet):
+    serializer_class = serializers.ZoneSerializer
+    queryset = models.Zone.objects.all()
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
 
+    ## return a zone of that village
+    def retrieve(self, request, pk):
+        """Return all zone according to that village id"""
+        
+        # zones = {
+        #     "id": zone.id,
+        #     "zone_name": zone.zone_name,
+        #     "zone_" : zone.zone_village,
+        #     "zone.zone_lat" : zone.zone_lat,
+        #     "zone.zone_lon" : zone.zone_lon,
+        #     "zone.zone_last_update" : zone.zone_last_update for zone in models.Zone.objects.filter(zone_village = pk)
+        # }
+        
+        ##mrthod 1
+        # serialized_q = models.Zone.objects.filter(zone_village = pk).values()
+        # query = json.dumps(list(serialized_q), cls=DjangoJSONEncoder)
+        ## ans: get str wiht \
 
+        ##method2
+        # objectQuerySet = models.Zone.objects.filter(zone_village = pk)
+        # data = djangoSerializers.serialize('json', list(objectQuerySet),fields =)
+        
+        
+        ##method3
+        # jsonSerializer = json.dumps(list(objectQuerySet), cls=DjangoJSONEncoder)
+
+        ##method 4 ## work 
+        zone_by_village = list(models.Zone.objects.filter(zone_village = pk).values())
+        
+        if(len(zone_by_village)>0):
+            return Response(zone_by_village)
+        else:
+            return Response(
+                { "detail": "Not found."},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+            
+        
 ## User views
 
 class UserLoginApiView(ObtainAuthToken):
