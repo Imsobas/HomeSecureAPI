@@ -33,8 +33,9 @@ class VillageViewSet(viewsets.ModelViewSet):
         """Return all Village"""
         villages = {village.village_name: village.id for village in models.Village.objects.all()}
         print(villages)
-        
+
         return Response(villages)
+    
 
     
     

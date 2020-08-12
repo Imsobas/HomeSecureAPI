@@ -41,23 +41,69 @@ class Zone(models.Model):
     zone_last_update = models.DateTimeField(null=True, blank=True)
     ## not have is_active due to you need to delete every home incase want to delete zone
 
-
     def __str__(self):
         """Return the model as a string"""
         return self.zone_name
 
-# class Home(models.Model):
-#     home_number = models.CharField(max_length=100)
-#     home_address = models.CharField(max_length=200, null=True, blank=True)
-#     ## fk zone
-#     home_zone = models.ForeignKey(Zone, null=True, blank=True) 
-#     home_lat = models.DecimalField(max_digits=11, decimal_places=7, default=0.000000)
-#     home_lon = models.DecimalField(max_digits=11, decimal_places=7, default=0.00000)
-#     is_active = models.BooleanField(default=True)
+class QRcode(models.Model):
+    qr_content = 
+    qr_type = 
+    qr_format = 
 
-#     def __str__(self):
-#         """Return the model as a string"""
-#         return self.home_number
+    qr_car = 
+    qr_car_color =
+    qr_car_digit = 
+
+    qr_home = models.
+    ## can add multiple user
+    qr_user = models.ManyToManyField(null=True, blank=True)
+
+    ## security who check this in village
+
+    # qr_enter_check_guard = models.ForeignKey(Village,null=True, blank=True, on_delete=models.SET_NULL) 
+    # qr_inside_check_guard = models.ForeignKey(Village,null=True, blank=True, on_delete=models.SET_NULL) 
+    # qr_exit_check_guard = models.ForeignKey(Village,null=True, blank=True, on_delete=models.SET_NULL) 
+
+    qr_enter_check_time = models.DateTimeField(null=True, blank=True)
+    qr_inside_check_time = models.DateTimeField(null=True, blank=True)
+    qr_user_check_time = models.DateTimeField(null=True, blank=True)
+    qr_exit_check_time = models.DateTimeField(null=True, blank=True)
+
+    qr_enter_check_status = models.BooleanField(default=False)
+    qr_inside_check_status = models.BooleanField(default=False)
+    qr_user_check_status = models.BooleanField(default=False)
+    qr_exit_check_status = models.BooleanField(default=False)
+
+    qr_enter_check_lat = models.DecimalField(max_digits=11, decimal_places=7, default=0.000000)
+    qr_enter_check_lon = models.DecimalField(max_digits=11, decimal_places=7, default=0.000000)
+    
+    qr_inside_check_lat = models.DecimalField(max_digits=11, decimal_places=7, default=0.000000)
+    qr_inside_check_lon = models.DecimalField(max_digits=11, decimal_places=7, default=0.000000)
+
+    qr_user_check_lat = models.DecimalField(max_digits=11, decimal_places=7, default=0.000000)
+    qr_user_check_lon = models.DecimalField(max_digits=11, decimal_places=7, default=0.000000)
+
+    qr_exit_check_lat = models.DecimalField(max_digits=11, decimal_places=7, default=0.000000)
+    qr_exit_check_lon = models.DecimalField(max_digits=11, decimal_places=7, default=0.000000)
+
+    qr_complete_status = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=False)
+
+
+
+
+class Home(models.Model):
+    home_number = models.CharField(max_length=100)
+    home_address = models.CharField(max_length=200, null=True, blank=True)
+    ## fk zone
+    home_zone = models.ForeignKey(Zone, null=True, blank=True) 
+    home_lat = models.DecimalField(max_digits=11, decimal_places=7, default=0.000000)
+    home_lon = models.DecimalField(max_digits=11, decimal_places=7, default=0.00000)
+    is_active = models.BooleanField(default=True)
+
+    def __str__(self):
+        """Return the model as a string"""
+        return self.home_number
 
 # class Checkpoint(models.Model):
 #     point_name = models.CharField(max_length=100)
