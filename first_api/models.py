@@ -99,6 +99,8 @@ class Home(models.Model):
     home_zone = models.ForeignKey(Zone, null=True, blank=True) 
     home_lat = models.DecimalField(max_digits=11, decimal_places=7, default=0.000000)
     home_lon = models.DecimalField(max_digits=11, decimal_places=7, default=0.00000)
+    ## 
+    # user_model = 
     is_active = models.BooleanField(default=True)
 
     def __str__(self):
