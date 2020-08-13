@@ -19,6 +19,16 @@ from first_api import models
 from first_api import permission
 import json
 
+## helper function
+
+def notFoundHandling(result,error_message="Not found."):
+    if(len(result)>0):
+        return Response(result)
+    else: 
+        return Response({ "detail": error_message},
+        status=status.HTTP_404_NOT_FOUND)
+
+
 
 # Home Secure main views 
 
@@ -33,47 +43,32 @@ class VillageViewSet(viewsets.ModelViewSet):
     queryset = models.Village.objects.filter(is_active=True)
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated, permission.UpdateAllVillage,)
-    renderer_classes = [renderers.JSONRenderer]
+    # renderer_classes = [renderers.JSONRenderer] add thuis if need only json 
 
     @action(detail=True, methods = 'GET')
     def villages_pk_zones(self, request, pk):
         """ Return all zone to specific village"""
-        
         queryset = models.Zone.objects.filter(zone_village=pk).values()
         result = list(queryset)
-
-        print(result)
         
-        return Response(result)
+        return notFoundHandling(result)
 
     @action(detail=True, methods = 'GET')
     def villages_pk_zones_pk(self, request, village_pk, zone_pk ):
-        """ Return all zone to specific village"""
-        
-        queryset = models.Zone.objects.filter(zone_village=village_pk, id=zone_pk).values()
+        """ Return specific zone to specific village"""
+        queryset = models.Zone.objects.filter(zone_village=village_pk, pk=zone_pk).values()
         result = list(queryset)
-
-        print(result)
-        
-        return Response(result)
-
-
-    
-
-
-
-
-    # def list(self, request):
-    #     """Return all Village"""
-    #     villages = {village.village_name: village.id for village in models.Village.objects.all()}
-
-    #     return Response(villages)   
+            
+        return notFoundHandling(result)
+        # return Response(result)
 
 class ZoneViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.ZoneSerializer
     queryset = models.Zone.objects.all()
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
+
+    
 
     # @action(detail=True, methods = 'GET', renderer_classes=[renderers.JSONRenderer])
     # def zone_by_village(self, request, pk):

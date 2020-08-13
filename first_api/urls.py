@@ -31,8 +31,8 @@ villages_pk_zones_pk = views.VillageViewSet.as_view({
 # Home Secure main routers
 urlpatterns = [
     ##village
-    path('village/<int:pk>/zones/', villages_pk_zones ,name='villages_pk_zones'),
-    path('village/<int:village_pk>/zones/<int:zone_pk>/', villages_pk_zones_pk ,name='villages_pk_zones_pk'),
+    path('villages/<int:pk>/zones/', villages_pk_zones ,name='villages_pk_zones'),
+    path('villages/<int:village_pk>/zones/<int:zone_pk>/', villages_pk_zones_pk ,name='villages_pk_zones_pk'),
 
     path('hello-view/', views.HelloApiView.as_view()), 
     path('login/', views.UserLoginApiView.as_view()),

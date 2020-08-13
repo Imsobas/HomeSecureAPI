@@ -9,7 +9,7 @@ class CompanySerializer(serializers.ModelSerializer):
     """Serializes company items"""
     class Meta:
         model = models.Company
-        fields = ('id','company_name','company_address','company_phone','is_active')
+        fields = ('pk','company_name','company_address','company_phone','is_active')
 
 class VillageSerializer(serializers.ModelSerializer):
     """Serializes village items"""
@@ -17,19 +17,19 @@ class VillageSerializer(serializers.ModelSerializer):
         model = models.Village
         ## return value in request are missing if not fill in field
         ## also receive value from post 
-        fields = ('id','village_name','village_address','village_company','village_lat','village_lon','is_active')
+        fields = ('pk','village_name','village_address','village_company','village_lat','village_lon','is_active')
 
 class ZoneSerializer(serializers.ModelSerializer):
     """Serializes zone items"""
     class Meta:
         model = models.Zone
-        fields = ('id','zone_name','zone_number','zone_village','zone_lat','zone_lon','zone_last_update')
+        fields = ('pk','zone_name','zone_number','zone_village','zone_lat','zone_lon','zone_last_update')
 
 class HomeSerializer(serializers.ModelSerializer):
     """Serializes home items"""
     class Meta:
         model = models.Home
-        fields = ('id','home_number','home_address','home_zone','home_lat','home_lon','is_active')
+        fields = ('pk','home_number','home_address','home_zone','home_lat','home_lon','is_active')
 
 
 ## User serializer
@@ -39,7 +39,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.UserProfile
-        fields = ('id','username','user_role','password')
+        fields = ('pk','username','user_role','password')
         extra_kwargs = {
              'password':{
                  'write_only': True,
@@ -63,7 +63,7 @@ class ProfileFeedItemSerializer(serializers.ModelSerializer):
     """Serializes profile feed items"""
     class Meta:
         model = models.ProfileFeedItem ## set this serializer to this model 
-        fields = ('id','user_profile','status_text','created_on')
+        fields = ('pk','user_profile','status_text','created_on')
         extra_kwargs = { ## additional value
             'user_profile': {'read_only': True}
         }
