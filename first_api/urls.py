@@ -20,19 +20,25 @@ router.register(r'homes',views.HomeViewSet)
 
 ## Binding URL
 
-## village 
-villages_pk_zones = views.VillageViewSet.as_view({
-    'get': 'villages_pk_zones'
+
+get_villages_pk_zones = views.ZoneViewSet.as_view({
+    'get': 'get_villages_pk_zones'
 })
-villages_pk_zones_pk = views.VillageViewSet.as_view({
-    'get': 'villages_pk_zones_pk'
+get_villages_pk_zones_pk = views.ZoneViewSet.as_view({
+    'get': 'get_villages_pk_zones_pk'
+})
+get_villages_zones_homes = views.HomeViewSet.as_view({
+    'get': 'get_villages_zones_homes'
 })
 
 # Home Secure main routers
 urlpatterns = [
-    ##village
-    path('villages/<int:pk>/zones/', villages_pk_zones ,name='villages_pk_zones'),
-    path('villages/<int:village_pk>/zones/<int:zone_pk>/', villages_pk_zones_pk ,name='villages_pk_zones_pk'),
+    ##zone function
+    path('villages/<int:pk>/zones/', get_villages_pk_zones ,name='villages_pk_zones'),
+    path('villages/<int:village_pk>/zones/<int:zone_pk>/', get_villages_pk_zones_pk ,name='villages_pk_zones_pk'),
+
+    ##home function 
+    path('villages/zones/homes/', get_villages_zones_homes, name='get_villages_zones_homes'),
 
     path('hello-view/', views.HelloApiView.as_view()), 
     path('login/', views.UserLoginApiView.as_view()),

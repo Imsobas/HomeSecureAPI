@@ -12,7 +12,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework import renderers
 from rest_framework.decorators import action
 # from django.core.serializers.json import DjangoJSONEncoder
-# from django.core import serializers 
+from django.core import serializers as django_core_serializers
+from django.http import HttpResponse, JsonResponse
 
 from first_api import serializers 
 from first_api import models
@@ -45,28 +46,32 @@ class VillageViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated, permission.UpdateAllVillage,)
     # renderer_classes = [renderers.JSONRenderer] add thuis if need only json 
 
-    @action(detail=True, methods = 'GET')
-    def villages_pk_zones(self, request, pk):
-        """ Return all zone to specific village"""
-        queryset = models.Zone.objects.filter(zone_village=pk).values()
-        result = list(queryset)
-        
-        return notFoundHandling(result)
+    
 
-    @action(detail=True, methods = 'GET')
-    def villages_pk_zones_pk(self, request, village_pk, zone_pk ):
-        """ Return specific zone to specific village"""
-        queryset = models.Zone.objects.filter(zone_village=village_pk, pk=zone_pk).values()
-        result = list(queryset)
-            
-        return notFoundHandling(result)
-        # return Response(result)
+    
+
 
 class ZoneViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.ZoneSerializer
     queryset = models.Zone.objects.all()
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
+
+    @action(detail=True, methods = 'GET')
+    def get_villages_pk_zones(self, request, pk):
+        """ Return all zone to specific village"""
+        querySet = models.Zone.objects.filter(zone_village=pk).values()
+        result = list(querySet)
+        
+        return notFoundHandling(result)
+
+    @action(detail=True, methods = 'GET')
+    def get_villages_pk_zones_pk(self, request, village_pk, zone_pk ):
+        """ Return specific zone to specific village"""
+        querySet = models.Zone.objects.filter(zone_village=village_pk, pk=zone_pk).values()
+        result = list(querySet)
+            
+        return notFoundHandling(result)
 
     
 
@@ -91,11 +96,69 @@ class HomeViewSet(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
 
-    # def list(self, request):
-        
-    #     request = ()
+    @action(detail=True, methods = 'GET')
+    def get_villages_zones_homes(self, request):
+        """ Return specific homes correspond to each zone corespond to each village """
 
-    #     return Response({'message': 'Hello!', 'a_viewset': a_viewset})
+        # querySet = models.Home.objects.all().values()
+        # result = list(querySet)        
+
+        result_list = []
+
+        villageQuerySet = models.Village.objects.all()
+        villageSerializer = serializers.VillageSerializer(villageQuerySet,many=True)
+        villageData = villageSerializer.data
+
+        for village in villageData:
+            village_dict = dict()
+            village_dict["pk"] = village["pk"]
+            village_dict["village_name"] = village["village_name"]
+
+            zone_list = []
+            zoneQuerySet = models.Zone.objects.filter(zone_village=village_dict["pk"]).all()
+            zoneSerializer = serializers.ZoneSerializer(zoneQuerySet,many=True)
+            zoneData = zoneSerializer.data
+            
+            for zone in zoneData:
+                zone_dict = dict()
+                zone_dict["pk"] = zone["pk"]
+                zone_dict["zone_name"] = zone["zone_name"]
+                zone_dict["zone_number"] = zone["zone_number"]
+
+                home_list = []
+                homeQuerySet = models.Home.objects.filter(home_zone=zone_dict["pk"]).all()
+                homeSerializer = serializers.HomeSerializer(homeQuerySet,many=True)
+                homeData = homeSerializer.data
+                
+                for home in homeData:
+                    home_dict = dict()
+                    home_dict["pk"] = home["pk"]
+                    home_dict["home_number"] = home["home_number"]
+                    home_dict["home_address"] = home["home_address"]
+                    home_dict["home_zone"] = home["home_zone"]
+                    home_dict["home_lat"] = home["home_lat"]
+                    home_dict["home_lon"] = home["home_lon"]
+                    home_dict["is_active"] = ["is_active"]
+                    home_list.append(home_dict)
+
+                zone_dict['home'] = home_list      
+                zone_list.append(zone_dict)
+
+            village_dict['zone'] = zone_list
+            result_list.append(village_dict)
+
+        ##workkk
+        querySet = models.Home.objects.all()
+        serializer = serializers.HomeSerializer(querySet,many=True)
+        result = serializer.data
+        ##workkk
+
+
+        # return Response(temp_list)
+        return notFoundHandling(result_list)
+
+
+    
 
 
 
