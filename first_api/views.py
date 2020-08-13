@@ -9,6 +9,8 @@ from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.settings import api_settings
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.permissions import IsAuthenticated
+from rest_framework import renderers
+from rest_framework.decorators import action
 # from django.core.serializers.json import DjangoJSONEncoder
 # from django.core import serializers 
 
@@ -22,23 +24,50 @@ import json
 
 class CompanyViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.CompanySerializer
-    queryset = models.Company.objects.all() ## if not change this, get wrong url 
+    queryset = models.Company.objects.filter(is_active=True) ## if not change this, get wrong url 
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
 
 class VillageViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.VillageSerializer
-    queryset = models.Village.objects.all()
+    queryset = models.Village.objects.filter(is_active=True)
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated, permission.UpdateAllVillage,)
+    renderer_classes = [renderers.JSONRenderer]
 
-    def list(self, request):
-        """Return all Village"""
-        villages = {village.village_name: village.id for village in models.Village.objects.all()}
-        print(villages)
-        print(type(villages))
+    @action(detail=True, methods = 'GET')
+    def villages_pk_zones(self, request, pk):
+        """ Return all zone to specific village"""
+        
+        queryset = models.Zone.objects.filter(zone_village=pk).values()
+        result = list(queryset)
 
-        return Response(villages)   
+        print(result)
+        
+        return Response(result)
+
+    @action(detail=True, methods = 'GET')
+    def villages_pk_zones_pk(self, request, village_pk, zone_pk ):
+        """ Return all zone to specific village"""
+        
+        queryset = models.Zone.objects.filter(zone_village=village_pk, id=zone_pk).values()
+        result = list(queryset)
+
+        print(result)
+        
+        return Response(result)
+
+
+    
+
+
+
+
+    # def list(self, request):
+    #     """Return all Village"""
+    #     villages = {village.village_name: village.id for village in models.Village.objects.all()}
+
+    #     return Response(villages)   
 
 class ZoneViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.ZoneSerializer
@@ -46,42 +75,37 @@ class ZoneViewSet(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
 
-    ## return a zone of that village
-    def retrieve(self, request, pk):
-        """Return all zone according to that village id"""
+    # @action(detail=True, methods = 'GET', renderer_classes=[renderers.JSONRenderer])
+    # def zone_by_village(self, request, pk):
+    #     """Return all zone according to that village id, pk is village_id"""
+    #     zone_by_village = list(models.Zone.objects.filter(zone_village = pk).values())
         
-        # zones = {
-        #     "id": zone.id,
-        #     "zone_name": zone.zone_name,
-        #     "zone_" : zone.zone_village,
-        #     "zone.zone_lat" : zone.zone_lat,
-        #     "zone.zone_lon" : zone.zone_lon,
-        #     "zone.zone_last_update" : zone.zone_last_update for zone in models.Zone.objects.filter(zone_village = pk)
-        # }
-        
-        ##mrthod 1
-        # serialized_q = models.Zone.objects.filter(zone_village = pk).values()
-        # query = json.dumps(list(serialized_q), cls=DjangoJSONEncoder)
-        ## ans: get str wiht \
+    #     if(len(zone_by_village)>0):
+    #         return Response(zone_by_village)
+    #     else:
+    #         ## not found specific village
+    #         return Response(
+    #             { "detail": "Not found."},
+    #             status=status.HTTP_404_NOT_FOUND
+    #         )
 
-        ##method2
-        # objectQuerySet = models.Zone.objects.filter(zone_village = pk)
-        # data = djangoSerializers.serialize('json', list(objectQuerySet),fields =)
-        
-        
-        ##method3
-        # jsonSerializer = json.dumps(list(objectQuerySet), cls=DjangoJSONEncoder)
+## use only post from home 
+class HomeViewSet(viewsets.ModelViewSet):
+    serializer_class = serializers.HomeSerializer
+    queryset = models.Home.objects.filter(is_active=True)
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
 
-        ##method 4 ## work 
-        zone_by_village = list(models.Zone.objects.filter(zone_village = pk).values())
+    # def list(self, request):
         
-        if(len(zone_by_village)>0):
-            return Response(zone_by_village)
-        else:
-            return Response(
-                { "detail": "Not found."},
-                status=status.HTTP_404_NOT_FOUND
-            )
+    #     request = ()
+
+    #     return Response({'message': 'Hello!', 'a_viewset': a_viewset})
+
+
+
+
+
 
             
         
