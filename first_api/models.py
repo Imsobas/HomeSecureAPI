@@ -5,6 +5,59 @@ from django.contrib.auth.models import BaseUserManager
 from django.conf import settings
 from first_api.user_role import user_role_list
 
+## User model
+
+class UserProfileManager(BaseUserManager):
+    """Manager for user profiles"""
+
+    def create_user(self, username, password=None): ## overide old method 
+        """Create a new user profile"""
+        if not username:
+            raise ValueError('Users must have an email address')
+
+        ## should add some username normalized
+        user = self.model(username=username,user_role=user_role)
+        user.set_password(password)
+        user.save(using=self._db)
+
+        return user
+
+    def create_superuser(self, username, password): ## overide old method 
+        """Create and save a new superuser with given details"""
+        user = self.create_user(username, password)
+
+        user.is_superuser = True
+        user.is_staff = True
+        user.user_role = "Admin" ## Admin 
+        user.save(using=self._db)
+
+        return user
+
+class UserProfile(AbstractBaseUser, PermissionsMixin):
+    """Database model for users in the system"""
+    username = models.CharField(max_length=20,unique=True)
+    user_role = models.CharField(max_length=20)
+    is_active = models.BooleanField(default=True)
+    is_staff = models.BooleanField(default=False)
+
+    objects = UserProfileManager()
+
+    # USERNAME_FIELD = 'email'
+    USERNAME_FIELD = 'username'
+    # REQUIRED_FIELDS = ['name']
+
+    def get_full_name(self):
+        """Retrieve full name for user"""
+        return self.username
+
+    def get_short_name(self):
+        """Retrieve short name of user"""
+        return self.username
+
+    def __str__(self):
+        """Return string representation of user"""
+        return self.username
+
 # Home Secure main models 
 
 class Company(models.Model):
@@ -36,9 +89,10 @@ class Zone(models.Model):
     zone_number = models.IntegerField(default=0)
     ## fk village
     zone_village = models.ForeignKey(Village,null=True, blank=True, on_delete=models.DO_NOTHING) 
-    zone_lat = models.DecimalField(max_digits=11, decimal_places=7, default=0.000000)
-    zone_lon = models.DecimalField(max_digits=11, decimal_places=7, default=0.00000)
+    zone_lat = models.DecimalField(max_digits=11, decimal_places=7, null=True, blank=True)
+    zone_lon = models.DecimalField(max_digits=11, decimal_places=7, null=True, blank=True)
     zone_last_update = models.DateTimeField(null=True, blank=True)
+    is_active = models.BooleanField(default=True)
     ## not have is_active due to you need to delete every home incase want to delete zone
 
     def __str__(self):
@@ -50,8 +104,8 @@ class Home(models.Model):
     home_address = models.CharField(max_length=200, null=True, blank=True)
     ## fk zone
     home_zone = models.ForeignKey(Zone, null=True, blank=True, on_delete=models.DO_NOTHING) 
-    home_lat = models.DecimalField(max_digits=11, decimal_places=7, default=0.000000)
-    home_lon = models.DecimalField(max_digits=11, decimal_places=7, default=0.00000)
+    home_lat = models.DecimalField(max_digits=11, decimal_places=7, null=True, blank=True)
+    home_lon = models.DecimalField(max_digits=11, decimal_places=7, null=True, blank=True)
     ##
     is_active = models.BooleanField(default=True)
 
@@ -84,7 +138,7 @@ class SecureGuard(models.Model):
     secure_work_start_time = models.DateTimeField(null=True, blank=True)
     secure_work_end_time = models.DateTimeField(null=True, blank=True)
     secure_work_period = models.DateTimeField(null=True, blank=True)
-    secure_current_location = models.DecimalField(max_digits=11, decimal_places=7, default=0.00000)
+    secure_current_location = models.DecimalField(max_digits=11, decimal_places=7,  null=True, blank=True)
     secure_current_location_time = models.DateTimeField(null=True, blank=True)
     is_active = models.BooleanField(default=True)
 
@@ -125,17 +179,17 @@ class Qrcode(models.Model):
     qr_user_status = models.BooleanField(default=False)
     qr_exit_status = models.BooleanField(default=False)
 
-    qr_enter_lat = models.DecimalField(max_digits=11, decimal_places=7, default=0.000000)
-    qr_enter_lon = models.DecimalField(max_digits=11, decimal_places=7, default=0.000000)
+    qr_enter_lat = models.DecimalField(max_digits=11, decimal_places=7,  null=True, blank=True)
+    qr_enter_lon = models.DecimalField(max_digits=11, decimal_places=7,  null=True, blank=True)
     
-    qr_inside_lat = models.DecimalField(max_digits=11, decimal_places=7, default=0.000000)
-    qr_inside_lon = models.DecimalField(max_digits=11, decimal_places=7, default=0.000000)
+    qr_inside_lat = models.DecimalField(max_digits=11, decimal_places=7,  null=True, blank=True)
+    qr_inside_lon = models.DecimalField(max_digits=11, decimal_places=7,  null=True, blank=True)
 
-    qr_user_lat = models.DecimalField(max_digits=11, decimal_places=7, default=0.000000)
-    qr_user_lon = models.DecimalField(max_digits=11, decimal_places=7, default=0.000000)
+    qr_user_lat = models.DecimalField(max_digits=11, decimal_places=7,  null=True, blank=True)
+    qr_user_lon = models.DecimalField(max_digits=11, decimal_places=7,  null=True, blank=True)
 
-    qr_exit_lat = models.DecimalField(max_digits=11, decimal_places=7, default=0.000000)
-    qr_exit_lon = models.DecimalField(max_digits=11, decimal_places=7, default=0.000000)
+    qr_exit_lat = models.DecimalField(max_digits=11, decimal_places=7,  null=True, blank=True)
+    qr_exit_lon = models.DecimalField(max_digits=11, decimal_places=7,  null=True, blank=True)
 
     qr_complete_status = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
@@ -162,83 +216,31 @@ class Qrcode(models.Model):
 
 
     
-## User model
 
-class UserProfileManager(BaseUserManager):
-    """Manager for user profiles"""
-
-    def create_user(self, username, user_role, password=None): ## overide old method 
-        """Create a new user profile"""
-        if not username:
-            raise ValueError('Users must have an email address')
-
-        ## should add some username normalized
-        user = self.model(username=username,user_role=user_role)
-
-        user.set_password(password)
-        user.save(using=self._db)
-
-        return user
-
-    def create_superuser(self, username, password): ## overide old method 
-        """Create and save a new superuser with given details"""
-        user = self.create_user(username, password)
-
-        user.is_superuser = True
-        user.is_staff = True
-        user.user_role = user_role_list[0] ## Admin 
-        user.save(using=self._db)
-
-        return user
-
-class UserProfile(AbstractBaseUser, PermissionsMixin):
-    """Database model for users in the system"""
-    username = models.CharField(max_length=20,unique=True)
-    user_role = models.CharField(max_length=20)
-    is_active = models.BooleanField(default=True)
-    is_staff = models.BooleanField(default=False)
-
-    objects = UserProfileManager()
-
-    # USERNAME_FIELD = 'email'
-    USERNAME_FIELD = 'username'
-    # REQUIRED_FIELDS = ['name']
-
-    def get_full_name(self):
-        """Retrieve full name for user"""
-        return self.username
-
-    def get_short_name(self):
-        """Retrieve short name of user"""
-        return self.username
-
-    def __str__(self):
-        """Return string representation of user"""
-        return self.username
 
 ## Old model
 
-class Article(models.Model):
-    title = models.CharField(max_length=100)
-    author = models.CharField(max_length=100)
-    email = models.EmailField(max_length=100)
-    date = models.DateTimeField(auto_now_add=True)
+# class Article(models.Model):
+#     title = models.CharField(max_length=100)
+#     author = models.CharField(max_length=100)
+#     email = models.EmailField(max_length=100)
+#     date = models.DateTimeField(auto_now_add=True)
 
-    def __str__(self): ## to tell what we gonna do when convert model instance into a string. 
-        return self.title
+#     def __str__(self): ## to tell what we gonna do when convert model instance into a string. 
+#         return self.title
  
-class ProfileFeedItem(models.Model):
-    """Profile Status Update"""
-    user_profile = models.ForeignKey(
-        settings.AUTH_USER_MODEL, ## associated with user which is user auth model.
-        on_delete=models.CASCADE
-    )
-    status_text = models.CharField(max_length=255)
-    created_on = models.DateTimeField(auto_now=True)
+# class ProfileFeedItem(models.Model):
+#     """Profile Status Update"""
+#     user_profile = models.ForeignKey(
+#         settings.AUTH_USER_MODEL, ## associated with user which is user auth model.
+#         on_delete=models.CASCADE
+#     )
+#     status_text = models.CharField(max_length=255)
+#     created_on = models.DateTimeField(auto_now=True)
 
-    def __str__(self):
-        """Return the model as a string"""
-        return self.status_text
+#     def __str__(self):
+#         """Return the model as a string"""
+#         return self.status_text
 
 
 

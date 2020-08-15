@@ -122,3 +122,33 @@ class QRcodeSerializer(serializers.ModelSerializer):
             code_scan.guard.add(g)
         code_scan.save()
         return code_scan
+
+
+## example of customViewset from StackOverflow 
+
+class ManuscriptViewSet(viewsets.ModelViewSet):
+    """Handles creating, reading and updating items."""
+
+    authentication_classes = (TokenAuthentication,)
+    serializer_class = serializers.ManuscriptItemSerializer
+    permission_classes = (permissions.PostOwnManuscript, IsAuthenticated,)
+
+    def perform_create(self, serializer):
+        """Sets the user profile to the logged in user."""
+        serializer.save(author=self.request.user)
+
+    def get_queryset(self):
+        """
+        This view should return a list of all the manuscripts
+        for the currently authenticated user.
+        """
+        user = self.request.user
+        return models.ManuscriptItem.objects.filter(author=user)
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        self.perform_destroy(instance)
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    def perform_destroy(self, instance):
+        instance.delete()

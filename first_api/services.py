@@ -32,8 +32,8 @@ def notFoundHandling(result,error_message="Not found."):
 class VillagesZonesService(viewsets.ModelViewSet):
     serializer_class = serializers.HomeSerializer
     queryset = models.Village.objects.filter(is_active=True)
-    authentication_classes = (TokenAuthentication,)
-    permission_classes = (IsAuthenticatedOrReadOnly,)
+    # authentication_classes = (TokenAuthentication,)
+    # permission_classes = (IsAuthenticatedOrReadOnly,)
 
     @action(detail=True, methods = 'GET')
     def get_villages_zones(self, request):

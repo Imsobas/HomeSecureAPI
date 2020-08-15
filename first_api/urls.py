@@ -5,17 +5,15 @@ from first_api import views
 
 
 router = DefaultRouter() ## router use with viewset 
-router.register('hello-viewset', views.HelloViewSet, basename='hello-viewset')
+# router.register('hello-viewset', views.HelloViewSet, basename='hello-viewset')
 
 ## do not need to define basename due to use query set in UserProfileViewSet
 ## queryset all ready provide a basename
 router.register(r'profiles',views.UserProfileViewSet)
-router.register(r'feeds',views.UserProfileFeedViewSet)
+# router.register(r'feeds',views.UserProfileFeedViewSet)
 router.register(r'companys',views.CompanyViewSet)
 router.register(r'villages',views.VillageViewSet)
 router.register(r'homes',views.HomeViewSet)
-
-
 
 
 ## Binding URL
@@ -40,7 +38,7 @@ urlpatterns = [
     ##home function 
     path('villages/zones/homes/', get_villages_zones_homes, name='get_villages_zones_homes'),
 
-    path('hello-view/', views.HelloApiView.as_view()), 
-    path('login/', views.UserLoginApiView.as_view()),
+    # path('hello-view/', views.HelloApiView.as_view()), 
+    # path('login/', views.UserLoginApiView.as_view()),
     path('',include(router.urls))
 ]
