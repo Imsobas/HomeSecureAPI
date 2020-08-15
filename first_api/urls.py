@@ -28,13 +28,16 @@ get_villages_pk_zones_pk = views.ZoneViewSet.as_view({
 get_villages_zones_homes = views.HomeViewSet.as_view({
     'get': 'get_villages_zones_homes'
 })
+get_villages_active = views.VillageViewSet.as_view({
+    'get': 'get_villages_active'
+})
 
 # Home Secure main routers
 urlpatterns = [
     ##zone function
     path('villages/<int:pk>/zones/', get_villages_pk_zones ,name='villages_pk_zones'),
     path('villages/<int:village_pk>/zones/<int:zone_pk>/', get_villages_pk_zones_pk ,name='villages_pk_zones_pk'),
-
+    path('villages_active/',get_villages_active,name='get_villages_active'),
     ##home function 
     path('villages/zones/homes/', get_villages_zones_homes, name='get_villages_zones_homes'),
 

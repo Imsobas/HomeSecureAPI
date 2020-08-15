@@ -48,41 +48,57 @@ class UserProfileViewSet(viewsets.ModelViewSet):
 
 class CompanyViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.CompanySerializer
-    # queryset = models.Company.objects.filter(is_active=True) ## if not change this, get wrong url 
     queryset = models.Company.objects.all()
     permission_classes = (IsAuthenticated,)
 
+    @action(detail=True, methods = 'GET')
+    def get_companys_active(self, request):
+        """ Return all active company"""
+        querySet = models.Company.objects.filter(is_active=True)
+        serializer = serializers.CompanySerializer(querySet,many=True)
+        result = serializer.data
+
+        return notFoundHandling(result)
+    
 class VillageViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.VillageSerializer
     queryset = models.Village.objects.all()
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
 
-    # queryset = models.Village.objects.filter(is_active=True)
-    # authentication_classes = (TokenAuthentication,)
-    # permission_classes = (IsAuthenticated, permission.UpdateAllVillage,)
+    @action(detail=True, methods = 'GET')
+    def get_villages_active(self, request):
+        """ Return all active village"""
+        querySet = models.Village.objects.filter(is_active=True)
+        serializer = serializers.VillageSerializer(querySet,many=True)
+        result = serializer.data
 
+        return notFoundHandling(result)
 
-    # renderer_classes = [renderers.JSONRenderer] add thuis if need only json 
+ # renderer_classes = [renderers.JSONRenderer] add thuis if need only json 
 
     
 class ZoneViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.ZoneSerializer
     queryset = models.Zone.objects.all()
-    # authentication_classes = (TokenAuthentication,)
-    # permission_classes = (IsAuthenticated,)
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
 
     @action(detail=True, methods = 'GET')
     def get_villages_pk_zones(self, request, pk):
         """ Return all zone to specific village"""
-        querySet = models.Zone.objects.filter(zone_village=pk).values()
-        result = list(querySet)
+        querySet = models.Zone.objects.filter(zone_village=pk).all()
+        serializer = serializers.ZoneSerializer(querySet,many=True)
+        result = serializer.data
         
         return notFoundHandling(result)
 
     @action(detail=True, methods = 'GET')
     def get_villages_pk_zones_pk(self, request, village_pk, zone_pk ):
         """ Return specific zone to specific village"""
-        querySet = models.Zone.objects.filter(zone_village=village_pk, pk=zone_pk).values()
-        result = list(querySet)
+        querySet = models.Zone.objects.filter(zone_village=village_pk, pk=zone_pk).all()
+        serializer = serializers.ZoneSerializer(querySet,many=True)
+        result = serializer.data
             
         return notFoundHandling(result)
 
@@ -101,6 +117,7 @@ class ZoneViewSet(viewsets.ModelViewSet):
     #             { "detail": "Not found."},
     #             status=status.HTTP_404_NOT_FOUND
     #         )
+
 
 ## use only post from home 
 class HomeViewSet(viewsets.ModelViewSet):
@@ -162,9 +179,9 @@ class HomeViewSet(viewsets.ModelViewSet):
             result_list.append(village_dict)
 
         ##workkk
-        querySet = models.Home.objects.all()
-        serializer = serializers.HomeSerializer(querySet,many=True)
-        result = serializer.data
+        # querySet = models.Home.objects.all()
+        # serializer = serializers.HomeSerializer(querySet,many=True)
+        # result = serializer.data
         ##workkk
 
 
