@@ -32,17 +32,17 @@ def notFoundHandling(result,error_message="Not found."):
 
 ## User views
 
-# class UserLoginApiView(ObtainAuthToken):
-#     """Handle creating user authentication tokens"""
-#     renderer_classes = api_settings.DEFAULT_RENDERER_CLASSES
+class UserLoginApiView(ObtainAuthToken):
+    """Handle creating user authentication tokens"""
+    renderer_classes = api_settings.DEFAULT_RENDERER_CLASSES
 
 class UserProfileViewSet(viewsets.ModelViewSet):
     """Handle creating and updating profile"""
     serializer_class = serializers.UserProfileSerializer
     ## contains the standard CRUD operation of View Set such list, create ...
     queryset = models.UserProfile.objects.all()
-    # authentication_classes = (TokenAuthentication,)
-    # permission_classes = (permission.UpdateOwnProfile,)
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,permission.UpdateOwnProfile,)
 
 # Home Secure main views 
 

@@ -23,18 +23,18 @@ class UpdateAllVillage(permissions.BasePermission):
         return request.user.user_role == user_role_list[0] ## id of profile model is equal to user id 
 
 
-## User permissions 
-# class UpdateOwnProfile(permissions.BasePermission):
-#     """Allow user to edit their own profile"""
+# User permissions 
+class UpdateOwnProfile(permissions.BasePermission):
+    """Allow user to edit their own profile"""
 
-#     def has_object_permission(self, request, view, obj):
-#         """Check user is trying to edit their own profle"""
-#         if(request.user.user_role == user_role_list[0]):
-#             return True
-#         print(request.user.user_role==user_role_list[2]) ## work
-#         print('enterUpdateOwnProfile')
+    def has_object_permission(self, request, view, obj):
+        """Check user is trying to edit their own profle"""
+        if(request.user.user_role == 'Admin'):
+            return True
+        # print(request.user.user_role==user_role_list[2]) ## work
+        # print('enterUpdateOwnProfile')
         
-#         return obj.pk == request.user.pk ## id of profile model is equal to user id 
+        # return obj.pk == request.user.pk ## id of profile model is equal to user id 
 
 
 # class UpdatedOwnStatus(permissions.BasePermission):
