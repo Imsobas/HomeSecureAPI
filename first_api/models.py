@@ -10,7 +10,7 @@ from first_api.user_role import user_role_list
 class UserProfileManager(BaseUserManager):
     """Manager for user profiles"""
 
-    def create_user(self, username, password=None): ## overide old method 
+    def create_user(self, username, user_role, password=None): ## overide old method 
         """Create a new user profile"""
         if not username:
             raise ValueError('Users must have an email address')
@@ -24,19 +24,27 @@ class UserProfileManager(BaseUserManager):
 
     def create_superuser(self, username, password): ## overide old method 
         """Create and save a new superuser with given details"""
-        user = self.create_user(username, password)
+        user = self.create_user(username, 'Admin' ,password)
 
         user.is_superuser = True
         user.is_staff = True
-        user.user_role = "Admin" ## Admin 
         user.save(using=self._db)
 
         return user
 
 class UserProfile(AbstractBaseUser, PermissionsMixin):
     """Database model for users in the system"""
+
+
+    USER_ROLE_CHOICE = (
+        ('Admin','Admin'),
+        ('SecureGuard','SecureGuard'),
+        ('GeneralUser','GeneralUser')
+    )
+
+
     username = models.CharField(max_length=20,unique=True)
-    user_role = models.CharField(max_length=20)
+    user_role = models.CharField(max_length=20,choices=USER_ROLE_CHOICE)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
 
@@ -44,7 +52,7 @@ class UserProfile(AbstractBaseUser, PermissionsMixin):
 
     # USERNAME_FIELD = 'email'
     USERNAME_FIELD = 'username'
-    # REQUIRED_FIELDS = ['name']
+    REQUIRED_FIELDS = []
 
     def get_full_name(self):
         """Retrieve full name for user"""
