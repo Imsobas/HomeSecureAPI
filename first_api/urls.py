@@ -14,6 +14,7 @@ router.register(r'profiles',views.UserProfileViewSet)
 router.register(r'companys',views.CompanyViewSet)
 router.register(r'villages',views.VillageViewSet)
 router.register(r'homes',views.HomeViewSet)
+router.register(r'zones',views.ZoneViewSet)
 
 
 ## Binding URL
