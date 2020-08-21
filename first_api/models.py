@@ -110,6 +110,7 @@ class Zone(models.Model):
 class Home(models.Model):
     home_number = models.CharField(max_length=100)
     home_address = models.CharField(max_length=200, null=True, blank=True)
+    home_village = models.ForeignKey(Village, null=True, blank=True, on_delete=models.DO_NOTHING)
     ## fk zone
     home_zone = models.ForeignKey(Zone, null=True, blank=True, on_delete=models.DO_NOTHING) 
     home_lat = models.DecimalField(max_digits=11, decimal_places=7, null=True, blank=True)

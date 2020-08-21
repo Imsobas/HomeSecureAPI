@@ -85,6 +85,39 @@ class ZoneViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,)
 
     @action(detail=True, methods = 'GET')
+    def get_villages_zones(self, request):
+        """ Return all zone according to all village, Note: get only active village """
+        
+        result_list = []
+
+        villageQuerySet = models.Village.objects.filter(is_active=True).all()
+        villageSerializer = serializers.VillageSerializer(villageQuerySet,many=True)
+        villageData = villageSerializer.data
+
+        for village in villageData:
+            village_dict = dict()
+            village_dict["pk"] = village["pk"]
+            village_dict["village_name"] = village["village_name"]
+
+            zone_list = []
+            zoneQuerySet = models.Zone.objects.filter(zone_village=village_dict["pk"],is_active=True).all()
+            zoneSerializer = serializers.ZoneSerializer(zoneQuerySet,many=True)
+            zoneData = zoneSerializer.data
+            
+            for zone in zoneData:
+                zone_dict = dict()
+                zone_dict["pk"] = zone["pk"]
+                zone_dict["zone_name"] = zone["zone_name"]
+                zone_dict["zone_number"] = zone["zone_number"]
+    
+                zone_list.append(zone_dict)
+
+            village_dict['zone'] = zone_list
+            result_list.append(village_dict)
+
+        return notFoundHandling(result_list)
+
+    @action(detail=True, methods = 'GET')
     def get_villages_pk_zones(self, request, pk):
         """ Return all zone to specific village"""
         querySet = models.Zone.objects.filter(zone_village=pk).all()

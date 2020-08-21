@@ -19,6 +19,9 @@ router.register(r'zones',views.ZoneViewSet)
 
 ## Binding URL
 
+get_villages_zones = views.ZoneViewSet.as_view({
+    'get': 'get_villages_zones'
+})
 
 get_villages_pk_zones = views.ZoneViewSet.as_view({
     'get': 'get_villages_pk_zones'
@@ -33,9 +36,11 @@ get_villages_active = views.VillageViewSet.as_view({
     'get': 'get_villages_active'
 })
 
+
 # Home Secure main routers
 urlpatterns = [
     ##zone function
+    path('villages/zones/', get_villages_zones ,name='villages_zones'),
     path('villages/<int:pk>/zones/', get_villages_pk_zones ,name='villages_pk_zones'),
     path('villages/<int:village_pk>/zones/<int:zone_pk>/', get_villages_pk_zones_pk ,name='villages_pk_zones_pk'),
     path('villages_active/',get_villages_active,name='get_villages_active'),
