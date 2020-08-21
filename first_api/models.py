@@ -129,6 +129,10 @@ class GeneralUser(models.Model):
     general_user_last_name = models.CharField(max_length=100)
     general_user_username = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.DO_NOTHING) 
     general_user_type = models.CharField(max_length=100)
+    general_user_village = models.ForeignKey(Village, null=True, blank=True, on_delete=models.DO_NOTHING)
+    general_user_zone = models.ForeignKey(Zone, null=True, blank=True, on_delete=models.DO_NOTHING)
+    general_user_home  = models.ForeignKey(Home, null=True, blank=True, on_delete=models.DO_NOTHING)
+    
 
     def __str__(self):
         """Return the model as a string"""
