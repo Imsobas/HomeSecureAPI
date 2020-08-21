@@ -171,6 +171,15 @@ class HomeViewSet(viewsets.ModelViewSet):
 
 
     @action(detail=True, methods = 'GET')
+    def get_villages_pk_homes(self, request, village_pk):
+        """ Return all homes correspond to specific village """
+        querySet = models.Home.objects.filter(home_village=village_pk, is_active=True).all()
+        serializer = serializers.HomeSerializer(querySet,many=True)
+        result = serializer.data
+            
+        return notFoundHandling(result)
+
+    @action(detail=True, methods = 'GET')
     def get_villages_pk_zones_pk_homes(self, request, village_pk, zone_pk):
         """ Return all homes correspond to specific zone and correspond to specific village """
         querySet = models.Home.objects.filter(home_village=village_pk, home_zone=zone_pk, is_active=True).all()

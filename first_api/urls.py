@@ -42,6 +42,10 @@ get_villages_zones_homes = views.HomeViewSet.as_view({
     'get': 'get_villages_zones_homes'
 })
 
+get_villages_pk_homes = views.HomeViewSet.as_view({
+    'get': 'get_villages_pk_homes'
+})
+
 get_villages_pk_zones_pk_homes = views.HomeViewSet.as_view({
     'get': 'get_villages_pk_zones_pk_homes'
 })
@@ -66,6 +70,7 @@ urlpatterns = [
     
     ##home end point
     path('homes_active/', get_homes_active, name='get_homes_active'),
+    path('villages/<int:village_pk>/homes/',get_villages_pk_homes, name='get_villages_pk_homes'),
     path('villages/zones/homes/', get_villages_zones_homes, name='get_villages_zones_homes'),
     path('villages/<int:village_pk>/zones/<int:zone_pk>/homes/', get_villages_pk_zones_pk_homes, name='get_villages_pk_zones_pk_homes'),
 
