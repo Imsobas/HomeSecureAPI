@@ -258,7 +258,30 @@ class HomeViewSet(viewsets.ModelViewSet):
 
     
 
+## use only post from home 
+class GeneralUserViewSet(viewsets.ModelViewSet):
+    serializer_class = serializers.GeneralUserSerializer
+    queryset = models.GeneralUser.objects.all()
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
 
+    @action(detail=True, methods = 'GET')
+    def get_general_users_active(self, request):
+        """ Return all active home"""
+        querySet = models.GeneralUser.objects.filter(is_active=True).all()
+        serializer = serializers.GeneralUserSerializer(querySet,many=True)
+        result = serializer.data
+
+        return notFoundHandling(result)
+
+    @action(detail=True, methods = 'GET')
+    def get_villages_pk_zones_pk_general_users(self, request, village_pk, zone_pk):
+        """ Return all homes correspond to specific zone and correspond to specific village """
+        querySet = models.GeneralUser.objects.filter(gen_user_village=village_pk, gen_user_zone=zone_pk, is_active=True).all()
+        serializer = serializers.GeneralUserSerializer(querySet,many=True)
+        result = serializer.data
+            
+        return notFoundHandling(result)
 
 
 

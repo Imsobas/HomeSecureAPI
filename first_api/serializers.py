@@ -37,6 +37,12 @@ class HomeSerializer(serializers.ModelSerializer):
         model = models.Home
         fields = ('pk','home_number','home_address','home_village','home_zone','home_lat','home_lon','is_active')
 
+class GeneralUserSerializer(serializers.ModelSerializer):
+    """Serializes GeneralUser items"""
+    class Meta:
+        model = models.GeneralUser
+        fields = ('pk','gen_user_firstname','gen_user_lastname','gen_user_username','gen_user_type','gen_user_village','gen_user_zone','gen_user_home','is_active')
+
 
 ## User serializer
 

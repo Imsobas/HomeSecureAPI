@@ -108,6 +108,7 @@ class Zone(models.Model):
         return self.zone_name
 
 class Home(models.Model):
+
     home_number = models.CharField(max_length=100)
     home_address = models.CharField(max_length=200, null=True, blank=True)
     home_village = models.ForeignKey(Village, null=True, blank=True, on_delete=models.DO_NOTHING)
@@ -115,7 +116,6 @@ class Home(models.Model):
     home_zone = models.ForeignKey(Zone, null=True, blank=True, on_delete=models.DO_NOTHING) 
     home_lat = models.DecimalField(max_digits=11, decimal_places=7, null=True, blank=True)
     home_lon = models.DecimalField(max_digits=11, decimal_places=7, null=True, blank=True)
-    ##
     is_active = models.BooleanField(default=True)
 
     def __str__(self):
@@ -125,13 +125,21 @@ class Home(models.Model):
 class GeneralUser(models.Model):
     ## keep firs, last name in this cause 1.easier when list all user 
     ## 2. one user can be both general and secure
-    general_user_first_name = models.CharField(max_length=100)
-    general_user_last_name = models.CharField(max_length=100)
-    general_user_username = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.DO_NOTHING) 
-    general_user_type = models.CharField(max_length=100)
-    general_user_village = models.ForeignKey(Village, null=True, blank=True, on_delete=models.DO_NOTHING)
-    general_user_zone = models.ForeignKey(Zone, null=True, blank=True, on_delete=models.DO_NOTHING)
-    general_user_home  = models.ForeignKey(Home, null=True, blank=True, on_delete=models.DO_NOTHING)
+
+    GENERAL_USER_ROLE_CHOICE = (
+        ('ลูกบ้าน','ลูกบ้าน'),
+        ('กรรมการหมู่บ้าน','กรรมการหมู่บ้าน'),
+        ('ผู้ดูแลหมู่บ้าน','ผู้ดูแลหมู่บ้าน')
+    )
+
+    gen_user_firstname = models.CharField(max_length=100)
+    gen_user_lastname = models.CharField(max_length=100)
+    gen_user_username = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.DO_NOTHING) 
+    gen_user_type = models.CharField(max_length=100,choices=GENERAL_USER_ROLE_CHOICE)
+    gen_user_village = models.ForeignKey(Village, null=True, blank=True, on_delete=models.DO_NOTHING)
+    gen_user_zone = models.ForeignKey(Zone, null=True, blank=True, on_delete=models.DO_NOTHING)
+    gen_user_home  = models.ForeignKey(Home, null=True, blank=True, on_delete=models.DO_NOTHING)
+    is_active = models.BooleanField(default=True)
     
 
     def __str__(self):

@@ -15,6 +15,7 @@ router.register(r'companys',views.CompanyViewSet)
 router.register(r'villages',views.VillageViewSet)
 router.register(r'homes',views.HomeViewSet)
 router.register(r'zones',views.ZoneViewSet)
+router.register(r'general_users',views.GeneralUserViewSet)
 
 
 ## Binding URL
@@ -54,6 +55,16 @@ get_homes_active = views.HomeViewSet.as_view({
     'get': 'get_homes_active'
 })
 
+##general users
+
+get_general_users_active = views.GeneralUserViewSet.as_view({
+    'get': 'get_general_users_active'
+})
+
+get_villages_pk_zones_pk_general_users = views.GeneralUserViewSet.as_view({
+    'get': 'get_villages_pk_zones_pk_general_users'
+})
+
 
 # Home Secure main routers
 urlpatterns = [
@@ -73,6 +84,12 @@ urlpatterns = [
     path('villages/<int:village_pk>/homes/',get_villages_pk_homes, name='get_villages_pk_homes'),
     path('villages/zones/homes/', get_villages_zones_homes, name='get_villages_zones_homes'),
     path('villages/<int:village_pk>/zones/<int:zone_pk>/homes/', get_villages_pk_zones_pk_homes, name='get_villages_pk_zones_pk_homes'),
+
+    ##general user end point 
+    path('general_users_active/', get_general_users_active, name='get_general_users_active'),
+    path('villages/<int:village_pk>/zones/<int:zone_pk>/general_users/', get_villages_pk_zones_pk_general_users, name='get_villages_pk_zones_pk_general_users'),
+    
+    
 
     # path('hello-view/', views.HelloApiView.as_view()), 
     path('login/', views.UserLoginApiView.as_view()),
