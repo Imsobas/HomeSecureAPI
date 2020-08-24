@@ -65,6 +65,10 @@ get_villages_pk_zones_pk_general_users = views.GeneralUserViewSet.as_view({
     'get': 'get_villages_pk_zones_pk_general_users'
 })
 
+get_villages_pk_general_users = views.GeneralUserViewSet.as_view({
+    'get': 'get_villages_pk_general_users'
+})
+
 
 # Home Secure main routers
 urlpatterns = [
@@ -87,6 +91,7 @@ urlpatterns = [
 
     ##general user end point 
     path('general_users_active/', get_general_users_active, name='get_general_users_active'),
+    path('villages/<int:village_pk>/general_users/', get_villages_pk_general_users, name='get_villages_pk_general_users'),
     path('villages/<int:village_pk>/zones/<int:zone_pk>/general_users/', get_villages_pk_zones_pk_general_users, name='get_villages_pk_zones_pk_general_users'),
     
     
