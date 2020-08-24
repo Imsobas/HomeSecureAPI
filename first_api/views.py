@@ -44,6 +44,20 @@ class UserProfileViewSet(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,permission.UpdateOwnProfile,)
 
+    @action(detail=True, methods = 'GET')
+    def get_profiles_check(self, request, new_username):
+        """ Return all active company"""
+        querySet = models.UserProfile.objects.filter(username=new_username)
+        serializer = serializers.UserProfileSerializer(querySet,many=True)
+        result = serializer.data
+
+        if(len(result)>0):
+            return Response({ "detail": 'duplicate username'},
+                status=status.HTTP_404_NOT_FOUND)
+        else:
+            return Response({'detail':'useable username'})
+        
+
 # Home Secure main views 
 
 class CompanyViewSet(viewsets.ModelViewSet):

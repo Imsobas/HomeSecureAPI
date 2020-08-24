@@ -69,6 +69,11 @@ get_villages_pk_general_users = views.GeneralUserViewSet.as_view({
     'get': 'get_villages_pk_general_users'
 })
 
+## user
+
+get_profiles_check  = views.UserProfileViewSet.as_view({
+    'get': 'get_profiles_check'
+})
 
 # Home Secure main routers
 urlpatterns = [
@@ -93,6 +98,9 @@ urlpatterns = [
     path('general_users_active/', get_general_users_active, name='get_general_users_active'),
     path('villages/<int:village_pk>/general_users/', get_villages_pk_general_users, name='get_villages_pk_general_users'),
     path('villages/<int:village_pk>/zones/<int:zone_pk>/general_users/', get_villages_pk_zones_pk_general_users, name='get_villages_pk_zones_pk_general_users'),
+    
+    ##user
+    path('profiles_check/<str:new_username>/', get_profiles_check, name='get_profiles_check'),
     
     
 

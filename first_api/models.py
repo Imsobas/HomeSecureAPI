@@ -127,9 +127,9 @@ class GeneralUser(models.Model):
     ## 2. one user can be both general and secure
 
     GENERAL_USER_ROLE_CHOICE = (
-        ('ลูกบ้าน','ลูกบ้าน'),
-        ('กรรมการหมู่บ้าน','กรรมการหมู่บ้าน'),
-        ('ผู้ดูแลหมู่บ้าน','ผู้ดูแลหมู่บ้าน')
+        ('Villager','Villager'),
+        ('Manager','Manager'),
+        ('Caretaker','Caretaker')
     )
 
     gen_user_firstname = models.CharField(max_length=100)
