@@ -149,6 +149,7 @@ class ZoneViewSet(viewsets.ModelViewSet):
             
         return notFoundHandling(result)
 
+
     
 
     # @action(detail=True, methods = 'GET', renderer_classes=[renderers.JSONRenderer])
@@ -270,7 +271,6 @@ class HomeViewSet(viewsets.ModelViewSet):
         return notFoundHandling(result_list)
 
 
-    
 
 ## use only post from home 
 class GeneralUserViewSet(viewsets.ModelViewSet):
@@ -306,6 +306,12 @@ class GeneralUserViewSet(viewsets.ModelViewSet):
             
         return notFoundHandling(result)
 
+
+class CheckpointViewSet(viewsets.ModelViewSet):
+    serializer_class = serializers.CheckpointSerializer
+    queryset = models.Checkpoint.objects.all()
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
 
 
 

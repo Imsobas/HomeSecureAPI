@@ -43,6 +43,11 @@ class GeneralUserSerializer(serializers.ModelSerializer):
         model = models.GeneralUser
         fields = ('pk','gen_user_firstname','gen_user_lastname','gen_user_username','gen_user_type','gen_user_village','gen_user_zone','gen_user_home','is_active')
 
+class CheckpointSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Checkpoint
+        fields = ('pk', 'point_name', 'point_active', 'point_zone', 'point_village', 'point_lat', 'point_lon', 'is_active')
+
 
 ## User serializer
 
@@ -68,6 +73,8 @@ class UserProfileSerializer(serializers.ModelSerializer):
         )
 
         return user 
+
+
 
 
 
