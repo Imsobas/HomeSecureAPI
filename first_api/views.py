@@ -313,6 +313,23 @@ class CheckpointViewSet(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
 
+    @action(detail=True, methods = 'GET')
+    def get_villages_pk_checkpoints(self, request, village_pk):
+        """ Return all checkpoints correspond to specific village """
+        querySet = models.Checkpoint.objects.filter(point_village=village_pk, is_active=True).all()
+        serializer = serializers.CheckpointSerializer(querySet,many=True)
+        result = serializer.data
+            
+        return notFoundHandling(result)
+
+    @action(detail=True, methods = 'GET')
+    def get_villages_pk_zones_pk_checkpoints(self, request, village_pk, zone_pk):
+        """ Return all checkpoints correspond to specific zone and correspond to specific village """
+        querySet = models.Checkpoint.objects.filter(point_village=village_pk, point_zone=zone_pk, is_active=True).all()
+        serializer = serializers.CheckpointSerializer(querySet,many=True)
+        result = serializer.data
+            
+        return notFoundHandling(result)
 
 
             

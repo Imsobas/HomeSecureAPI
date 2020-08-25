@@ -76,6 +76,16 @@ get_profiles_check  = views.UserProfileViewSet.as_view({
     'get': 'get_profiles_check'
 })
 
+## checkpoint 
+
+get_villages_pk_checkpoints = views.CheckpointViewSet.as_view({
+    'get': 'get_villages_pk_checkpoints'
+})
+
+get_villages_pk_zones_pk_checkpoints = views.CheckpointViewSet.as_view({
+    'get': 'get_villages_pk_zones_pk_checkpoints'
+})
+
 # Home Secure main routers
 urlpatterns = [
 
@@ -103,7 +113,9 @@ urlpatterns = [
     ##user
     path('profiles_check/<str:new_username>/', get_profiles_check, name='get_profiles_check'),
     
-    
+    ##checkpoint 
+    path('villages/<int:village_pk>/checkpoints/', get_villages_pk_checkpoints, name='get_villages_pk_checkpoints'),
+    path('villages/<int:village_pk>/zones/<int:zone_pk>/checkpoints/', get_villages_pk_zones_pk_checkpoints, name='get_villages_pk_zones_pk_checkpoints'),
 
     # path('hello-view/', views.HelloApiView.as_view()), 
     path('login/', views.UserLoginApiView.as_view()),
