@@ -84,8 +84,9 @@ class Village(models.Model):
     village_address = models.CharField(max_length=200, null=True, blank=True)
     ## fk company
     village_company = models.ForeignKey(Company,null=True, blank=True, on_delete=models.DO_NOTHING) 
-    village_lat = models.DecimalField(max_digits=11, decimal_places=7, null=True, blank=True)
-    village_lon = models.DecimalField(max_digits=11, decimal_places=7, null=True, blank=True)
+    ##old lat lon is 11,7
+    village_lat = models.DecimalField(max_digits=22, decimal_places=16, null=True, blank=True)
+    village_lon = models.DecimalField(max_digits=22, decimal_places=16, null=True, blank=True)
     is_active = models.BooleanField(default=True)
 
     def __str__(self):
@@ -97,8 +98,8 @@ class Zone(models.Model):
     zone_number = models.IntegerField(default=0)
     ## fk village
     zone_village = models.ForeignKey(Village,null=True, blank=True, on_delete=models.DO_NOTHING) 
-    zone_lat = models.DecimalField(max_digits=11, decimal_places=7, null=True, blank=True)
-    zone_lon = models.DecimalField(max_digits=11, decimal_places=7, null=True, blank=True)
+    zone_lat = models.DecimalField(max_digits=22, decimal_places=16, null=True, blank=True)
+    zone_lon = models.DecimalField(max_digits=22, decimal_places=16, null=True, blank=True)
     zone_last_update = models.DateTimeField(null=True, blank=True)
     is_active = models.BooleanField(default=True)
     ## not have is_active due to you need to delete every home incase want to delete zone
@@ -114,8 +115,8 @@ class Home(models.Model):
     home_village = models.ForeignKey(Village, null=True, blank=True, on_delete=models.DO_NOTHING)
     ## fk zone
     home_zone = models.ForeignKey(Zone, null=True, blank=True, on_delete=models.DO_NOTHING) 
-    home_lat = models.DecimalField(max_digits=11, decimal_places=7, null=True, blank=True)
-    home_lon = models.DecimalField(max_digits=11, decimal_places=7, null=True, blank=True)
+    home_lat = models.DecimalField(max_digits=22, decimal_places=16, null=True, blank=True)
+    home_lon = models.DecimalField(max_digits=22, decimal_places=16, null=True, blank=True)
     is_active = models.BooleanField(default=True)
 
     def __str__(self):
@@ -159,7 +160,7 @@ class SecureGuard(models.Model):
     secure_work_start_time = models.DateTimeField(null=True, blank=True)
     secure_work_end_time = models.DateTimeField(null=True, blank=True)
     secure_work_period = models.DateTimeField(null=True, blank=True)
-    secure_current_location = models.DecimalField(max_digits=11, decimal_places=7,  null=True, blank=True)
+    secure_current_location = models.DecimalField(max_digits=22, decimal_places=16, null=True, blank=True)
     secure_current_location_time = models.DateTimeField(null=True, blank=True)
     is_active = models.BooleanField(default=True)
 
@@ -200,17 +201,17 @@ class Qrcode(models.Model):
     qr_user_status = models.BooleanField(default=False)
     qr_exit_status = models.BooleanField(default=False)
 
-    qr_enter_lat = models.DecimalField(max_digits=11, decimal_places=7,  null=True, blank=True)
-    qr_enter_lon = models.DecimalField(max_digits=11, decimal_places=7,  null=True, blank=True)
+    qr_enter_lat = models.DecimalField(max_digits=22, decimal_places=16,  null=True, blank=True)
+    qr_enter_lon = models.DecimalField(max_digits=22, decimal_places=16,  null=True, blank=True)
     
-    qr_inside_lat = models.DecimalField(max_digits=11, decimal_places=7,  null=True, blank=True)
-    qr_inside_lon = models.DecimalField(max_digits=11, decimal_places=7,  null=True, blank=True)
+    qr_inside_lat = models.DecimalField(max_digits=22, decimal_places=16,  null=True, blank=True)
+    qr_inside_lon = models.DecimalField(max_digits=22, decimal_places=16,  null=True, blank=True)
 
-    qr_user_lat = models.DecimalField(max_digits=11, decimal_places=7,  null=True, blank=True)
-    qr_user_lon = models.DecimalField(max_digits=11, decimal_places=7,  null=True, blank=True)
+    qr_user_lat = models.DecimalField(max_digits=22, decimal_places=16,  null=True, blank=True)
+    qr_user_lon = models.DecimalField(max_digits=22, decimal_places=16,  null=True, blank=True)
 
-    qr_exit_lat = models.DecimalField(max_digits=11, decimal_places=7,  null=True, blank=True)
-    qr_exit_lon = models.DecimalField(max_digits=11, decimal_places=7,  null=True, blank=True)
+    qr_exit_lat = models.DecimalField(max_digits=22, decimal_places=16,  null=True, blank=True)
+    qr_exit_lon = models.DecimalField(max_digits=22, decimal_places=16,  null=True, blank=True)
 
     qr_complete_status = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
