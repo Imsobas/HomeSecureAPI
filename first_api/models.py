@@ -154,10 +154,18 @@ class GeneralUser(models.Model):
         return str(self.general_userfirst_name)+" "+str(self.general_userlast_name)
 
 class SecureGuard(models.Model):
+
+    SECURITY_POSITION_CHOICE = (
+        ('SecureBoss','SecureBoss'),
+        ('Enter','Enter'),
+        ('Exit','Exit'),
+        ('Inside','Inside')
+    )
+
     secure_firstname = models.CharField(max_length=100)
     secure_lastname = models.CharField(max_length=100)
     secure_username = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.DO_NOTHING)
-    secure_type = models.CharField(max_length=100)
+    secure_type = models.CharField(max_length=100,choices=SECURITY_POSITION_CHOICE)
     secure_zone = models.ForeignKey(Zone, null=True, blank=True, on_delete=models.DO_NOTHING)
     secure_village = models.ForeignKey(Village, null=True, blank=True, on_delete=models.DO_NOTHING)
     secure_company = models.ForeignKey(Company, null=True, blank=True, on_delete=models.DO_NOTHING)
