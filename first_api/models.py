@@ -233,6 +233,7 @@ class Checkpoint(models.Model):
     point_active = models.BooleanField(default=True)
     point_zone = models.ForeignKey(Zone, null=True, blank=True, on_delete=models.DO_NOTHING)
     point_village = models.ForeignKey(Village, null=True, blank=True, on_delete=models.DO_NOTHING)
+    point_company = models.ForeignKey(Company,null=True, blank=True, on_delete=models.DO_NOTHING) 
     point_lat = models.DecimalField(max_digits=11, decimal_places=8, default=0.000000)
     point_lon = models.DecimalField(max_digits=11, decimal_places=8, default=0.000000)
     is_active = models.BooleanField(default=True)

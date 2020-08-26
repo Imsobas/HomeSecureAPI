@@ -46,7 +46,7 @@ class GeneralUserSerializer(serializers.ModelSerializer):
 class CheckpointSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Checkpoint
-        fields = ('pk', 'point_name', 'point_active', 'point_zone', 'point_village', 'point_lat', 'point_lon', 'is_active')
+        fields = ('pk', 'point_name', 'point_active', 'point_zone', 'point_company','point_village', 'point_lat', 'point_lon', 'is_active')
 
 
 ## User serializer
