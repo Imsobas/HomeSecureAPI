@@ -97,6 +97,7 @@ class Zone(models.Model):
     zone_name = models.CharField(max_length=100)
     zone_number = models.IntegerField(default=0)
     ## fk village
+    zone_company = models.ForeignKey(Company,null=True, blank=True, on_delete=models.DO_NOTHING) 
     zone_village = models.ForeignKey(Village,null=True, blank=True, on_delete=models.DO_NOTHING) 
     zone_lat = models.DecimalField(max_digits=11, decimal_places=8, null=True, blank=True)
     zone_lon = models.DecimalField(max_digits=11, decimal_places=8, null=True, blank=True)
@@ -109,9 +110,11 @@ class Zone(models.Model):
         return self.zone_name
 
 class Home(models.Model):
-
+    
+    
     home_number = models.CharField(max_length=100)
     home_address = models.CharField(max_length=200, null=True, blank=True)
+    home_company = models.ForeignKey(Company,null=True, blank=True, on_delete=models.DO_NOTHING) 
     home_village = models.ForeignKey(Village, null=True, blank=True, on_delete=models.DO_NOTHING)
     ## fk zone
     home_zone = models.ForeignKey(Zone, null=True, blank=True, on_delete=models.DO_NOTHING) 
@@ -137,6 +140,7 @@ class GeneralUser(models.Model):
     gen_user_lastname = models.CharField(max_length=100)
     gen_user_username = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.DO_NOTHING) 
     gen_user_type = models.CharField(max_length=100,choices=GENERAL_USER_ROLE_CHOICE)
+    gen_user_company = models.ForeignKey(Company,null=True, blank=True, on_delete=models.DO_NOTHING) 
     gen_user_village = models.ForeignKey(Village, null=True, blank=True, on_delete=models.DO_NOTHING)
     gen_user_zone = models.ForeignKey(Zone, null=True, blank=True, on_delete=models.DO_NOTHING)
     gen_user_home  = models.ForeignKey(Home, null=True, blank=True, on_delete=models.DO_NOTHING)
