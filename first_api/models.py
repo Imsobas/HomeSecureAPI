@@ -188,6 +188,7 @@ class Work(models.Model):
     work_start_time = models.TimeField(null=True, blank=True)
     work_end_time = models.TimeField(null=True, blank=True)
     work_village = models.ForeignKey(Village, null=True, blank=True, on_delete=models.DO_NOTHING)
+    is_active = models.BooleanField(default=True)
 
 
 class Qrcode(models.Model):
