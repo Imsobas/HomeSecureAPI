@@ -183,6 +183,11 @@ class SecureGuard(models.Model):
         """Return the model as a string"""
         return str(self.secure_firstname)+" "+str(self.secure_lastname)
 
+class Work(models.Model):
+    work_name = models.CharField(max_length=100)
+    work_start_time = models.TimeField(null=True, blank=True)
+    work_end_time = models.TimeField(null=True, blank=True)
+    work_village = models.ForeignKey(Village, null=True, blank=True, on_delete=models.DO_NOTHING)
 
 
 class Qrcode(models.Model):

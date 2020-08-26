@@ -17,4 +17,5 @@ admin.site.register(models.GeneralUser)
 admin.site.register(models.SecureGuard)
 admin.site.register(models.Qrcode)
 admin.site.register(models.Checkpoint)
+admin.site.register(models.Work)
 

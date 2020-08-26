@@ -342,6 +342,12 @@ class CheckpointViewSet(viewsets.ModelViewSet):
             
         return notFoundHandling(result)
 
+class WorkViewSet(viewsets.ModelViewSet):
+    serializer_class = serializers.WorkSerializer
+    queryset = models.Work.objects.all()
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+
 
             
         
