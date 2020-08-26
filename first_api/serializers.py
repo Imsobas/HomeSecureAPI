@@ -29,19 +29,19 @@ class ZoneSerializer(serializers.ModelSerializer):
     """Serializes zone items"""
     class Meta:
         model = models.Zone
-        fields = ('pk','zone_name','zone_number','zone_village','zone_lat','zone_lon','zone_last_update','is_active')
+        fields = ('pk','zone_name','zone_number', 'zone_company','zone_village','zone_lat','zone_lon','zone_last_update','is_active')
 
 class HomeSerializer(serializers.ModelSerializer):
     """Serializes home items"""
     class Meta:
         model = models.Home
-        fields = ('pk','home_number','home_address','home_village','home_zone','home_lat','home_lon','is_active')
+        fields = ('pk','home_number','home_address', 'home_company','home_village','home_zone','home_lat','home_lon','is_active')
 
 class GeneralUserSerializer(serializers.ModelSerializer):
     """Serializes GeneralUser items"""
     class Meta:
         model = models.GeneralUser
-        fields = ('pk','gen_user_firstname','gen_user_lastname','gen_user_username','gen_user_type','gen_user_village','gen_user_zone','gen_user_home','is_active')
+        fields = ('pk','gen_user_firstname','gen_user_lastname','gen_user_username','gen_user_type', 'gen_user_company','gen_user_village','gen_user_zone','gen_user_home','is_active')
 
 class CheckpointSerializer(serializers.ModelSerializer):
     class Meta:

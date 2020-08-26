@@ -38,6 +38,8 @@ class UserProfile(AbstractBaseUser, PermissionsMixin):
 
     USER_ROLE_CHOICE = (
         ('Admin','Admin'),
+        ('Manager','Manager'),
+        ('SecureBoss','SecureBoss'),
         ('SecureGuard','SecureGuard'),
         ('GeneralUser','GeneralUser')
     )

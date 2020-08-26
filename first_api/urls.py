@@ -30,6 +30,10 @@ get_villages_zones = views.ZoneViewSet.as_view({
     'get': 'get_villages_zones'
 })
 
+get_companys_pk_villages = views.VillageViewSet.as_view({
+    'get': 'get_companys_pk_villages'
+})
+
 ## zone
 get_villages_pk_zones = views.ZoneViewSet.as_view({
     'get': 'get_villages_pk_zones'
@@ -93,6 +97,8 @@ urlpatterns = [
 
     ## village end point 
     path('villages_active/',get_villages_active,name='get_villages_active'),
+    path('companys/<int:pk>/villages/',  get_companys_pk_villages,name='  get_companys_pk_villages'), ## conpany adapted
+  
 
     ##zone end point
     path('villages/zones/', get_villages_zones ,name='villages_zones'),

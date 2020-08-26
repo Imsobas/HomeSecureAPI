@@ -88,6 +88,17 @@ class VillageViewSet(viewsets.ModelViewSet):
         result = serializer.data
 
         return notFoundHandling(result)
+    
+    @action(detail=True, methods = 'GET')
+    def get_companys_pk_villages(self, request, pk):
+        """ Return all village to specific company"""
+        querySet = models.Village.objects.filter(village_company=pk).all()
+        serializer = serializers.VillageSerializer(querySet,many=True)
+        result = serializer.data
+        
+        return notFoundHandling(result)
+
+
 
  # renderer_classes = [renderers.JSONRenderer] add thuis if need only json 
 
