@@ -91,6 +91,12 @@ get_villages_pk_zones_pk_checkpoints = views.CheckpointViewSet.as_view({
     'get': 'get_villages_pk_zones_pk_checkpoints'
 })
 
+## work 
+
+get_villages_pk_works = views.WorkViewSet.as_view({
+    'get': 'get_villages_pk_works'
+})
+
 # Home Secure main routers
 urlpatterns = [
 
@@ -123,6 +129,9 @@ urlpatterns = [
     ##checkpoint 
     path('villages/<int:village_pk>/checkpoints/', get_villages_pk_checkpoints, name='get_villages_pk_checkpoints'),
     path('villages/<int:village_pk>/zones/<int:zone_pk>/checkpoints/', get_villages_pk_zones_pk_checkpoints, name='get_villages_pk_zones_pk_checkpoints'),
+
+    ##work 
+    path('villages/<int:pk>/works/', get_villages_pk_works ,name='get_villages_pk_works'),
 
     # path('hello-view/', views.HelloApiView.as_view()), 
     path('login/', views.UserLoginApiView.as_view()),

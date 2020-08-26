@@ -348,6 +348,17 @@ class WorkViewSet(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
 
+    @action(detail=True, methods = 'GET')
+    def get_villages_pk_works(self, request, pk):
+        """ Return all work to specific village"""
+        querySet = models.Work.objects.filter(work_village=pk).all()
+        serializer = serializers.WorkSerializer(querySet,many=True)
+        result = serializer.data
+        
+        return notFoundHandling(result)
+
+
+
 
             
         
