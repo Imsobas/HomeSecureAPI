@@ -184,7 +184,7 @@ class SecureGuard(models.Model):
     secure_left_date = models.DateTimeField(null=True, blank=True)
     secure_work_start_time = models.DateTimeField(null=True, blank=True)
     secure_work_end_time = models.DateTimeField(null=True, blank=True)
-    secure_work_shift = models.ForeignKey(Work,on_delete=models.DO_NOTHING)
+    secure_work_shift = models.ForeignKey(Work, null=True, blank=True,on_delete=models.DO_NOTHING)
     secure_current_location = models.DecimalField(max_digits=22, decimal_places=16, null=True, blank=True)
     secure_current_location_time = models.DateTimeField(null=True, blank=True)
     is_active = models.BooleanField(default=True)
