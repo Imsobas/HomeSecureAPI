@@ -153,6 +153,17 @@ class GeneralUser(models.Model):
         """Return the model as a string"""
         return str(self.general_userfirst_name)+" "+str(self.general_userlast_name)
 
+class Work(models.Model):
+    work_name = models.CharField(max_length=100)
+    work_start_time = models.TimeField(null=True, blank=True)
+    work_end_time = models.TimeField(null=True, blank=True)
+    work_village = models.ForeignKey(Village, null=True, blank=True, on_delete=models.DO_NOTHING)
+    is_active = models.BooleanField(default=True)
+
+    def __str__(self):
+        """Return the model as a string"""
+        return self.work_name
+
 class SecureGuard(models.Model):
 
     SECURITY_POSITION_CHOICE = (
@@ -173,7 +184,7 @@ class SecureGuard(models.Model):
     secure_left_date = models.DateTimeField(null=True, blank=True)
     secure_work_start_time = models.DateTimeField(null=True, blank=True)
     secure_work_end_time = models.DateTimeField(null=True, blank=True)
-    secure_work_period = models.DateTimeField(null=True, blank=True)
+    secure_work_shift = models.ForeignKey(Work,on_delete=models.DO_NOTHING)
     secure_current_location = models.DecimalField(max_digits=22, decimal_places=16, null=True, blank=True)
     secure_current_location_time = models.DateTimeField(null=True, blank=True)
     is_active = models.BooleanField(default=True)
@@ -183,12 +194,7 @@ class SecureGuard(models.Model):
         """Return the model as a string"""
         return str(self.secure_firstname)+" "+str(self.secure_lastname)
 
-class Work(models.Model):
-    work_name = models.CharField(max_length=100)
-    work_start_time = models.TimeField(null=True, blank=True)
-    work_end_time = models.TimeField(null=True, blank=True)
-    work_village = models.ForeignKey(Village, null=True, blank=True, on_delete=models.DO_NOTHING)
-    is_active = models.BooleanField(default=True)
+
 
 
 class Qrcode(models.Model):
