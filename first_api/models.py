@@ -114,7 +114,7 @@ class Zone(models.Model):
 class Home(models.Model):
     
     
-    home_number = models.IntegerField(default=0,unique=True)
+    home_number = models.CharField(max_length=100, null=True, blank=True, unique=True)
     home_address = models.CharField(max_length=200, null=True, blank=True)
     home_company = models.ForeignKey(Company,null=True, blank=True, on_delete=models.DO_NOTHING) 
     home_village = models.ForeignKey(Village, null=True, blank=True, on_delete=models.DO_NOTHING)
