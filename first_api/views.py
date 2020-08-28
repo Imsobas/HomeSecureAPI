@@ -378,6 +378,54 @@ class QrCodeViewSet(viewsets.ModelViewSet):
     queryset = models.Qrcode.objects.all()
     authentication_classes = (TokenAuthentication,)
 
+    @action(detail=True, methods = 'GET')
+    def get_qrcodes_homedetails(self, request, number):
+
+        currentQuerySet = models.Home.objects.filter(home_number=number, is_active=True).all()
+        currentSerializer = serializers.HomeSerializer(currentQuerySet,many=True)
+        currentData =  currentSerializer.data
+
+        result = []
+        
+        home_dict = dict()
+        for home in currentData:
+            home_dict["home_pk"] = home["pk"]
+            home_dict['home_zone'] = home['home_zone']
+            home_dict['home_lat'] = home['home_lat']
+            home_dict['home_lon'] = home['home_lon']
+
+            genUserQuerySet = models.GeneralUser.objects.filter(gen_user_home= home_dict["home_pk"], is_active=True).all()
+            genUserSerializer = serializers.GeneralUserSerializer(genUserQuerySet, many=True)
+            genUserData = genUserSerializer.data
+            
+            user_list = []
+            for user in genUserData:
+                user_list.append(user['pk'])
+
+            home_dict['genuser_pk_list']  = user_list
+
+            secureGuardQuerySet = models.SecureGuard.objects.filter(secure_zone= home_dict["home_zone"], is_active=True).all()
+            secureGuardSerializer = serializers.SecureGuardSerializer(secureGuardQuerySet, many=True)
+            secureGuardData = secureGuardSerializer.data
+
+            secure_list = []
+            for secure in secureGuardData:
+                secure_list.append(secure['pk'])
+
+            home_dict['secure_pk_list'] = secure_list
+
+        result.append(home_dict)
+        
+
+        if(len(result)!=1 ):
+            return Response({ "detail": "Not found."},status=status.HTTP_404_NOT_FOUND)
+        if(len(result)>1 ):
+            return Response({ "detail": "Error, multiple home"},status=status.HTTP_404_NOT_FOUND)
+       
+        return notFoundHandling(home_dict)
+            
+
+
 
 
 

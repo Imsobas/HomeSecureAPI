@@ -99,6 +99,12 @@ get_villages_pk_works = views.WorkViewSet.as_view({
     'get': 'get_villages_pk_works'
 })
 
+## qrcodes 
+
+get_qrcodes_homedetails = views.QrCodeViewSet.as_view({
+    'get': 'get_qrcodes_homedetails'
+})
+
 # Home Secure main routers
 urlpatterns = [
 
@@ -134,6 +140,10 @@ urlpatterns = [
 
     ##work 
     path('villages/<int:pk>/works/', get_villages_pk_works ,name='get_villages_pk_works'),
+
+    ##qr
+    path('qrcodes/homedetails/<int:number>', get_qrcodes_homedetails ,name='get_qrcodes_homedetails'),
+    
 
     # path('hello-view/', views.HelloApiView.as_view()), 
     path('login/', views.UserLoginApiView.as_view()),
