@@ -53,6 +53,11 @@ class WorkSerializer(serializers.ModelSerializer):
         model = models.Work
         fields =  ('pk', 'work_name', 'work_start_time', 'work_end_time', 'work_village', 'is_active')
 
+class SecureGuardSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.SecureGuard
+        fields = ('pk', 'secure_firstname', 'secure_lastname', 'secure_username', 'secure_type', 'secure_zone', 'secure_village', 'secure_company', 'secure_join_date', 'secure_left_date', 'secure_work_start_time', 'secure_work_end_time', 'secure_work_shift', 'secure_current_location', 'secure_current_location_time', 'is_active' )
+
 ## User serializer
 
 class UserProfileSerializer(serializers.ModelSerializer):
@@ -77,9 +82,6 @@ class UserProfileSerializer(serializers.ModelSerializer):
         )
 
         return user 
-
-
-
 
 
 # class ProfileFeedItemSerializer(serializers.ModelSerializer):

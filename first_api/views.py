@@ -357,6 +357,12 @@ class WorkViewSet(viewsets.ModelViewSet):
         
         return notFoundHandling(result)
 
+class SecureGuardViewSet(viewsets.ModelViewSet):
+    serializer_class = serializers.SecureGuardSerializer
+    queryset = models.SecureGuard.objects.all()
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+
 
 
 
