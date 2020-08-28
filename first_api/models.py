@@ -126,7 +126,7 @@ class Home(models.Model):
 
     def __str__(self):
         """Return the model as a string"""
-        return self.home_number
+        return str(self.home_number)
 
 class GeneralUser(models.Model):
     ## keep firs, last name in this cause 1.easier when list all user 
@@ -154,7 +154,7 @@ class GeneralUser(models.Model):
         # return str(self.gen_user_firstname)+" "+str(self.gen_user_lastname)
         if self.gen_user_firstname==None:
             return "ERROR-CUSTOMER NAME IS NULL"
-        return str(self.gen_user_firstname)
+        return str(self.gen_user_firstname)+" "+str(self.gen_user_lastname)
         
 
 
