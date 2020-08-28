@@ -58,6 +58,17 @@ class SecureGuardSerializer(serializers.ModelSerializer):
         model = models.SecureGuard
         fields = ('pk', 'secure_firstname', 'secure_lastname', 'secure_username', 'secure_type', 'secure_zone', 'secure_village', 'secure_company', 'secure_join_date', 'secure_left_date', 'secure_work_start_time', 'secure_work_end_time', 'secure_work_shift', 'secure_current_location', 'secure_current_location_time', 'is_active' )
 
+class QrCodeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Qrcode
+        fields = ('pk', 'qr_content', 'qr_type', 'qr_car_number', 'qr_home_number',
+         'qr_car_color', 'qr_car_brand', 'qr_company', 'qr_village', 'qr_zone',
+          'qr_home', 'qr_user', 'qr_enter_secure', 'qr_inside_secure', 'qr_exit_secure', 
+          'qr_enter_time', 'qr_inside_time', 'qr_user_time', 'qr_exit_time', 'qr_enter_status',
+          'qr_inside_status', 'qr_user_status', 'qr_exit_status', 'qr_enter_lat', 'qr_enter_lon',
+          'qr_inside_lat', 'qr_inside_lon', 'qr_user_lat', 'qr_user_lon', 'qr_exit_lat', 'qr_exit_lon',
+          'qr_complete_status', 'is_active')
+
 ## User serializer
 
 class UserProfileSerializer(serializers.ModelSerializer):

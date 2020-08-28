@@ -19,6 +19,7 @@ router.register(r'general_users',views.GeneralUserViewSet)
 router.register(r'checkpoints',views.CheckpointViewSet)
 router.register(r'works',views.WorkViewSet)
 router.register(r'secure_guards',views.SecureGuardViewSet)
+router.register(r'qrcodes',views.QrCodeViewSet)
 
 
 ## Binding URL

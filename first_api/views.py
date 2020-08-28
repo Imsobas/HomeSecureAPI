@@ -187,6 +187,16 @@ class HomeViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,)
 
     @action(detail=True, methods = 'GET')
+    def get_homes_number(self, request, number):
+        """ Return all homes filtered by home_number """
+        querySet = models.Home.objects.filter(home_number=number, is_active=True).all()
+        serializer = serializers.HomeSerializer(querySet,many=True)
+        result = serializer.data
+            
+        return notFoundHandling(result)
+
+
+    @action(detail=True, methods = 'GET')
     def get_homes_active(self, request):
         """ Return all active home"""
         querySet = models.Home.objects.filter(is_active=True).all()
@@ -362,6 +372,12 @@ class SecureGuardViewSet(viewsets.ModelViewSet):
     queryset = models.SecureGuard.objects.all()
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
+
+class QrCodeViewSet(viewsets.ModelViewSet):
+    serializer_class = serializers.QrCodeSerializer
+    queryset = models.Qrcode.objects.all()
+    authentication_classes = (TokenAuthentication,)
+
 
 
 

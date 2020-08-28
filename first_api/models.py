@@ -114,7 +114,7 @@ class Zone(models.Model):
 class Home(models.Model):
     
     
-    home_number = models.CharField(max_length=100)
+    home_number = models.IntegerField(default=0,unique=True)
     home_address = models.CharField(max_length=200, null=True, blank=True)
     home_company = models.ForeignKey(Company,null=True, blank=True, on_delete=models.DO_NOTHING) 
     home_village = models.ForeignKey(Village, null=True, blank=True, on_delete=models.DO_NOTHING)
@@ -151,7 +151,12 @@ class GeneralUser(models.Model):
 
     def __str__(self):
         """Return the model as a string"""
-        return str(self.general_userfirst_name)+" "+str(self.general_userlast_name)
+        # return str(self.gen_user_firstname)+" "+str(self.gen_user_lastname)
+        if self.gen_user_firstname==None:
+            return "ERROR-CUSTOMER NAME IS NULL"
+        return str(self.gen_user_firstname)
+        
+
 
 class Work(models.Model):
     work_name = models.CharField(max_length=100)
@@ -200,52 +205,49 @@ class SecureGuard(models.Model):
 class Qrcode(models.Model):
     qr_content = models.CharField(max_length=200)
     qr_type = models.CharField(max_length=20)
-    qr_format = models.CharField(max_length=20)
-    qr_format_detail = models.CharField(max_length=100)
+    # qr_format = models.CharField(max_length=20)
+    # qr_format_detail = models.CharField(max_length=100)
     qr_car_number = models.CharField(max_length=200)
+    qr_home_number = models.IntegerField(default=0)
     qr_car_color = models.CharField(max_length=100)
     qr_car_brand = models.CharField(max_length=100)
-    
-
+    qr_company = models.ForeignKey(Company,null=True, blank=True, on_delete=models.DO_NOTHING)
+    qr_village = models.ForeignKey(Village,null=True, blank=True, on_delete=models.DO_NOTHING)
+    qr_zone = models.ForeignKey(Zone,null=True, blank=True, on_delete=models.DO_NOTHING)
     qr_home = models.ForeignKey(Home,null=True, blank=True, on_delete=models.DO_NOTHING)
     qr_user = models.ForeignKey(GeneralUser,null=True, blank=True, on_delete=models.DO_NOTHING)
-    qr_village = models.ForeignKey(Village,null=True, blank=True, on_delete=models.DO_NOTHING)
     ## security who check this in village
-
     qr_enter_secure = models.ForeignKey(SecureGuard,null=True, blank=True, on_delete=models.DO_NOTHING, related_name='qr_enter_secure') 
     qr_inside_secure = models.ForeignKey(SecureGuard,null=True, blank=True, on_delete=models.DO_NOTHING, related_name='qr_inside_secure') 
     qr_exit_secure = models.ForeignKey(SecureGuard,null=True, blank=True, on_delete=models.DO_NOTHING, related_name='qr_exit_secure') 
-    
-
     qr_enter_time = models.DateTimeField(null=True, blank=True)
     qr_inside_time = models.DateTimeField(null=True, blank=True)
     qr_user_time = models.DateTimeField(null=True, blank=True)
     qr_exit_time = models.DateTimeField(null=True, blank=True)
-
     qr_enter_status = models.BooleanField(default=False)
     qr_inside_status = models.BooleanField(default=False)
     qr_user_status = models.BooleanField(default=False)
     qr_exit_status = models.BooleanField(default=False)
-
     qr_enter_lat = models.DecimalField(max_digits=11, decimal_places=8,  null=True, blank=True)
     qr_enter_lon = models.DecimalField(max_digits=11, decimal_places=8,  null=True, blank=True)
-    
     qr_inside_lat = models.DecimalField(max_digits=11, decimal_places=8,  null=True, blank=True)
     qr_inside_lon = models.DecimalField(max_digits=11, decimal_places=8,  null=True, blank=True)
-
     qr_user_lat = models.DecimalField(max_digits=11, decimal_places=8,  null=True, blank=True)
     qr_user_lon = models.DecimalField(max_digits=11, decimal_places=8,  null=True, blank=True)
-
     qr_exit_lat = models.DecimalField(max_digits=11, decimal_places=8,  null=True, blank=True)
     qr_exit_lon = models.DecimalField(max_digits=11, decimal_places=8,  null=True, blank=True)
-
     qr_complete_status = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
 
     def __str__(self):
         """Return the model as a string"""
-        return self.qr_content
+        return str(self.qr_content)
+    
 
+
+
+
+    
 
 class Checkpoint(models.Model):
     point_name = models.CharField(max_length=100)
