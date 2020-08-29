@@ -109,8 +109,14 @@ get_villages_location_pk = views.VillageViewSet.as_view({
     'get': 'get_villages_location_pk'
 })
 
+## qr_inside_screen services
 get_villages_pk_qrcodes = views.QrCodeViewSet.as_view({
     'get': 'get_villages_pk_qrcodes'
+})
+
+## qr_village_screen services
+get_villages_pk_homes_pk_qrcodes = views.QrCodeViewSet.as_view({
+     'get': 'get_villages_pk_homes_pk_qrcodes'
 })
 
 # Home Secure main routers
@@ -152,6 +158,8 @@ urlpatterns = [
     ##qr
     path('qrcodes/homedetails/<int:number>', get_qrcodes_homedetails ,name='get_qrcodes_homedetails'),
     path('villages/<int:village_pk>/qrcodes/', get_villages_pk_qrcodes, name = 'get_villages_pk_qrcodes'),
+    path('villages/<int:village_pk>/homes/<int:home_pk>/qrcodes/', get_villages_pk_homes_pk_qrcodes, name = 'get_villages_pk_homes_pk_qrcodes'),
+    
 
     # path('hello-view/', views.HelloApiView.as_view()), 
     path('login/', views.UserLoginApiView.as_view()),

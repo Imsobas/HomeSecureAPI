@@ -462,6 +462,17 @@ class QrCodeViewSet(viewsets.ModelViewSet):
             
         return notFoundHandling(result)
 
+    ## qr_user_screen_scervices
+    @action(detail=True, methods = 'GET')
+    def get_villages_pk_homes_pk_qrcodes(self, request, village_pk, home_pk):
+        """ Return all information specific to qr_user_services """
+        querySet = models.Qrcode.objects.filter(qr_village=village_pk, qr_home=home_pk, is_active=True, qr_home_status=False).all()
+        serializer = serializers.QrCodeSerializer(querySet,many=True)
+        result = serializer.data
+            
+        return notFoundHandling(result)
+
+
 
 
 
