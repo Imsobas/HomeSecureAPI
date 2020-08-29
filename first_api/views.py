@@ -98,6 +98,31 @@ class VillageViewSet(viewsets.ModelViewSet):
         
         return notFoundHandling(result)
 
+    @action(detail=True, methods = 'GET')
+    def get_villages_location_pk(self, request, villagePk):
+        """ Return location of specific village"""
+        querySet = models.Village.objects.filter(is_active=True, pk = villagePk).all()
+        serializer = serializers.VillageSerializer(querySet,many=True)
+        villageData = serializer.data
+
+
+        final = []
+        
+        for village in villageData:
+            village_dict = dict()
+            village_dict["pk"] = village["pk"]
+            village_dict['village_lat'] = village['village_lat']
+            village_dict['village_lon'] = village['village_lon']
+
+            final.append(village_dict)
+        
+        if(len(final)<1 ):
+            return Response({ "detail": "Not found."},status=status.HTTP_404_NOT_FOUND)
+        if(len(final)>1 ):
+            return Response({ "detail": "Error, multiple home"},status=status.HTTP_404_NOT_FOUND)
+       
+        return notFoundHandling(final[0])
+
 
 
  # renderer_classes = [renderers.JSONRenderer] add thuis if need only json 
@@ -387,8 +412,9 @@ class QrCodeViewSet(viewsets.ModelViewSet):
 
         result = []
         
-        home_dict = dict()
+        
         for home in currentData:
+            home_dict = dict()
             home_dict["home_pk"] = home["pk"]
             home_dict['home_zone'] = home['home_zone']
             home_dict['home_lat'] = home['home_lat']
@@ -414,17 +440,27 @@ class QrCodeViewSet(viewsets.ModelViewSet):
 
             home_dict['secure_pk_list'] = secure_list
 
-        result.append(home_dict)
+            result.append(home_dict)
         
 
-        if(len(result)!=1 ):
+        if(len(result)<1 ):
             return Response({ "detail": "Not found."},status=status.HTTP_404_NOT_FOUND)
         if(len(result)>1 ):
             return Response({ "detail": "Error, multiple home"},status=status.HTTP_404_NOT_FOUND)
        
-        return notFoundHandling(home_dict)
+        return notFoundHandling(result[0])
             
 
+
+    ## qr_inside_screen_services 
+    @action(detail=True, methods = 'GET')
+    def get_villages_pk_qrcodes(self, request, village_pk):
+        """ Return all information specific to qr_inside_screen services """
+        querySet = models.Qrcode.objects.filter(qr_village=village_pk, is_active=True, qr_inside_status=False).all()
+        serializer = serializers.QrCodeSerializer(querySet,many=True)
+        result = serializer.data
+            
+        return notFoundHandling(result)
 
 
 
