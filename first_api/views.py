@@ -479,8 +479,13 @@ class QrCodeViewSet(viewsets.ModelViewSet):
         querySet = models.Qrcode.objects.filter(qr_village=village_pk, qr_content = content,is_active=True).order_by('qr_enter_time').all()[::-1][:1]
         serializer = serializers.QrCodeSerializer(querySet,many=True)
         result = serializer.data
-            
-        return notFoundHandling(result)
+
+        error_message="Not found."
+        if(len(result)>0):
+            return Response(result[0])
+        else: 
+            return Response({ "detail": error_message},
+        status=status.HTTP_404_NOT_FOUND)
 
 
 
