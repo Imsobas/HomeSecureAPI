@@ -472,6 +472,17 @@ class QrCodeViewSet(viewsets.ModelViewSet):
             
         return notFoundHandling(result)
 
+     ## qr_exit_screen_scervices
+    @action(detail=True, methods = 'GET')
+    def get_villages_pk_contents_content_qrcodes(self, request, village_pk, content):
+        """ Return lasted qr code that match with qr code content """
+        querySet = models.Qrcode.objects.filter(qr_village=village_pk, qr_content = content,is_active=True).order_by('qr_enter_time').all()[::-1][:1]
+        serializer = serializers.QrCodeSerializer(querySet,many=True)
+        result = serializer.data
+            
+        return notFoundHandling(result)
+
+
 
 
 
