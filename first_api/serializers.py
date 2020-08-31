@@ -71,6 +71,11 @@ class QrCodeSerializer(serializers.ModelSerializer):
           'qr_exit_lat', 'qr_exit_lon','qr_detail', 'qr_livehome_status',
           'qr_complete_status', 'is_active')
 
+class SettingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Setting
+        fields = ('pk', 'setting_village', 'inside_scan_duration')
+
 ## User serializer
 
 class UserProfileSerializer(serializers.ModelSerializer):

@@ -4,6 +4,7 @@ from django.contrib.auth.models import PermissionsMixin
 from django.contrib.auth.models import BaseUserManager
 from django.conf import settings
 from first_api.user_role import user_role_list
+from datetime import timedelta
 
 ## User model
 
@@ -244,6 +245,7 @@ class Qrcode(models.Model):
     def __str__(self):
         """Return the model as a string"""
         return str(self.qr_content)
+        
     
 
 
@@ -262,6 +264,14 @@ class Checkpoint(models.Model):
     point_lon = models.DecimalField(max_digits=11, decimal_places=8, default=0.000000)
     is_active = models.BooleanField(default=True)
 
+
+class Setting(models.Model):
+    setting_village = models.ForeignKey(Village,null=True, blank=True, on_delete=models.DO_NOTHING)
+    inside_scan_duration = models.DurationField(default=timedelta(minutes=6))
+
+    def __str__(self):
+        """Return the model as a string"""
+        return str(self.pk)
 
 
 
