@@ -19,6 +19,7 @@ from first_api import serializers
 from first_api import models
 from first_api import permission
 import json
+import datetime
 
 ## helper function
 
@@ -462,7 +463,7 @@ class QrCodeViewSet(viewsets.ModelViewSet):
             
         return notFoundHandling(result)
 
-    ## qr_user_screen_scervices
+    ## qr_user_screen_services
     @action(detail=True, methods = 'GET')
     def get_villages_pk_homes_pk_qrcodes(self, request, village_pk, home_pk):
         """ Return all information specific to qr_user_services """
@@ -472,7 +473,7 @@ class QrCodeViewSet(viewsets.ModelViewSet):
             
         return notFoundHandling(result)
 
-     ## qr_exit_screen_scervices
+     ## qr_exit_screen_services
     @action(detail=True, methods = 'GET')
     def get_villages_pk_contents_content_qrcodes(self, request, village_pk, content):
         """ Return lasted qr code that match with qr code content """
@@ -486,6 +487,46 @@ class QrCodeViewSet(viewsets.ModelViewSet):
         else: 
             return Response({ "detail": error_message},
         status=status.HTTP_404_NOT_FOUND)
+    
+    ## qr_history_screen_services
+    @action(detail=True, methods = 'GET')
+    def get_historyservice_list_villages_pk_zones_pk_dates_year_month_day_qrcodes(self, request, village_pk, zone_pk, year, month, day):
+        """ Return all qr codeinformation specific for qr history list service """
+        querySet = models.Qrcode.objects.filter(qr_village=village_pk, qr_zone = zone_pk, qr_enter_time__date= datetime.date(year,month,day) ,is_active=True).all()
+        serializer = serializers.QrCodeSerializer(querySet,many=True)
+        result = serializer.data
+            
+        return notFoundHandling(result)
+
+     ## qr_history_screen_services
+    @action(detail=True, methods = 'GET')
+    def get_historyservice_list_villages_pk_zones_pk_qrcodes(self, request, village_pk, zone_pk):
+        """ Return all qr codeinformation specific for qr history list service """
+        querySet = models.Qrcode.objects.filter(qr_village=village_pk, qr_zone = zone_pk, is_active=True).all()
+        serializer = serializers.QrCodeSerializer(querySet,many=True)
+        result = serializer.data
+            
+        return notFoundHandling(result)
+
+    ## qr_history_screen_services
+    @action(detail=True, methods = 'GET')
+    def get_historyservice_list_villages_pk_dates_year_month_day_qrcodes(self, request, village_pk, year, month, day):
+        """ Return all qr codeinformation specific for qr history list service """
+        querySet = models.Qrcode.objects.filter(qr_village=village_pk, qr_enter_time__date= datetime.date(year,month,day) ,is_active=True).all()
+        serializer = serializers.QrCodeSerializer(querySet,many=True)
+        result = serializer.data
+            
+        return notFoundHandling(result)
+
+    ## qr_history_screen_services
+    @action(detail=True, methods = 'GET')
+    def get_historyservice_list_villages_pk_qrcodes(self, request, village_pk):
+        """ Return all qr codeinformation specific for qr history list service """
+        querySet = models.Qrcode.objects.filter(qr_village=village_pk, is_active=True).all()
+        serializer = serializers.QrCodeSerializer(querySet,many=True)
+        result = serializer.data
+            
+        return notFoundHandling(result)
 
 
 
