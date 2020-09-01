@@ -276,8 +276,15 @@ class Setting(models.Model):
 class PointInspection(models.Model):
     inspect_checkin_time = models.DateTimeField(null=True, blank=True)
     inspect_checkout_time = models.DateTimeField(null=True, blank=True)
-    inspect_point = models.ForeignKey(Checkpoint, null=True, blank=True, on_delete=models.DO_NOTHING)
+    inspect_checkpoint = models.ForeignKey(Checkpoint, null=True, blank=True, on_delete=models.DO_NOTHING)
+    inspect_village = models.ForeignKey(Village, null=True, blank=True, on_delete=models.DO_NOTHING)
+    inspect_zone = models.ForeignKey(Zone, null=True, blank=True, on_delete=models.DO_NOTHING)
+    inspect_secure = models.ForeignKey(SecureGuard, null=True, blank=True, on_delete=models.DO_NOTHING)
+    insepect_work = models.ForeignKey(Work, null=True, blank=True, on_delete=models.DO_NOTHING)
     
+    def __str__(self):
+        """Return the model as a string"""
+        return str(self.pk)
 
 
 

@@ -79,7 +79,7 @@ class SettingSerializer(serializers.ModelSerializer):
 class PointInspectionSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.PointInspection
-        fields = ('pk', 'inspect_checkin_time', 'inspect_checkout_time', 'inspect_point')
+        fields = ('pk', 'inspect_checkin_time', 'inspect_checkout_time', 'inspect_checkpoint', 'inspect_village', 'inspect_zone', 'inspect_secure', 'insepect_work')
 
 ## User serializer
 
