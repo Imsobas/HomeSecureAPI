@@ -273,6 +273,13 @@ class Setting(models.Model):
         """Return the model as a string"""
         return str(self.pk)
 
+class PointInspection(models.Model):
+    inspect_checkin_time = models.DateTimeField(null=True, blank=True)
+    inspect_checkout_time = models.DateTimeField(null=True, blank=True)
+    inspect_point = models.ForeignKey(Checkpoint, null=True, blank=True, on_delete=models.DO_NOTHING)
+    
+
+
 
 
 
