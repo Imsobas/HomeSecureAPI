@@ -551,16 +551,32 @@ class PointObservationViewSet(viewsets.ModelViewSet):
         # MyObject.objects.filter(someField=someValue).exists()
         
         isExistPO = models.PointObservation.objects.filter(observation_village=data['observation_village'], observation_zone=data['observation_zone'], observation_work=data['observation_work'], observation_secure=data['observation_secure'], observation_date=data['observation_date']).exists()
-
+        
+        
         if(isExistPO==True):
+            ## already have pointObservation
             pointObservation = models.PointObservation.objects.only('pk').get(observation_village=data['observation_village'], observation_zone=data['observation_zone'], observation_work=data['observation_work'], observation_secure=data['observation_secure'], observation_date=data['observation_date'])
 
-            isExistPOR = models.PointObservationRecord.objects.filter(observation_pk=pointObservation, observation_timeslot=data['observation_timeslot'],checkpoint_pk = data['checkpoint_pk']).exists()
+            ## check the exist PointObservationRecord
+            for pointPk in data['checkpoint_list']:
+                checkpoint = models.Checkpoint.objects.only('pk').get(pk=pointPk)
+                isExistPOPL = models.PointObservationPointList.objects.filter(observation_pk=pointObservation, checkpoint_pk=checkpoint).exists()
+                
+                if(isExistPOPL==False):
+                    pointObservationPointList = models.PointObservationPointList.objects.create(observation_pk=pointObservation, checkpoint_pk = checkpoint)
+                    pointObservationPointList.save()
 
+
+                
+                
+
+            isExistPOR = models.PointObservationRecord.objects.filter(observation_pk=pointObservation, observation_timeslot=data['observation_timeslot'],checkpoint_pk = data['checkpoint_pk']).exists()
             if(isExistPOR==True):
+                ## already have pointObservationRecord
                 pointObservationRecord = models.PointObservationRecord.objects.only('pk').get(observation_pk=pointObservation, observation_timeslot=data['observation_timeslot'],checkpoint_pk = data['checkpoint_pk'])
-                return Response({ "detail": 'already have this point observation record'},status=status.HTTP_200_OK)
+                return Response({ "detail": 'already have this pointObservation and pointObservationRecord'},status=status.HTTP_200_OK)
             else:
+                ## create new  pointObservationRecord
                 checkpoint = models.Checkpoint.objects.only('pk').get(pk=data['checkpoint_pk'])
                 pointObservationRecord = models.PointObservationRecord.objects.create(observation_checkin_time=data['observation_checkin_time'], observation_checkout_time=data['observation_checkout_time'],observation_timeslot=data['observation_timeslot'],checkpoint_pk = checkpoint, observation_pk= pointObservation )
                 pointObservationRecord.save()
@@ -569,6 +585,7 @@ class PointObservationViewSet(viewsets.ModelViewSet):
 
                 return Response(serializer.data,status.HTTP_201_CREATED)
         else:
+            ## create new  pointObservation
             village = models.Village.objects.only('pk').get(pk=data['observation_village'])
             zone = models.Zone.objects.only('pk').get(pk=data['observation_zone'])
             work = models.Work.objects.only('pk').get(pk=data['observation_work'])
@@ -576,12 +593,19 @@ class PointObservationViewSet(viewsets.ModelViewSet):
             pointObservation = models.PointObservation.objects.create(observation_village=village, observation_zone=zone, observation_work=work, observation_secure=secure, observation_date=data['observation_date'])
             pointObservation.save()
 
-            isExistPOR = models.PointObservationRecord.objects.filter(observation_pk=pointObservation, observation_timeslot=data['observation_timeslot'],checkpoint_pk = data['checkpoint_pk']).exists()
+            ## create new PointObservationRecord
+            for pointPk in data['checkpoint_list']:
+                checkpoint = models.Checkpoint.objects.only('pk').get(pk=pointPk)
+                pointObservationPointList = models.PointObservationPointList.objects.create(observation_pk=pointObservation, checkpoint_pk = checkpoint)
+                pointObservationPointList.save()
 
+            isExistPOR = models.PointObservationRecord.objects.filter(observation_pk=pointObservation, observation_timeslot=data['observation_timeslot'],checkpoint_pk = data['checkpoint_pk']).exists()
             if(isExistPOR==True):
+                ## already have pointObservationRecord
                 pointObservationRecord = models.PointObservationRecord.objects.only('pk').get(observation_pk=pointObservation, observation_timeslot=data['observation_timeslot'],checkpoint_pk = data['checkpoint_pk'])
-                return Response({ "detail": 'already have this point observation record'},status=status.HTTP_200_OK)
+                return Response({ "detail": 'already have this pointObservationRecord'},status=status.HTTP_200_OK)
             else:
+                ## create new  pointObservationRecord
                 checkpoint = models.Checkpoint.objects.only('pk').get(pk=data['checkpoint_pk'])
                 pointObservationRecord = models.PointObservationRecord.objects.create(observation_checkin_time=data['observation_checkin_time'], observation_checkout_time=data['observation_checkout_time'],observation_timeslot=data['observation_timeslot'],checkpoint_pk = checkpoint, observation_pk= pointObservation )
                 pointObservationRecord.save()
