@@ -547,26 +547,38 @@ class PointObservationViewSet(viewsets.ModelViewSet):
     def testObservation(self, request):
         """ Test def"""
         data = request.data
-        # try:
-        #     pointObservation = models.PointObservation.only('pk').get(observation_date=data['observation_date'])
-        # except models.PointObservation.DoesNotExist:
-        #     pointObservation = models.PointObservation.objects.create
+        try:
+            pointObservation = models.PointObservation.objects.only('pk').get(observation_village=data['observation_village'], observation_zone=data['observation_zone'], observation_work=data['observation_work'], observation_secure=data['observation_secure'], observation_date=data['observation_date'])
+        except models.PointObservation.DoesNotExist:
+            print("except case")
+        
+        try:
+            pointObservationRecord = models.PointObservationRecord.objects.only('pk').get(observation_pk=pointObservation, observation_timeslot=data['observation_timeslot'],checkpoint_pk = data['checkpoint_pk'])
+            return Response({ "detail": 'already check'},status=status.HTTP_200_OK)
             
+        except models.PointObservationRecord.DoesNotExist:
+            checkpoint = models.Checkpoint.objects.only('pk').get(pk=data['checkpoint_pk'])
+            pointObservationRecord = models.PointObservationRecord.objects.create(observation_checkin_time=data['observation_checkin_time'], observation_checkout_time=data['observation_checkout_time'],observation_timeslot=data['observation_timeslot'],checkpoint_pk = checkpoint, observation_pk= pointObservation )
 
-        village = models.Village.objects.only('pk').get(pk=data['observation_village'])
-        # village = models.PointObservation.objects.filter(pk=data['observation_village'])   # comment = Comment.objects.filter(pk=comment_id)
-        print(village)
-        new_test = models.PointObservation.objects.create(observation_village=village,observation_hour_split=data['observation_hour_split'])
-        new_test.save()
+            pointObservationRecord.save()
 
-        serializer = serializers.PointObservationSerializer(new_test)
+            serializer = serializers.PointObservationRecordSerializer(pointObservationRecord)
+
+            return Response(serializer.data,status.HTTP_201_CREATED)
+
+        # village = models.Village.objects.only('pk').get(pk=data['observation_village'])
+        # # village = models.PointObservation.objects.filter(pk=data['observation_village'])   # comment = Comment.objects.filter(pk=comment_id)
+        # print(village)
+        # new_test = models.PointObservation.objects.create(observation_village=village,observation_hour_split=data['observation_hour_split'])
+        # new_test.save()
+
+        # serializer = serializers.PointObservationSerializer(new_test)
         
-        new_test = models.PointObservation.objects.only('pk').get(observation_village=village,observation_hour_split=data['observation_hour_split'])
-        print(new_test)
+        ### get new pk model again after create model
+        # new_test = models.PointObservation.objects.only('pk').get(observation_village=village,observation_hour_split=data['observation_hour_split'])
+        # print(new_test)
 
         
-
-        return Response(serializer.data)
 
         # serializer = serializers.PointObservationSerializer(data=request.data)
         # print(serializer.data['observation_village'])
