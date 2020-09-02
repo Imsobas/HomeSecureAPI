@@ -273,14 +273,32 @@ class Setting(models.Model):
         """Return the model as a string"""
         return str(self.pk)
 
-class PointInspection(models.Model):
-    inspect_checkin_time = models.DateTimeField(null=True, blank=True)
-    inspect_checkout_time = models.DateTimeField(null=True, blank=True)
-    inspect_checkpoint = models.ForeignKey(Checkpoint, null=True, blank=True, on_delete=models.DO_NOTHING)
-    inspect_village = models.ForeignKey(Village, null=True, blank=True, on_delete=models.DO_NOTHING)
-    inspect_zone = models.ForeignKey(Zone, null=True, blank=True, on_delete=models.DO_NOTHING)
-    inspect_secure = models.ForeignKey(SecureGuard, null=True, blank=True, on_delete=models.DO_NOTHING)
-    insepect_work = models.ForeignKey(Work, null=True, blank=True, on_delete=models.DO_NOTHING)
+
+class PointObservation(models.Model):
+    observation_village = models.ForeignKey(Village,null=True, blank=True, on_delete=models.DO_NOTHING)
+    observation_zone = models.ForeignKey(Zone,null=True, blank=True, on_delete=models.DO_NOTHING)
+    observation_hour_split = models.IntegerField(default=0)
+    observation_work = models.ForeignKey(Work,null=True, blank=True, on_delete=models.DO_NOTHING)
+    observation_secure = models.ForeignKey(SecureGuard,null=True, blank=True, on_delete=models.DO_NOTHING)
+    observation_date = models.DateField(auto_now_add=True)
+
+
+class PointCheckingCheckPointList(models.Model):
+    observation_pk = models.ForeignKey(PointObservation,null=True, blank=True, on_delete=models.DO_NOTHING)
+    checkpoint_pk = models.ForeignKey(Checkpoint,null=True, blank=True, on_delete=models.DO_NOTHING)
+    
+
+class PointObservationDetail(models.Model):
+    observation_pk = models.ForeignKey(PointObservation, null=True, blank=True, on_delete=models.DO_NOTHING)
+    observation_checkin_time = models.DateTimeField(null=True, blank=True)
+    observation_checkout_time = models.DateTimeField(null=True, blank=True)
+    observation_checkpoint = models.ForeignKey(Checkpoint, null=True, blank=True, on_delete=models.DO_NOTHING)
+    
+
+
+    # inspect_village = models.ForeignKey(Village, null=True, blank=True, on_delete=models.DO_NOTHING)
+    # inspect_zone = models.ForeignKey(Zone, null=True, blank=True, on_delete=models.DO_NOTHING)
+    # insepect_work = models.ForeignKey(Work, null=True, blank=True, on_delete=models.DO_NOTHING)
     
     def __str__(self):
         """Return the model as a string"""

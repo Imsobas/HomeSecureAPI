@@ -76,10 +76,15 @@ class SettingSerializer(serializers.ModelSerializer):
         model = models.Setting
         fields = ('pk', 'setting_village', 'inside_scan_duration')
 
-class PointInspectionSerializer(serializers.ModelSerializer):
+# class PointInspectionSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = models.PointInspection
+#         fields = ('pk', 'inspect_checkin_time', 'inspect_checkout_time', 'inspect_checkpoint', 'inspect_village', 'inspect_zone', 'inspect_secure', 'insepect_work')
+
+class PointObservationSerializer(serializers.ModelSerializer):
     class Meta:
-        model = models.PointInspection
-        fields = ('pk', 'inspect_checkin_time', 'inspect_checkout_time', 'inspect_checkpoint', 'inspect_village', 'inspect_zone', 'inspect_secure', 'insepect_work')
+        model = models.PointObservation
+        fields = ('pk', 'observation_village', 'observation_zone','observation_hour_split','observation_work','observation_secure','observation_date')
 
 ## User serializer
 
