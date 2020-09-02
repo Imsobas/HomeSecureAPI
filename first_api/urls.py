@@ -147,6 +147,12 @@ get_historyservice_list_villages_pk_qrcodes = views.QrCodeViewSet.as_view({
      'get': 'get_historyservice_list_villages_pk_qrcodes'
 })
 
+## Test 
+testObservation = views.PointObservationViewSet.as_view({
+    'post': 'testObservation' 
+})
+
+
 # Home Secure main routers
 urlpatterns = [
 
@@ -192,7 +198,11 @@ urlpatterns = [
     path('historyservice/list/villages/<int:village_pk>/zones/<int:zone_pk>/qrcodes/', get_historyservice_list_villages_pk_zones_pk_qrcodes, name = 'get_historyservice_list_villages_pk_zones_pk_qrcodes'),
     path('historyservice/list/villages/<int:village_pk>/dates/<int:year>/<int:month>/<int:day>/qrcodes/', get_historyservice_list_villages_pk_dates_year_month_day_qrcodes, name = 'get_historyservice_list_villages_pk_dates_year_month_day_qrcodes'),
     path('historyservice/list/villages/<int:village_pk>/qrcodes/', get_historyservice_list_villages_pk_qrcodes, name = 'get_historyservice_list_villages_pk_qrcodes'),
-    
+
+
+    #test 
+    path('testObservation/', testObservation ,name='testObservation'),
+
     # path('hello-view/', views.HelloApiView.as_view()), 
     path('login/', views.UserLoginApiView.as_view()),
     path('',include(router.urls))

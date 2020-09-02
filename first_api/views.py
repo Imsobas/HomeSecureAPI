@@ -542,6 +542,43 @@ class PointObservationViewSet(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
 
+
+    @action(detail=True, methods=['post'])
+    def testObservation(self, request):
+        """ Test def"""
+        data = request.data
+        # try:
+        #     pointObservation = models.PointObservation.only('pk').get(observation_date=data['observation_date'])
+        # except models.PointObservation.DoesNotExist:
+        #     pointObservation = models.PointObservation.objects.create
+            
+
+        village = models.Village.objects.only('pk').get(pk=data['observation_village'])
+        # village = models.PointObservation.objects.filter(pk=data['observation_village'])   # comment = Comment.objects.filter(pk=comment_id)
+        print(village)
+        new_test = models.PointObservation.objects.create(observation_village=village,observation_hour_split=data['observation_hour_split'])
+        new_test.save()
+
+        serializer = serializers.PointObservationSerializer(new_test)
+        
+        new_test = models.PointObservation.objects.only('pk').get(observation_village=village,observation_hour_split=data['observation_hour_split'])
+        print(new_test)
+
+        
+
+        return Response(serializer.data)
+
+        # serializer = serializers.PointObservationSerializer(data=request.data)
+        # print(serializer.data['observation_village'])
+        # if serializer.is_valid():
+        #     print(serializer.data['observation_village'])
+        # else:
+        #       return Response({ "detail": error_message},status=status.HTTP_404_NOT_FOUND)
+      
+
+
+
+
 class PointObservationPointListViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.PointObservationPointListSerializer
     queryset = models.PointObservationPointList.objects.all()
