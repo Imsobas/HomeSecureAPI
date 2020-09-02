@@ -280,7 +280,7 @@ class PointObservation(models.Model):
     observation_zone = models.ForeignKey(Zone,null=True, blank=True, on_delete=models.DO_NOTHING)
     observation_work = models.ForeignKey(Work,null=True, blank=True, on_delete=models.DO_NOTHING)
     observation_secure = models.ForeignKey(SecureGuard,null=True, blank=True, on_delete=models.DO_NOTHING)
-    observation_date = models.DateField(auto_now_add=True)
+    observation_date = models.CharField(max_length=10)
 
 
 class PointObservationPointList(models.Model):

@@ -547,34 +547,91 @@ class PointObservationViewSet(viewsets.ModelViewSet):
     def testObservation(self, request):
         """ Test def"""
         data = request.data
-        try:
-            print(data['observation_date'])
-            pointObservation = models.PointObservation.objects.only('pk').get(observation_village=data['observation_village'], observation_zone=data['observation_zone'], observation_work=data['observation_work'], observation_secure=data['observation_secure'], observation_date=data['observation_date'])
-        except models.PointObservation.DoesNotExist:
-            print("except case")
 
+        # MyObject.objects.filter(someField=someValue).exists()
+        
+        isExistPO = models.PointObservation.objects.filter(observation_village=data['observation_village'], observation_zone=data['observation_zone'], observation_work=data['observation_work'], observation_secure=data['observation_secure'], observation_date=data['observation_date']).exists()
+
+        if(isExistPO==True):
+            pointObservation = models.PointObservation.objects.only('pk').get(observation_village=data['observation_village'], observation_zone=data['observation_zone'], observation_work=data['observation_work'], observation_secure=data['observation_secure'], observation_date=data['observation_date'])
+
+            isExistPOR = models.PointObservationRecord.objects.filter(observation_pk=pointObservation, observation_timeslot=data['observation_timeslot'],checkpoint_pk = data['checkpoint_pk']).exists()
+
+            if(isExistPOR==True):
+                pointObservationRecord = models.PointObservationRecord.objects.only('pk').get(observation_pk=pointObservation, observation_timeslot=data['observation_timeslot'],checkpoint_pk = data['checkpoint_pk'])
+                return Response({ "detail": 'already have this point observation record'},status=status.HTTP_200_OK)
+            else:
+                checkpoint = models.Checkpoint.objects.only('pk').get(pk=data['checkpoint_pk'])
+                pointObservationRecord = models.PointObservationRecord.objects.create(observation_checkin_time=data['observation_checkin_time'], observation_checkout_time=data['observation_checkout_time'],observation_timeslot=data['observation_timeslot'],checkpoint_pk = checkpoint, observation_pk= pointObservation )
+                pointObservationRecord.save()
+
+                serializer = serializers.PointObservationRecordSerializer(pointObservationRecord)
+
+                return Response(serializer.data,status.HTTP_201_CREATED)
+        else:
             village = models.Village.objects.only('pk').get(pk=data['observation_village'])
             zone = models.Zone.objects.only('pk').get(pk=data['observation_zone'])
             work = models.Work.objects.only('pk').get(pk=data['observation_work'])
             secure = models.SecureGuard.objects.only('pk').get(pk=data['observation_secure'])
-
-            pointObservation = models.PointObservation.objects.create(observation_village=village, observation_zone=zone, observation_work=work, observation_secure=secure)
+            pointObservation = models.PointObservation.objects.create(observation_village=village, observation_zone=zone, observation_work=work, observation_secure=secure, observation_date=data['observation_date'])
             pointObservation.save()
+
+            isExistPOR = models.PointObservationRecord.objects.filter(observation_pk=pointObservation, observation_timeslot=data['observation_timeslot'],checkpoint_pk = data['checkpoint_pk']).exists()
+
+            if(isExistPOR==True):
+                pointObservationRecord = models.PointObservationRecord.objects.only('pk').get(observation_pk=pointObservation, observation_timeslot=data['observation_timeslot'],checkpoint_pk = data['checkpoint_pk'])
+                return Response({ "detail": 'already have this point observation record'},status=status.HTTP_200_OK)
+            else:
+                checkpoint = models.Checkpoint.objects.only('pk').get(pk=data['checkpoint_pk'])
+                pointObservationRecord = models.PointObservationRecord.objects.create(observation_checkin_time=data['observation_checkin_time'], observation_checkout_time=data['observation_checkout_time'],observation_timeslot=data['observation_timeslot'],checkpoint_pk = checkpoint, observation_pk= pointObservation )
+                pointObservationRecord.save()
+
+                serializer = serializers.PointObservationRecordSerializer(pointObservationRecord)
+
+                return Response(serializer.data,status.HTTP_201_CREATED)
+
+
+        #### old bug
+
+
+
+        # try:
+        #     print(data['observation_date'])
+        #     MyObject.objects.filter(someField=someValue).count()
+        #     pointObservation = models.PointObservation.objects.only('pk').get(observation_village=data['observation_village'], observation_zone=data['observation_zone'], observation_work=data['observation_work'], observation_secure=data['observation_secure'], observation_date=data['observation_date'])
+        # except models.PointObservation.DoesNotExist:
+        #     print("except case")
+
+        #     village = models.Village.objects.only('pk').get(pk=data['observation_village'])
+        #     zone = models.Zone.objects.only('pk').get(pk=data['observation_zone'])
+        #     work = models.Work.objects.only('pk').get(pk=data['observation_work'])
+        #     secure = models.SecureGuard.objects.only('pk').get(pk=data['observation_secure'])
+
+        #     Create = models.PointObservation.objects.create(observation_village=village, observation_zone=zone, observation_work=work, observation_secure=secure)
+        #     Create.save()
+
+        #     pointObservation = models.PointObservation.objects.only('pk').get(observation_village=data['observation_village'], observation_zone=data['observation_zone'], observation_work=data['observation_work'], observation_secure=data['observation_secure'], observation_date=data['observation_date'])
         
-        try:
-            pointObservationRecord = models.PointObservationRecord.objects.only('pk').get(observation_pk=pointObservation, observation_timeslot=data['observation_timeslot'],checkpoint_pk = data['checkpoint_pk'])
-            return Response({ "detail": 'already have this point observation record'},status=status.HTTP_200_OK)
+        # try:
+        #     pointObservationRecord = models.PointObservationRecord.objects.only('pk').get(observation_pk=pointObservation, observation_timeslot=data['observation_timeslot'],checkpoint_pk = data['checkpoint_pk'])
+        #     return Response({ "detail": 'already have this point observation record'},status=status.HTTP_200_OK)
             
-        except models.PointObservationRecord.DoesNotExist:
-            checkpoint = models.Checkpoint.objects.only('pk').get(pk=data['checkpoint_pk'])
-            pointObservationRecord = models.PointObservationRecord.objects.create(observation_checkin_time=data['observation_checkin_time'], observation_checkout_time=data['observation_checkout_time'],observation_timeslot=data['observation_timeslot'],checkpoint_pk = checkpoint, observation_pk= pointObservation )
+        # except models.PointObservationRecord.DoesNotExist:
+        #     checkpoint = models.Checkpoint.objects.only('pk').get(pk=data['checkpoint_pk'])
+        #     pointObservationRecord = models.PointObservationRecord.objects.create(observation_checkin_time=data['observation_checkin_time'], observation_checkout_time=data['observation_checkout_time'],observation_timeslot=data['observation_timeslot'],checkpoint_pk = checkpoint, observation_pk= pointObservation )
 
-            pointObservationRecord.save()
+        #     pointObservationRecord.save()
 
-            serializer = serializers.PointObservationRecordSerializer(pointObservationRecord)
+        #     serializer = serializers.PointObservationRecordSerializer(pointObservationRecord)
 
-            return Response(serializer.data,status.HTTP_201_CREATED)
+        #     return Response(serializer.data,status.HTTP_201_CREATED)
 
+
+
+
+
+        ######## test 1 
+      
         # village = models.Village.objects.only('pk').get(pk=data['observation_village'])
         # # village = models.PointObservation.objects.filter(pk=data['observation_village'])   # comment = Comment.objects.filter(pk=comment_id)
         # print(village)
