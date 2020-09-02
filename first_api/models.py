@@ -281,11 +281,18 @@ class PointObservation(models.Model):
     observation_work = models.ForeignKey(Work,null=True, blank=True, on_delete=models.DO_NOTHING)
     observation_secure = models.ForeignKey(SecureGuard,null=True, blank=True, on_delete=models.DO_NOTHING)
     observation_date = models.CharField(max_length=10)
+    
+    class Meta:
+        unique_together = ('observation_village', 'observation_zone','observation_work','observation_secure','observation_date')
 
 
 class PointObservationPointList(models.Model):
     observation_pk = models.ForeignKey(PointObservation,null=True, blank=True, on_delete=models.DO_NOTHING)
     checkpoint_pk = models.ForeignKey(Checkpoint,null=True, blank=True, on_delete=models.DO_NOTHING)
+
+    class Meta:
+        unique_together = ('observation_pk', 'checkpoint_pk')
+
     
 
 class PointObservationRecord(models.Model):
@@ -294,6 +301,9 @@ class PointObservationRecord(models.Model):
     observation_checkout_time = models.DateTimeField(null=True, blank=True)
     observation_timeslot = models.IntegerField(default=0)
     checkpoint_pk = models.ForeignKey(Checkpoint, null=True, blank=True, on_delete=models.DO_NOTHING)
+
+    class Meta:
+        unique_together = ('observation_pk', 'observation_timeslot','checkpoint_pk')
     
 
 
