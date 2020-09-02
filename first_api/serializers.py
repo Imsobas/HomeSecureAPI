@@ -51,7 +51,7 @@ class CheckpointSerializer(serializers.ModelSerializer):
 class WorkSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Work
-        fields =  ('pk', 'work_name', 'work_start_time', 'work_end_time', 'work_village', 'is_active')
+        fields =  ('pk', 'work_name', 'work_start_time', 'work_end_time', 'work_hour_split', 'work_village', 'is_active')
 
 class SecureGuardSerializer(serializers.ModelSerializer):
     class Meta:
@@ -84,7 +84,7 @@ class SettingSerializer(serializers.ModelSerializer):
 class PointObservationSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.PointObservation
-        fields = ('pk', 'observation_village', 'observation_zone','observation_hour_split','observation_work','observation_secure','observation_date')
+        fields = ('pk', 'observation_village', 'observation_zone','observation_work','observation_secure','observation_date')
 
 class PointObservationPointListSerializer(serializers.ModelSerializer):
     class Meta:
@@ -94,7 +94,7 @@ class PointObservationPointListSerializer(serializers.ModelSerializer):
 class PointObservationRecordSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.PointObservationRecord
-        fields = ('pk', 'observation_pk', 'observation_checkin_time','observation_checkout_time','checkpoint_pk')
+        fields = ('pk', 'observation_pk', 'observation_checkin_time','observation_checkout_time', 'observation_timeslot','checkpoint_pk')
 
 ## User serializer
 

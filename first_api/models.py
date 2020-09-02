@@ -163,6 +163,7 @@ class Work(models.Model):
     work_name = models.CharField(max_length=100, unique=True)
     work_start_time = models.TimeField(null=True, blank=True)
     work_end_time = models.TimeField(null=True, blank=True)
+    work_hour_split = models.IntegerField(default=0)
     work_village = models.ForeignKey(Village, null=True, blank=True, on_delete=models.DO_NOTHING)
     is_active = models.BooleanField(default=True)
 
@@ -277,7 +278,6 @@ class Setting(models.Model):
 class PointObservation(models.Model):
     observation_village = models.ForeignKey(Village,null=True, blank=True, on_delete=models.DO_NOTHING)
     observation_zone = models.ForeignKey(Zone,null=True, blank=True, on_delete=models.DO_NOTHING)
-    observation_hour_split = models.IntegerField(default=0)
     observation_work = models.ForeignKey(Work,null=True, blank=True, on_delete=models.DO_NOTHING)
     observation_secure = models.ForeignKey(SecureGuard,null=True, blank=True, on_delete=models.DO_NOTHING)
     observation_date = models.DateField(auto_now_add=True)
@@ -292,6 +292,7 @@ class PointObservationRecord(models.Model):
     observation_pk = models.ForeignKey(PointObservation, null=True, blank=True, on_delete=models.DO_NOTHING)
     observation_checkin_time = models.DateTimeField(null=True, blank=True)
     observation_checkout_time = models.DateTimeField(null=True, blank=True)
+    observation_timeslot = models.IntegerField(default=0)
     checkpoint_pk = models.ForeignKey(Checkpoint, null=True, blank=True, on_delete=models.DO_NOTHING)
     
 
