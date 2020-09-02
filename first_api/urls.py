@@ -23,7 +23,8 @@ router.register(r'qrcodes',views.QrCodeViewSet)
 router.register(r'settings',views.SettingViewSet)
 # router.register(r'point_inspections',views.PointInspectionViewSet)
 router.register(r'point_observation',views.PointObservationViewSet)
-
+router.register(r'point_observation_point_list',views.PointObservationPointListViewSet)
+router.register(r'point_observation_record',views.PointObservationRecordViewSet)
 
 ## Binding URL
 

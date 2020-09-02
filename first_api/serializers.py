@@ -86,6 +86,16 @@ class PointObservationSerializer(serializers.ModelSerializer):
         model = models.PointObservation
         fields = ('pk', 'observation_village', 'observation_zone','observation_hour_split','observation_work','observation_secure','observation_date')
 
+class PointObservationPointListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.PointObservationPointList
+        fields = ('pk', 'observation_pk', 'checkpoint_pk')
+
+class PointObservationRecordSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.PointObservationRecord
+        fields = ('pk', 'observation_pk', 'observation_checkin_time','observation_checkout_time','checkpoint_pk')
+
 ## User serializer
 
 class UserProfileSerializer(serializers.ModelSerializer):

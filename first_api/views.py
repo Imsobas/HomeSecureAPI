@@ -542,6 +542,17 @@ class PointObservationViewSet(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
 
+class PointObservationPointListViewSet(viewsets.ModelViewSet):
+    serializer_class = serializers.PointObservationPointListSerializer
+    queryset = models.PointObservationPointList.objects.all()
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+
+class PointObservationRecordViewSet(viewsets.ModelViewSet):
+    serializer_class = serializers.PointObservationRecordSerializer
+    queryset = models.PointObservationRecord.objects.all()
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
 
 # class PointInspectionViewSet(viewsets.ModelViewSet):
 #     serializer_class = serializers.PointInspectionSerializer
