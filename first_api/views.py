@@ -548,13 +548,22 @@ class PointObservationViewSet(viewsets.ModelViewSet):
         """ Test def"""
         data = request.data
         try:
+            print(data['observation_date'])
             pointObservation = models.PointObservation.objects.only('pk').get(observation_village=data['observation_village'], observation_zone=data['observation_zone'], observation_work=data['observation_work'], observation_secure=data['observation_secure'], observation_date=data['observation_date'])
         except models.PointObservation.DoesNotExist:
             print("except case")
+
+            village = models.Village.objects.only('pk').get(pk=data['observation_village'])
+            zone = models.Zone.objects.only('pk').get(pk=data['observation_zone'])
+            work = models.Work.objects.only('pk').get(pk=data['observation_work'])
+            secure = models.SecureGuard.objects.only('pk').get(pk=data['observation_secure'])
+
+            pointObservation = models.PointObservation.objects.create(observation_village=village, observation_zone=zone, observation_work=work, observation_secure=secure)
+            pointObservation.save()
         
         try:
             pointObservationRecord = models.PointObservationRecord.objects.only('pk').get(observation_pk=pointObservation, observation_timeslot=data['observation_timeslot'],checkpoint_pk = data['checkpoint_pk'])
-            return Response({ "detail": 'already check'},status=status.HTTP_200_OK)
+            return Response({ "detail": 'already have this point observation record'},status=status.HTTP_200_OK)
             
         except models.PointObservationRecord.DoesNotExist:
             checkpoint = models.Checkpoint.objects.only('pk').get(pk=data['checkpoint_pk'])
