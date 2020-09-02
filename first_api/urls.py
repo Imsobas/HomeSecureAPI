@@ -201,7 +201,7 @@ urlpatterns = [
 
 
     #test 
-    path('testObservation/', testObservation ,name='testObservation'),
+    path('pointobservation_create_service/', testObservation ,name='testObservation'),
 
     # path('hello-view/', views.HelloApiView.as_view()), 
     path('login/', views.UserLoginApiView.as_view()),
