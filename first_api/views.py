@@ -546,12 +546,12 @@ class PointObservationViewSet(viewsets.ModelViewSet):
     def pointobservation_fetch_record(self, request, village_pk, zone_pk, work_pk, secure_pk, date, timeslot):
         """ Get all Point Observation Record specific to this Point Observation parameter """
         
-        print(date)
-        print(village_pk)
-        print(zone_pk)
-        print(work_pk)
-        print(secure_pk)
-        print(timeslot)
+        # print(date)
+        # print(village_pk)
+        # print(zone_pk)
+        # print(work_pk)
+        # print(secure_pk)
+        # print(timeslot)
         isExistPO = models.PointObservation.objects.filter(observation_village=village_pk, observation_zone=zone_pk, observation_work=work_pk, observation_secure=secure_pk, observation_date=date).exists()
         if(isExistPO==False):
             return Response({ "detail": "Not found."},status=status.HTTP_404_NOT_FOUND)
@@ -570,12 +570,12 @@ class PointObservationViewSet(viewsets.ModelViewSet):
     def pointobservation_fetch_record_checked_pk(self, request, village_pk, zone_pk, work_pk, secure_pk, date, timeslot):
         """ Get all Point Observation Record specific to this Point Observation parameter """
         
-        print(date)
-        print(village_pk)
-        print(zone_pk)
-        print(work_pk)
-        print(secure_pk)
-        print(timeslot)
+        # print(date)
+        # print(village_pk)
+        # print(zone_pk)
+        # print(work_pk)
+        # print(secure_pk)
+        # print(timeslot)
         isExistPO = models.PointObservation.objects.filter(observation_village=village_pk, observation_zone=zone_pk, observation_work=work_pk, observation_secure=secure_pk, observation_date=date).exists()
         if(isExistPO==False):
             return Response({ "detail": "Not found."},status=status.HTTP_404_NOT_FOUND)
