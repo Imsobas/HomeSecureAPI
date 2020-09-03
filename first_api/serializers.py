@@ -96,6 +96,11 @@ class PointObservationRecordSerializer(serializers.ModelSerializer):
         model = models.PointObservationRecord
         fields = ('pk', 'observation_pk', 'observation_checkin_time','observation_checkout_time', 'observation_timeslot','checkpoint_pk')
 
+class PointObservationRecordSerializer2(serializers.ModelSerializer):
+    class Meta: 
+        model = models.PointObservationRecord
+        fields = ('pk','observation_checkin_time', 'observation_checkout_time','observation_timeslot','checkpoint_pk')
+
 ## User serializer
 
 class UserProfileSerializer(serializers.ModelSerializer):

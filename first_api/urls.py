@@ -152,6 +152,15 @@ testObservation = views.PointObservationViewSet.as_view({
     'post': 'testObservation' 
 })
 
+## use for retrieve checked status in point observation screen
+pointobservation_fetch_record_checked_pk = views.PointObservationViewSet.as_view({
+    'get': 'pointobservation_fetch_record_checked_pk'
+})
+
+pointobservation_fetch_record = views.PointObservationViewSet.as_view({
+    'get': 'pointobservation_fetch_record'
+})
+
 
 # Home Secure main routers
 urlpatterns = [
@@ -202,7 +211,10 @@ urlpatterns = [
 
     #test 
     path('pointobservation_create_service/', testObservation ,name='testObservation'),
-
+    path('pointobservation_fetch_record_checked_pk/villages/<int:village_pk>/zones/<int:zone_pk>/works/<int:work_pk>/secures/<int:secure_pk>/dates/<str:date>/timeslots/<int:timeslot>/', pointobservation_fetch_record_checked_pk ,name='pointobservation_fetch_record_checked_pk'),
+    path('pointobservation_fetch_record/villages/<int:village_pk>/zones/<int:zone_pk>/works/<int:work_pk>/secures/<int:secure_pk>/dates/<str:date>/timeslots/<int:timeslot>/', pointobservation_fetch_record ,name='pointobservation_fetch_record'),
+    
+    
     # path('hello-view/', views.HelloApiView.as_view()), 
     path('login/', views.UserLoginApiView.as_view()),
     path('',include(router.urls))

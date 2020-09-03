@@ -542,14 +542,55 @@ class PointObservationViewSet(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
 
+    @action(detail=True, methods='GET')
+    def pointobservation_fetch_record(self, request, village_pk, zone_pk, work_pk, secure_pk, date, timeslot):
+        """ Get all Point Observation Record specific to this Point Observation parameter """
+        
+        print(date)
+        print(village_pk)
+        print(zone_pk)
+        print(work_pk)
+        print(secure_pk)
+        print(timeslot)
+        isExistPO = models.PointObservation.objects.filter(observation_village=village_pk, observation_zone=zone_pk, observation_work=work_pk, observation_secure=secure_pk, observation_date=date).exists()
+        if(isExistPO==False):
+            return Response({ "detail": "Not found."},status=status.HTTP_404_NOT_FOUND)
+        else:
+            pointObservation = models.PointObservation.objects.only('pk').get(observation_village=village_pk, observation_zone=zone_pk, observation_work=work_pk, observation_secure=secure_pk, observation_date=date)
 
+            querySet = models.PointObservationRecord.objects.all()
+
+            serializer = serializers.PointObservationRecordSerializer(querySet,many=True)
+            
+            result = serializer.data
+            return notFoundHandling(result)
+
+
+    @action(detail=True, methods='GET')
+    def pointobservation_fetch_record_checked_pk(self, request, village_pk, zone_pk, work_pk, secure_pk, date, timeslot):
+        """ Get all Point Observation Record specific to this Point Observation parameter """
+        
+        print(date)
+        print(village_pk)
+        print(zone_pk)
+        print(work_pk)
+        print(secure_pk)
+        print(timeslot)
+        isExistPO = models.PointObservation.objects.filter(observation_village=village_pk, observation_zone=zone_pk, observation_work=work_pk, observation_secure=secure_pk, observation_date=date).exists()
+        if(isExistPO==False):
+            return Response({ "detail": "Not found."},status=status.HTTP_404_NOT_FOUND)
+        else:
+            pointObservation = models.PointObservation.objects.only('pk').get(observation_village=village_pk, observation_zone=zone_pk, observation_work=work_pk, observation_secure=secure_pk, observation_date=date)
+
+            querySet = models.PointObservationRecord.objects.filter(observation_pk=pointObservation, observation_timeslot=timeslot).values_list('checkpoint_pk', flat=True)
+        
+            return notFoundHandling(querySet)
+    
+    
     @action(detail=True, methods=['post'])
     def testObservation(self, request):
         """ Test def"""
         data = request.data
-
-        
-        
 
         # MyObject.objects.filter(someField=someValue).exists()
         
@@ -559,7 +600,6 @@ class PointObservationViewSet(viewsets.ModelViewSet):
         if(isExistPO==True):
             ## already have pointObservation
             pointObservation = models.PointObservation.objects.only('pk').get(observation_village=data['observation_village'], observation_zone=data['observation_zone'], observation_work=data['observation_work'], observation_secure=data['observation_secure'], observation_date=data['observation_date'])
-
             
 
            
