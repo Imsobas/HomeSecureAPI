@@ -548,6 +548,9 @@ class PointObservationViewSet(viewsets.ModelViewSet):
         """ Test def"""
         data = request.data
 
+        
+        
+
         # MyObject.objects.filter(someField=someValue).exists()
         
         isExistPO = models.PointObservation.objects.filter(observation_village=data['observation_village'], observation_zone=data['observation_zone'], observation_work=data['observation_work'], observation_secure=data['observation_secure'], observation_date=data['observation_date']).exists()
@@ -557,19 +560,30 @@ class PointObservationViewSet(viewsets.ModelViewSet):
             ## already have pointObservation
             pointObservation = models.PointObservation.objects.only('pk').get(observation_village=data['observation_village'], observation_zone=data['observation_zone'], observation_work=data['observation_work'], observation_secure=data['observation_secure'], observation_date=data['observation_date'])
 
-            ## check the exist PointObservationRecord
-            for pointPk in data['checkpoint_list']:
+            
+
+           
+            
+            pointPkList = models.Checkpoint.objects.filter(point_zone=data['observation_zone']).values_list('pk', flat=True)
+            for pointPk in pointPkList: ## all point 
                 checkpoint = models.Checkpoint.objects.only('pk').get(pk=pointPk)
                 isExistPOPL = models.PointObservationPointList.objects.filter(observation_pk=pointObservation, checkpoint_pk=checkpoint).exists()
-                
                 if(isExistPOPL==False):
                     pointObservationPointList = models.PointObservationPointList.objects.create(observation_pk=pointObservation, checkpoint_pk = checkpoint)
                     pointObservationPointList.save()
 
+            # for pointPk in data['checkpoint_list']: ## all point 
+            #     checkpoint = models.Checkpoint.objects.only('pk').get(pk=pointPk)
+            #     isExistPOPL = models.PointObservationPointList.objects.filter(observation_pk=pointObservation, checkpoint_pk=checkpoint).exists()
+                
+            #     if(isExistPOPL==False):
+            #         pointObservationPointList = models.PointObservationPointList.objects.create(observation_pk=pointObservation, checkpoint_pk = checkpoint)
+            #         pointObservationPointList.save()
+
 
                 
-                
 
+            ## check the exist PointObservationRecord
             isExistPOR = models.PointObservationRecord.objects.filter(observation_pk=pointObservation, observation_timeslot=data['observation_timeslot'],checkpoint_pk = data['checkpoint_pk']).exists()
             if(isExistPOR==True):
                 ## already have pointObservationRecord
@@ -594,10 +608,17 @@ class PointObservationViewSet(viewsets.ModelViewSet):
             pointObservation.save()
 
             ## create new PointObservationRecord
-            for pointPk in data['checkpoint_list']:
+            pointPkList = models.Checkpoint.objects.filter(point_zone=data['observation_zone']).values_list('pk', flat=True)
+            for pointPk in pointPkList: ## all point 
                 checkpoint = models.Checkpoint.objects.only('pk').get(pk=pointPk)
                 pointObservationPointList = models.PointObservationPointList.objects.create(observation_pk=pointObservation, checkpoint_pk = checkpoint)
                 pointObservationPointList.save()
+
+            #  for pointPk in data['checkpoint_list']:
+            #     checkpoint = models.Checkpoint.objects.only('pk').get(pk=pointPk)
+            #     pointObservationPointList = models.PointObservationPointList.objects.create(observation_pk=pointObservation, checkpoint_pk = checkpoint)
+            #     pointObservationPointList.save()
+
 
             isExistPOR = models.PointObservationRecord.objects.filter(observation_pk=pointObservation, observation_timeslot=data['observation_timeslot'],checkpoint_pk = data['checkpoint_pk']).exists()
             if(isExistPOR==True):
