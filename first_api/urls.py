@@ -161,6 +161,22 @@ pointobservation_fetch_record = views.PointObservationViewSet.as_view({
     'get': 'pointobservation_fetch_record'
 })
 
+fetch_pointobservation = views.PointObservationViewSet.as_view({
+    'get': 'fetch_pointobservation'
+})
+
+fetch_pointobservation_null_work = views.PointObservationViewSet.as_view({
+    'get': 'fetch_pointobservation_null_work'
+})
+
+fetch_pointobservation_null_zone = views.PointObservationViewSet.as_view({
+    'get': 'fetch_pointobservation_null_zone'
+})
+
+fetch_pointobservation_null_zone_null_work = views.PointObservationViewSet.as_view({
+    'get': 'fetch_pointobservation_null_zone_null_work'
+})
+
 
 # Home Secure main routers
 urlpatterns = [
@@ -213,7 +229,12 @@ urlpatterns = [
     path('pointobservation_create_service/', testObservation ,name='testObservation'),
     path('pointobservation_fetch_record_checked_pk/villages/<int:village_pk>/zones/<int:zone_pk>/works/<int:work_pk>/secures/<int:secure_pk>/dates/<str:date>/timeslots/<int:timeslot>/', pointobservation_fetch_record_checked_pk ,name='pointobservation_fetch_record_checked_pk'),
     path('pointobservation_fetch_record/villages/<int:village_pk>/zones/<int:zone_pk>/works/<int:work_pk>/secures/<int:secure_pk>/dates/<str:date>/timeslots/<int:timeslot>/', pointobservation_fetch_record ,name='pointobservation_fetch_record'),
+    path('fetch_pointobservation/villages/<int:village_pk>/zones/<int:zone_pk>/works/<int:work_pk>/dates/<str:date>/', fetch_pointobservation ,name='fetch_pointobservation'),
+    path('fetch_pointobservation/villages/<int:village_pk>/zones/<int:zone_pk>/works/null/dates/<str:date>/', fetch_pointobservation_null_work ,name='fetch_pointobservation_null_work'),
+    path('fetch_pointobservation/villages/<int:village_pk>/zones/null/works/<int:work_pk>/dates/<str:date>/', fetch_pointobservation_null_zone ,name='fetch_pointobservation_null_zone'),
+    path('fetch_pointobservation/villages/<int:village_pk>/zones/null/works/null/dates/<str:date>/', fetch_pointobservation_null_zone_null_work ,name='fetch_pointobservation_null_zone_null_work'),
     
+
     
     # path('hello-view/', views.HelloApiView.as_view()), 
     path('login/', views.UserLoginApiView.as_view()),

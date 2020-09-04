@@ -543,6 +543,238 @@ class PointObservationViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,)
 
     @action(detail=True, methods='GET')
+    def fetch_pointobservation_null_zone_null_work(self, request, village_pk, date):
+        """Get data for front of working history services, get Point Observation PK, and Secure data"""
+        isExistPO = models.PointObservation.objects.filter(observation_village=village_pk, observation_date=date).exists()
+        if(isExistPO==False):
+            return Response({ "detail": "Not found."},status=status.HTTP_404_NOT_FOUND)
+        else:
+            pointObservation = models.PointObservation.objects.filter(observation_village=village_pk, observation_date=date).values_list('pk','observation_work','observation_secure')
+            
+            print(pointObservation)
+
+            
+            result = []
+
+            for po in pointObservation:
+                pointObservationDict = dict()
+
+                pointObservationPk = po[0]
+                workPk = po[1]
+                securePk = po[2]
+                # print(work_pk)
+                workQuerySet = models.Work.objects.filter(pk=workPk).last()
+                serializer = serializers.WorkSerializer(workQuerySet)
+                workData = serializer.data
+                ### filter by select only sepecific data field
+                newWorkData = dict()
+                # newWorkData['pk'] = workData['pk']
+                newWorkData['work_name'] = workData['work_name']
+                newWorkData['work_start_time'] = workData['work_start_time']
+                newWorkData['work_end_time'] = workData['work_end_time']
+                newWorkData['work_end_time'] = workData['work_end_time']
+                newWorkData['work_hour_split'] = workData['work_hour_split']
+                
+
+
+                secureQuerySet = models.SecureGuard.objects.filter(pk=securePk).last()
+                serializer = serializers.SecureGuardSerializer(secureQuerySet)
+                secureData = serializer.data
+                newSecureData = dict()
+                newSecureData['secure_firstname'] = secureData['secure_firstname']
+                newSecureData['secure_lastname'] = secureData['secure_lastname']
+                newSecureData['secure_type'] = secureData['secure_type']
+                
+                
+                pointObservationDict['pk'] = pointObservationPk
+                pointObservationDict['work'] = newWorkData
+                pointObservationDict['secure'] = newSecureData
+
+                result.append(pointObservationDict)
+            
+            return notFoundHandling(result)
+
+    @action(detail=True, methods='GET')
+    def fetch_pointobservation_null_zone(self, request, village_pk, work_pk, date):
+        """Get data for front of working history services, get Point Observation PK, and Secure data"""
+        isExistPO = models.PointObservation.objects.filter(observation_village=village_pk, observation_work=work_pk, observation_date=date).exists()
+        if(isExistPO==False):
+            return Response({ "detail": "Not found."},status=status.HTTP_404_NOT_FOUND)
+        else:
+            pointObservation = models.PointObservation.objects.filter(observation_village=village_pk, observation_work=work_pk, observation_date=date).values_list('pk','observation_work','observation_secure')
+            
+            print(pointObservation)
+
+            
+            result = []
+
+            for po in pointObservation:
+                pointObservationDict = dict()
+
+                pointObservationPk = po[0]
+                workPk = po[1]
+                securePk = po[2]
+                # print(work_pk)
+                workQuerySet = models.Work.objects.filter(pk=workPk).last()
+                serializer = serializers.WorkSerializer(workQuerySet)
+                workData = serializer.data
+                ### filter by select only sepecific data field
+                newWorkData = dict()
+                # newWorkData['pk'] = workData['pk']
+                newWorkData['work_name'] = workData['work_name']
+                newWorkData['work_start_time'] = workData['work_start_time']
+                newWorkData['work_end_time'] = workData['work_end_time']
+                newWorkData['work_end_time'] = workData['work_end_time']
+                newWorkData['work_hour_split'] = workData['work_hour_split']
+                
+
+
+                secureQuerySet = models.SecureGuard.objects.filter(pk=securePk).last()
+                serializer = serializers.SecureGuardSerializer(secureQuerySet)
+                secureData = serializer.data
+                newSecureData = dict()
+                newSecureData['secure_firstname'] = secureData['secure_firstname']
+                newSecureData['secure_lastname'] = secureData['secure_lastname']
+                newSecureData['secure_type'] = secureData['secure_type']
+                
+                
+                pointObservationDict['pk'] = pointObservationPk
+                pointObservationDict['work'] = newWorkData
+                pointObservationDict['secure'] = newSecureData
+
+                result.append(pointObservationDict)
+            
+            return notFoundHandling(result)
+
+
+    @action(detail=True, methods='GET')
+    def fetch_pointobservation_null_work(self, request, village_pk, zone_pk, date):
+        """Get data for front of working history services, get Point Observation PK, and Secure data"""
+        isExistPO = models.PointObservation.objects.filter(observation_village=village_pk, observation_zone=zone_pk, observation_date=date).exists()
+        if(isExistPO==False):
+            return Response({ "detail": "Not found."},status=status.HTTP_404_NOT_FOUND)
+        else:
+            pointObservation = models.PointObservation.objects.filter(observation_village=village_pk, observation_zone=zone_pk, observation_date=date).values_list('pk','observation_work','observation_secure')
+            print(pointObservation)
+
+            result = []
+
+            for po in pointObservation:
+                pointObservationDict = dict()
+
+                pointObservationPk = po[0]
+                workPk = po[1]
+                securePk = po[2]
+                # print(work_pk)
+                workQuerySet = models.Work.objects.filter(pk=workPk).last()
+                serializer = serializers.WorkSerializer(workQuerySet)
+                workData = serializer.data
+                ### filter by select only sepecific data field
+                newWorkData = dict()
+                # newWorkData['pk'] = workData['pk']
+                newWorkData['work_name'] = workData['work_name']
+                newWorkData['work_start_time'] = workData['work_start_time']
+                newWorkData['work_end_time'] = workData['work_end_time']
+                newWorkData['work_end_time'] = workData['work_end_time']
+                newWorkData['work_hour_split'] = workData['work_hour_split']
+                
+
+
+                secureQuerySet = models.SecureGuard.objects.filter(pk=securePk).last()
+                serializer = serializers.SecureGuardSerializer(secureQuerySet)
+                secureData = serializer.data
+                newSecureData = dict()
+                newSecureData['secure_firstname'] = secureData['secure_firstname']
+                newSecureData['secure_lastname'] = secureData['secure_lastname']
+                newSecureData['secure_type'] = secureData['secure_type']
+                
+                
+                pointObservationDict['pk'] = pointObservationPk
+                pointObservationDict['work'] = newWorkData
+                pointObservationDict['secure'] = newSecureData
+
+                result.append(pointObservationDict)
+            
+            return notFoundHandling(result)
+
+
+    @action(detail=True, methods='GET')
+    def fetch_pointobservation(self, request, village_pk, zone_pk, work_pk, date):
+        """Get data for front of working history services, get Point Observation PK, and Secure data"""
+        isExistPO = models.PointObservation.objects.filter(observation_village=village_pk, observation_zone=zone_pk, observation_work=work_pk, observation_date=date).exists()
+        if(isExistPO==False):
+            return Response({ "detail": "Not found."},status=status.HTTP_404_NOT_FOUND)
+        else:
+            pointObservation = models.PointObservation.objects.filter(observation_village=village_pk, observation_zone=zone_pk, observation_date=date).values_list('pk','observation_work','observation_secure')
+            
+            print(pointObservation)
+
+            
+            result = []
+
+            for po in pointObservation:
+                pointObservationDict = dict()
+
+                pointObservationPk = po[0]
+                workPk = po[1]
+                securePk = po[2]
+                # print(work_pk)
+                workQuerySet = models.Work.objects.filter(pk=workPk).last()
+                serializer = serializers.WorkSerializer(workQuerySet)
+                workData = serializer.data
+                ### filter by select only sepecific data field
+                newWorkData = dict()
+                # newWorkData['pk'] = workData['pk']
+                newWorkData['work_name'] = workData['work_name']
+                newWorkData['work_start_time'] = workData['work_start_time']
+                newWorkData['work_end_time'] = workData['work_end_time']
+                newWorkData['work_end_time'] = workData['work_end_time']
+                newWorkData['work_hour_split'] = workData['work_hour_split']
+                
+
+
+                secureQuerySet = models.SecureGuard.objects.filter(pk=securePk).last()
+                serializer = serializers.SecureGuardSerializer(secureQuerySet)
+                secureData = serializer.data
+                newSecureData = dict()
+                newSecureData['secure_firstname'] = secureData['secure_firstname']
+                newSecureData['secure_lastname'] = secureData['secure_lastname']
+                newSecureData['secure_type'] = secureData['secure_type']
+                
+                
+                pointObservationDict['pk'] = pointObservationPk
+                pointObservationDict['work'] = newWorkData
+                pointObservationDict['secure'] = newSecureData
+
+                result.append(pointObservationDict)
+            
+            return notFoundHandling(result)
+
+
+
+        #         querySet = models.Home.objects.filter(home_village=village_pk, home_zone=zone_pk, is_active=True).all()
+        # serializer = serializers.HomeSerializer(querySet,many=True)
+        # result = serializer.data
+
+    #              work_name = models.CharField(max_length=100, unique=True)
+    # work_start_time = models.TimeField(null=True, blank=True)
+    # work_end_time = models.TimeField(null=True, blank=True)
+    # work_hour_split
+                
+
+
+
+
+            #    pointPkList = models.Checkpoint.objects.filter(point_zone=data['observation_zone']).values_list('pk', flat=True)
+            # for pointPk in pointPkList: ## all point 
+            #     checkpoint = models.Checkpoint.objects.only('pk').get(pk=pointPk)
+            #     isExistPOPL = models.PointObservationPointList.objects.filter(observation_pk=pointObservation, checkpoint_pk=checkpoint).exists()
+            #     if(isExistPOPL==False):
+            #         pointObservationPointList = models.PointObservationPointList.objects.create(observation_pk=pointObservation, checkpoint_pk = checkpoint)
+            #         pointObservationPointList.save()
+
+
+    @action(detail=True, methods='GET')
     def pointobservation_fetch_record(self, request, village_pk, zone_pk, work_pk, secure_pk, date, timeslot):
         """ Get all Point Observation Record specific to this Point Observation parameter """
         
