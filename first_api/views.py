@@ -544,6 +544,31 @@ class PointObservationViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,)
 
     @action(detail=True, methods='GET')
+    def fetch_pointobservation_update_work(self, request, work_pk):
+        workQuerySet = models.Work.objects.filter(pk=work_pk).last()
+        serializer = serializers.WorkSerializer(workQuerySet)
+        workData = serializer.data
+        ### filter by select only sepecific data field
+        newWorkData = dict()
+        newWorkData['work_start_time'] = workData['work_start_time']
+        newWorkData['work_end_time'] = workData['work_end_time']
+        newWorkData['work_hour_split'] = workData['work_hour_split']
+        
+        return notFoundHandling(newWorkData)
+
+    @action(detail=True, methods='GET')
+    def fetch_pointobservation_update_zone(self, request, zone_pk):
+        zoneQuerySet = models.Zone.objects.filter(pk=zone_pk).last()
+        serializer = serializers.ZoneSerializer(zoneQuerySet)
+        zoneData = serializer.data
+        ### filter by select only sepecific data field
+        newZoneData = dict()
+        newZoneData['zone_name'] = zoneData['zone_name']
+        newZoneData['zone_number'] = zoneData['zone_number']
+        return notFoundHandling(newZoneData)
+
+
+    @action(detail=True, methods='GET')
     def fetch_pointobservation_null_zone_null_work(self, request, village_pk, date):
         """Get data for front of working history services, get Point Observation PK, and Secure data"""
         isExistPO = models.PointObservation.objects.filter(observation_village=village_pk, observation_date=date).exists()
@@ -569,10 +594,9 @@ class PointObservationViewSet(viewsets.ModelViewSet):
                 workData = serializer.data
                 ### filter by select only sepecific data field
                 newWorkData = dict()
-                # newWorkData['pk'] = workData['pk']
+                newWorkData['pk'] = workData['pk']
                 newWorkData['work_name'] = workData['work_name']
                 newWorkData['work_start_time'] = workData['work_start_time']
-                newWorkData['work_end_time'] = workData['work_end_time']
                 newWorkData['work_end_time'] = workData['work_end_time']
                 newWorkData['work_hour_split'] = workData['work_hour_split']
                 
@@ -585,6 +609,7 @@ class PointObservationViewSet(viewsets.ModelViewSet):
                 newSecureData['secure_firstname'] = secureData['secure_firstname']
                 newSecureData['secure_lastname'] = secureData['secure_lastname']
                 newSecureData['secure_type'] = secureData['secure_type']
+                newSecureData['secure_zone'] = secureData['secure_zone']
                 
                 
                 pointObservationDict['pk'] = pointObservationPk
@@ -621,10 +646,9 @@ class PointObservationViewSet(viewsets.ModelViewSet):
                 workData = serializer.data
                 ### filter by select only sepecific data field
                 newWorkData = dict()
-                # newWorkData['pk'] = workData['pk']
+                newWorkData['pk'] = workData['pk']
                 newWorkData['work_name'] = workData['work_name']
                 newWorkData['work_start_time'] = workData['work_start_time']
-                newWorkData['work_end_time'] = workData['work_end_time']
                 newWorkData['work_end_time'] = workData['work_end_time']
                 newWorkData['work_hour_split'] = workData['work_hour_split']
                 
@@ -637,6 +661,7 @@ class PointObservationViewSet(viewsets.ModelViewSet):
                 newSecureData['secure_firstname'] = secureData['secure_firstname']
                 newSecureData['secure_lastname'] = secureData['secure_lastname']
                 newSecureData['secure_type'] = secureData['secure_type']
+                newSecureData['secure_zone'] = secureData['secure_zone']
                 
                 
                 pointObservationDict['pk'] = pointObservationPk
@@ -672,10 +697,9 @@ class PointObservationViewSet(viewsets.ModelViewSet):
                 workData = serializer.data
                 ### filter by select only sepecific data field
                 newWorkData = dict()
-                # newWorkData['pk'] = workData['pk']
+                newWorkData['pk'] = workData['pk']
                 newWorkData['work_name'] = workData['work_name']
                 newWorkData['work_start_time'] = workData['work_start_time']
-                newWorkData['work_end_time'] = workData['work_end_time']
                 newWorkData['work_end_time'] = workData['work_end_time']
                 newWorkData['work_hour_split'] = workData['work_hour_split']
                 
@@ -688,6 +712,7 @@ class PointObservationViewSet(viewsets.ModelViewSet):
                 newSecureData['secure_firstname'] = secureData['secure_firstname']
                 newSecureData['secure_lastname'] = secureData['secure_lastname']
                 newSecureData['secure_type'] = secureData['secure_type']
+                newSecureData['secure_zone'] = secureData['secure_zone']
                 
                 
                 pointObservationDict['pk'] = pointObservationPk
@@ -725,14 +750,11 @@ class PointObservationViewSet(viewsets.ModelViewSet):
                 workData = serializer.data
                 ### filter by select only sepecific data field
                 newWorkData = dict()
-                # newWorkData['pk'] = workData['pk']
+                newWorkData['pk'] = workData['pk']
                 newWorkData['work_name'] = workData['work_name']
                 newWorkData['work_start_time'] = workData['work_start_time']
                 newWorkData['work_end_time'] = workData['work_end_time']
-                newWorkData['work_end_time'] = workData['work_end_time']
                 newWorkData['work_hour_split'] = workData['work_hour_split']
-                
-
 
                 secureQuerySet = models.SecureGuard.objects.filter(pk=securePk).last()
                 serializer = serializers.SecureGuardSerializer(secureQuerySet)
@@ -741,8 +763,13 @@ class PointObservationViewSet(viewsets.ModelViewSet):
                 newSecureData['secure_firstname'] = secureData['secure_firstname']
                 newSecureData['secure_lastname'] = secureData['secure_lastname']
                 newSecureData['secure_type'] = secureData['secure_type']
-                
-                
+                newSecureData['secure_zone'] = secureData['secure_zone'] 
+
+
+                # zoneQuerySet = models.Zone.objects.filter(pk=zonePk).last()
+                # serializer = serializers.SecureGuardSerializer(zoneQuerySet)
+                # zoneData = serializer.data
+                    
                 pointObservationDict['pk'] = pointObservationPk
                 pointObservationDict['work'] = newWorkData
                 pointObservationDict['secure'] = newSecureData
