@@ -20,6 +20,7 @@ from first_api import models
 from first_api import permission
 import json
 import datetime
+from django.db.models import Count
 
 ## helper function
 
@@ -885,35 +886,34 @@ class PointObservationRecordViewSet(viewsets.ModelViewSet):
 
             return notFoundHandling(result)
 
+    @action(detail=True, methods='GET')
+    def fetch_pointobservationrecord_timeslots_percent(self, request, pointobservation_pk):
+        """Get data for front of working history services, get Point Observation PK, and Secure data"""
+        # print(pointobservation_pk)
+        # print(timeslot)
+        # pointObservation = models.PointObservation.objects.only('pk').get(pk=pointobservation_pk)
+        isExistPO = models.PointObservation.objects.filter(pk=pointobservation_pk).exists()
+
+        if(isExistPO==False):
+            return Response({ "detail": "Not found point observation."},status=status.HTTP_404_NOT_FOUND)
+        else:
+            pointNum = models.PointObservationPointList.objects.filter(observation_pk=pointobservation_pk ).count()
+
+            pointObservationRecord = models.PointObservationRecord.objects.filter(observation_pk=pointobservation_pk).annotate(num_timeslot=Count('observation_timeslot'))
+
+            result = []
+            for item in pointObservationRecord:
+                temp = dict()
+                temp['timeslot'] = item.observation_timeslot
+                temp['percent'] =  int((item.num_timeslot/pointNum)*100)
+                result.append(temp)
+
+            return notFoundHandling(result)
 
 
-        # isExistPOR = models.PointObservationRecord.objects.filter(observation_pk=pointobservation_pk, observation_timeslot=timeslot).exists()
-        # if(isExistPO==False):
-        #     print("notexist")
-        #     result = {0}
-        #     return notFoundHandling(result)
-        # else:
-        #     result = models.PointObservationRecord.objects.filter(observation_pk=pointobservation_pk, observation_timeslot=timeslot).count()
-                    
-            
-        #     result = {result}
-        #     return notFoundHandling(result)   
 
 
 
-
-
-
-
-
-# class PointInspectionViewSet(viewsets.ModelViewSet):
-#     serializer_class = serializers.PointInspectionSerializer
-#     queryset = models.PointInspection.objects.all()
-#     authentication_classes = (TokenAuthentication,)
-#     permission_classes = (IsAuthenticated,)
-
-            
-        
 
 
 
