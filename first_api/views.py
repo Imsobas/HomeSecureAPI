@@ -609,12 +609,19 @@ class PointObservationViewSet(viewsets.ModelViewSet):
                 newSecureData['secure_firstname'] = secureData['secure_firstname']
                 newSecureData['secure_lastname'] = secureData['secure_lastname']
                 newSecureData['secure_type'] = secureData['secure_type']
-                newSecureData['secure_zone'] = secureData['secure_zone']
+                zonePk = secureData['secure_zone']
                 
+                zoneQuerySet = models.Zone.objects.filter(pk=zonePk).last()
+                serializer = serializers.ZoneSerializer(zoneQuerySet)
+                zoneData = serializer.data
+                newZoneData = dict()
+                newZoneData['zone_name'] = zoneData['zone_name']
+                newZoneData['zone_number'] = zoneData['zone_number']
                 
                 pointObservationDict['pk'] = pointObservationPk
                 pointObservationDict['work'] = newWorkData
                 pointObservationDict['secure'] = newSecureData
+                pointObservationDict['zone'] = newZoneData
 
                 result.append(pointObservationDict)
             
@@ -651,8 +658,7 @@ class PointObservationViewSet(viewsets.ModelViewSet):
                 newWorkData['work_start_time'] = workData['work_start_time']
                 newWorkData['work_end_time'] = workData['work_end_time']
                 newWorkData['work_hour_split'] = workData['work_hour_split']
-                
-
+            
 
                 secureQuerySet = models.SecureGuard.objects.filter(pk=securePk).last()
                 serializer = serializers.SecureGuardSerializer(secureQuerySet)
@@ -661,12 +667,20 @@ class PointObservationViewSet(viewsets.ModelViewSet):
                 newSecureData['secure_firstname'] = secureData['secure_firstname']
                 newSecureData['secure_lastname'] = secureData['secure_lastname']
                 newSecureData['secure_type'] = secureData['secure_type']
-                newSecureData['secure_zone'] = secureData['secure_zone']
+                zonePk = secureData['secure_zone']
+                
+                zoneQuerySet = models.Zone.objects.filter(pk=zonePk).last()
+                serializer = serializers.ZoneSerializer(zoneQuerySet)
+                zoneData = serializer.data
+                newZoneData = dict()
+                newZoneData['zone_name'] = zoneData['zone_name']
+                newZoneData['zone_number'] = zoneData['zone_number']
                 
                 
                 pointObservationDict['pk'] = pointObservationPk
                 pointObservationDict['work'] = newWorkData
                 pointObservationDict['secure'] = newSecureData
+                pointObservationDict['zone'] = newZoneData
 
                 result.append(pointObservationDict)
             
@@ -712,12 +726,20 @@ class PointObservationViewSet(viewsets.ModelViewSet):
                 newSecureData['secure_firstname'] = secureData['secure_firstname']
                 newSecureData['secure_lastname'] = secureData['secure_lastname']
                 newSecureData['secure_type'] = secureData['secure_type']
-                newSecureData['secure_zone'] = secureData['secure_zone']
+                zonePk = secureData['secure_zone']
+                
+                zoneQuerySet = models.Zone.objects.filter(pk=zonePk).last()
+                serializer = serializers.ZoneSerializer(zoneQuerySet)
+                zoneData = serializer.data
+                newZoneData = dict()
+                newZoneData['zone_name'] = zoneData['zone_name']
+                newZoneData['zone_number'] = zoneData['zone_number']
                 
                 
                 pointObservationDict['pk'] = pointObservationPk
                 pointObservationDict['work'] = newWorkData
                 pointObservationDict['secure'] = newSecureData
+                pointObservationDict['zone'] = newZoneData
 
                 result.append(pointObservationDict)
             
@@ -763,16 +785,22 @@ class PointObservationViewSet(viewsets.ModelViewSet):
                 newSecureData['secure_firstname'] = secureData['secure_firstname']
                 newSecureData['secure_lastname'] = secureData['secure_lastname']
                 newSecureData['secure_type'] = secureData['secure_type']
-                newSecureData['secure_zone'] = secureData['secure_zone'] 
+                zonePk = secureData['secure_zone']
+        
+                zoneQuerySet = models.Zone.objects.filter(pk=zonePk).last()
+                serializer = serializers.ZoneSerializer(zoneQuerySet)
+                zoneData = serializer.data
+                newZoneData = dict()
+                newZoneData['zone_name'] = zoneData['zone_name']
+                newZoneData['zone_number'] = zoneData['zone_number']
+                
+                
 
-
-                # zoneQuerySet = models.Zone.objects.filter(pk=zonePk).last()
-                # serializer = serializers.SecureGuardSerializer(zoneQuerySet)
-                # zoneData = serializer.data
                     
                 pointObservationDict['pk'] = pointObservationPk
                 pointObservationDict['work'] = newWorkData
                 pointObservationDict['secure'] = newSecureData
+                pointObservationDict['zone'] = newZoneData
 
                 result.append(pointObservationDict)
             
