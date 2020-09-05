@@ -880,14 +880,15 @@ class PointObservationPointListViewSet(viewsets.ModelViewSet):
                 pointDict['pk'] = pointPk
                 
                 
-                checkpoint = models.Checkpoint.objects.filter(pk=pointPk).values_list('point_name','point_lat','point_lon').last()
-                
-                
-                # print("xxxx")
+                checkpointQuerySet = models.Checkpoint.objects.filter(pk=pointPk).all()
+                serializer = serializers.CheckpointSerializer(checkpointQuerySet, many=True)
+                checkpoint = serializer.data
+
                 # print(checkpoint)
-                pointDict['point_name'] = checkpoint[0]
-                pointDict['point_lat'] = checkpoint[1]
-                pointDict['point_lon']= checkpoint[2]
+             
+                pointDict['point_name'] = checkpoint[0]['point_name']
+                pointDict['point_lat'] = checkpoint[0]['point_lat']
+                pointDict['point_lon']= checkpoint[0]['point_lon']
                 
                 isExistPOR = models.PointObservationRecord.objects.filter(observation_pk=pointobservation_pk, observation_timeslot= timeslot, checkpoint_pk = pointPk).exists()
 
