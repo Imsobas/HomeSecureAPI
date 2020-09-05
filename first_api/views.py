@@ -870,13 +870,44 @@ class PointObservationPointListViewSet(viewsets.ModelViewSet):
             return Response({ "detail": "Not found point observation."},status=status.HTTP_404_NOT_FOUND)
         else:
 
-            pointList = models.PointObservationPointList.objects.filter(observation_pk=pointobservation_pk).values_list('checkpoint_pk', flat=True)
+            pointPkList = models.PointObservationPointList.objects.filter(observation_pk=pointobservation_pk).values_list('checkpoint_pk', flat=True)
             
-            for pointPk in pointList:
-                print(pointPk)
+            result = []
+            ### each point pk
+            for pointPk in pointPkList:
+                    
+                pointDict = dict()
+                pointDict['pk'] = pointPk
+                
+                
+                checkpoint = models.Checkpoint.objects.filter(pk=pointPk).values_list('point_name','point_lat','point_lon').last()
+                
+                
+                # print("xxxx")
+                # print(checkpoint)
+                pointDict['point_name'] = checkpoint[0]
+                pointDict['point_lat'] = checkpoint[1]
+                pointDict['point_lon']= checkpoint[2]
+                
+                isExistPOR = models.PointObservationRecord.objects.filter(observation_pk=pointobservation_pk, observation_timeslot= timeslot, checkpoint_pk = pointPk).exists()
 
+                if(isExistPOR==False):
+                    pointDict['checked_status'] = False
+                    pointDict['checkin_time']= None
+                    pointDict['checkout_time'] = None
+                    result.append(pointDict)
+                else: 
+                    porQuerySet = models.PointObservationRecord.objects.filter(observation_pk=pointobservation_pk, observation_timeslot= timeslot).all()
+                    serializer = serializers.PointObservationRecordSerializer(porQuerySet,many=True)
+                    porData = serializer.data
+                    
+                    pointDict['check_status'] = True
+                    pointDict['checkin_time'] = porData[0]['observation_checkin_time']
+                    pointDict['checkout_time'] = porData[0]['observation_checkout_time']
 
-            return Response({ "detail": "Test"},status=status.HTTP_404_NOT_FOUND)
+                    result.append(pointDict)
+
+            return notFoundHandling(result)
             
             # pointNum = models.PointObservationPointList.objects.filter(observation_pk=pointobservation_pk ).count()
             # checkedPointNum = models.PointObservationRecord.objects.filter(observation_pk=pointobservation_pk, observation_timeslot=timeslot).count()
