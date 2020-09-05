@@ -311,6 +311,7 @@ class MaintenanceFeePeriod(models.Model):
     fee_start = models.DateTimeField(null=True, blank=True)
     fee_end = models.DateTimeField(null=True, blank=True)
     fee_deadline = models.DateTimeField(null=True, blank=True)
+    is_active = models.BooleanField(default=True)
 
 class MaintenanceFee(models.Model):
     fee_home = models.ForeignKey(Home,null=True, blank=True, on_delete=models.DO_NOTHING)
@@ -318,6 +319,7 @@ class MaintenanceFee(models.Model):
     fee_house_space = models.FloatField(default=0)
     fee_amount = models.FloatField(default=0)
     fee_paid_status = models.BooleanField(default=True)
+    is_active = models.BooleanField(default=True)
 
 
     # inspect_village = models.ForeignKey(Village, null=True, blank=True, on_delete=models.DO_NOTHING)
