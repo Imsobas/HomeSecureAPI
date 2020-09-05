@@ -884,8 +884,6 @@ class PointObservationPointListViewSet(viewsets.ModelViewSet):
                 serializer = serializers.CheckpointSerializer(checkpointQuerySet, many=True)
                 checkpoint = serializer.data
 
-                # print(checkpoint)
-             
                 pointDict['point_name'] = checkpoint[0]['point_name']
                 pointDict['point_lat'] = checkpoint[0]['point_lat']
                 pointDict['point_lon']= checkpoint[0]['point_lon']
@@ -959,13 +957,13 @@ class PointObservationRecordViewSet(viewsets.ModelViewSet):
         else:
             pointNum = models.PointObservationPointList.objects.filter(observation_pk=pointobservation_pk ).count()
 
-            pointObservationRecord = models.PointObservationRecord.objects.filter(observation_pk=pointobservation_pk).annotate(num_timeslot=Count('observation_timeslot'))
+            pointObservationRecord = models.PointObservationRecord.objects.filter(observation_pk=pointobservation_pk).values('observation_timeslot').order_by().annotate(Count('checkpoint_pk'))
 
             result = []
             for item in pointObservationRecord:
                 temp = dict()
-                temp['timeslot'] = item.observation_timeslot
-                temp['percent'] =  int((item.num_timeslot/pointNum)*100)
+                temp['timeslot'] = item['observation_timeslot']
+                temp['percent'] =  int((item['checkpoint_pk__count']/pointNum)*100)
                 result.append(temp)
 
             return notFoundHandling(result)
