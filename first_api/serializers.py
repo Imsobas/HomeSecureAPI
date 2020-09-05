@@ -104,12 +104,12 @@ class PointObservationRecordSerializer(serializers.ModelSerializer):
 class MaintenanceFeePeriodSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.MaintenanceFeePeriod
-        fields = ('pk', 'fee_village', 'fee_period_name','fee_start', 'fee_end','fee_deadline')
+        fields = ('pk', 'fee_village', 'fee_period_name','fee_start', 'fee_end','fee_deadline','is_active')
 
 class MaintenanceFeeSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.MaintenanceFee
-        fields = ('pk', 'fee_home', 'fee_paid_date','fee_house_space', 'fee_amount')
+        fields = ('pk', 'fee_home', 'fee_paid_date','fee_house_space', 'fee_amount','is_active')
 
 
 ## User serializer
