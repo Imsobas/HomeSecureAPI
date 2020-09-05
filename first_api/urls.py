@@ -247,7 +247,7 @@ urlpatterns = [
     path('fetch_pointobservation/villages/<int:village_pk>/zones/null/works/null/dates/<str:date>/', fetch_pointobservation_null_zone_null_work ,name='fetch_pointobservation_null_zone_null_work'),
     path('fetch_pointobservationrecord/pointobservation/<int:pointobservation_pk>/timeslots/<int:timeslot>/percent/',fetch_pointobservationrecord_percent,name='fetch_pointobservationrecord_percent'),
     path('fetch_pointobservationrecord/pointobservation/<int:pointobservation_pk>/timeslots/percent/', fetch_pointobservationrecord_timeslots_percent,name='fetch_pointobservationrecord_timeslots_percent'),
-    path('fetch_pointobservationrecord_pointlist/pointobservation/<int:pointobservation_pk>/timeslots/<int:timeslot>/percent/', fetch_pointobservationrecord_pointlist,name='fetch_pointobservationrecord_pointlist'),
+    path('fetch_pointobservationrecord_pointlist/pointobservation/<int:pointobservation_pk>/timeslots/<int:timeslot>/checkpoint_status', fetch_pointobservationrecord_pointlist,name='fetch_pointobservationrecord_pointlist'),
    
     
 
