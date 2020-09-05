@@ -25,6 +25,8 @@ router.register(r'settings',views.SettingViewSet)
 router.register(r'point_observation',views.PointObservationViewSet)
 router.register(r'point_observation_point_list',views.PointObservationPointListViewSet)
 router.register(r'point_observation_record',views.PointObservationRecordViewSet)
+router.register(r'maintenance_fee_period',views.MaintenanceFeePeriodViewSet)
+router.register(r'maintenance_fee',views.MaintenanceFeeViewSet)
 
 ## Binding URL
 

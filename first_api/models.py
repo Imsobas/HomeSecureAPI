@@ -305,6 +305,19 @@ class PointObservationRecord(models.Model):
     class Meta:
         unique_together = ('observation_pk', 'observation_timeslot','checkpoint_pk')
     
+class MaintenanceFeePeriod(models.Model):
+    fee_village = models.ForeignKey(Village,null=True, blank=True, on_delete=models.DO_NOTHING)
+    fee_period_name = models.CharField(max_length=100)
+    fee_start = models.DateTimeField(null=True, blank=True)
+    fee_end = models.DateTimeField(null=True, blank=True)
+    fee_deadline = models.DateTimeField(null=True, blank=True)
+
+class MaintenanceFee(models.Model):
+    fee_home = models.ForeignKey(Home,null=True, blank=True, on_delete=models.DO_NOTHING)
+    fee_paid_date = models.DateTimeField(null=True, blank=True)
+    fee_house_space = models.FloatField(default=0)
+    fee_amount = models.FloatField(default=0)
+    fee_paid_status = models.BooleanField(default=True)
 
 
     # inspect_village = models.ForeignKey(Village, null=True, blank=True, on_delete=models.DO_NOTHING)

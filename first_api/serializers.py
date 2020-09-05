@@ -96,10 +96,21 @@ class PointObservationRecordSerializer(serializers.ModelSerializer):
         model = models.PointObservationRecord
         fields = ('pk', 'observation_pk', 'observation_checkin_time','observation_checkout_time', 'observation_timeslot','checkpoint_pk')
 
-class PointObservationRecordSerializer2(serializers.ModelSerializer):
-    class Meta: 
-        model = models.PointObservationRecord
-        fields = ('pk','observation_checkin_time', 'observation_checkout_time','observation_timeslot','checkpoint_pk')
+# class PointObservationRecordSerializer2(serializers.ModelSerializer):
+#     class Meta: 
+#         model = models.PointObservationRecord
+#         fields = ('pk','observation_checkin_time', 'observation_checkout_time','observation_timeslot','checkpoint_pk')
+
+class MaintenanceFeePeriodSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.MaintenanceFeePeriod
+        fields = ('pk', 'fee_village', 'fee_period_name','fee_start', 'fee_end','fee_deadline')
+
+class MaintenanceFeeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.MaintenanceFee
+        fields = ('pk', 'fee_home', 'fee_paid_date','fee_house_space', 'fee_amount')
+
 
 ## User serializer
 

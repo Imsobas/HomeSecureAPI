@@ -1024,7 +1024,17 @@ class PointObservationRecordViewSet(viewsets.ModelViewSet):
             return notFoundHandling(result)
 
 
+class MaintenanceFeePeriodViewSet(viewsets.ModelViewSet):
+    serializer_class = serializers.MaintenanceFeePeriodSerializer
+    queryset = models.MaintenanceFeePeriod.objects.all()
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
 
+class MaintenanceFeeViewSet(viewsets.ModelViewSet):
+    serializer_class = serializers.MaintenanceFeeSerializer
+    queryset = models.MaintenanceFee.objects.all()
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
 
 
 
