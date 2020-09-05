@@ -794,7 +794,7 @@ class PointObservationViewSet(viewsets.ModelViewSet):
         if(isExistPO==True):
             ## already have pointObservation
             pointObservation = models.PointObservation.objects.only('pk').get(observation_village=data['observation_village'], observation_zone=data['observation_zone'], observation_work=data['observation_work'], observation_secure=data['observation_secure'], observation_date=data['observation_date'])
-            pointPkList = models.Checkpoint.objects.filter(point_zone=data['observation_zone']).values_list('pk', flat=True)
+            pointPkList = models.Checkpoint.objects.filter(point_zone=data['observation_zone'],is_active=True).values_list('pk', flat=True)
             for pointPk in pointPkList: ## all point 
                 checkpoint = models.Checkpoint.objects.only('pk').get(pk=pointPk)
                 isExistPOPL = models.PointObservationPointList.objects.filter(observation_pk=pointObservation, checkpoint_pk=checkpoint).exists()
@@ -827,7 +827,7 @@ class PointObservationViewSet(viewsets.ModelViewSet):
             pointObservation.save()
 
             ## create new PointObservationRecord
-            pointPkList = models.Checkpoint.objects.filter(point_zone=data['observation_zone']).values_list('pk', flat=True)
+            pointPkList = models.Checkpoint.objects.filter(point_zone=data['observation_zone'],is_active=True).values_list('pk', flat=True)
             for pointPk in pointPkList: ## all point 
                 checkpoint = models.Checkpoint.objects.only('pk').get(pk=pointPk)
                 pointObservationPointList = models.PointObservationPointList.objects.create(observation_pk=pointObservation, checkpoint_pk = checkpoint)
@@ -859,6 +859,32 @@ class PointObservationPointListViewSet(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
 
+    @action(detail=True, methods='GET')
+    def fetch_pointobservationrecord_pointlist(self, request, pointobservation_pk, timeslot):
+        """Get data for detail of working history services"""
+
+      
+        isExistPO = models.PointObservation.objects.filter(pk=pointobservation_pk).exists()
+
+        if(isExistPO==False):
+            return Response({ "detail": "Not found point observation."},status=status.HTTP_404_NOT_FOUND)
+        else:
+
+            pointList = models.PointObservationPointList.objects.filter(observation_pk=pointobservation_pk).values_list('checkpoint_pk', flat=True)
+            
+            for pointPk in pointList:
+                print(pointPk)
+
+
+            return Response({ "detail": "Test"},status=status.HTTP_404_NOT_FOUND)
+            
+            # pointNum = models.PointObservationPointList.objects.filter(observation_pk=pointobservation_pk ).count()
+            # checkedPointNum = models.PointObservationRecord.objects.filter(observation_pk=pointobservation_pk, observation_timeslot=timeslot).count()
+            
+            # result = {'percent':int((checkedPointNum/pointNum)*100)}
+
+            # return notFoundHandling(result)
+
 
     
 
@@ -867,6 +893,8 @@ class PointObservationRecordViewSet(viewsets.ModelViewSet):
     queryset = models.PointObservationRecord.objects.all()
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
+
+
 
     @action(detail=True, methods='GET')
     def fetch_pointobservationrecord_percent(self, request, pointobservation_pk, timeslot):
