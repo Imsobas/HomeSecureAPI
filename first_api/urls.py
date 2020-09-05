@@ -199,6 +199,12 @@ fetch_pointobservation_update_zone = views.PointObservationViewSet.as_view({
     'get': 'fetch_pointobservation_update_zone'
 })
 
+## MaintenanceFeePeriod
+
+get_villages_pk_maintenance_fee_period = views.MaintenanceFeePeriodViewSet.as_view({
+    'get': 'get_villages_pk_maintenance_fee_period'
+})
+
 # Home Secure main routers
 urlpatterns = [
 
@@ -259,6 +265,10 @@ urlpatterns = [
     path('fetch_pointobservationrecord_pointlist/pointobservation/<int:pointobservation_pk>/timeslots/<int:timeslot>/checkpoint_status/', fetch_pointobservationrecord_pointlist,name='fetch_pointobservationrecord_pointlist'),
     path('fetch_pointobservationrecord_updatework/works/<int:work_pk>/', fetch_pointobservation_update_work,name='fetch_pointobservation_update_work'),
     path('fetch_pointobservationrecord_updatework/zones/<int:zone_pk>/', fetch_pointobservation_update_zone,name='fetch_pointobservation_update_zone'),
+
+    ## maintenancefeeperiod
+    path('villages/<int:village_pk>/maintenance_fee_period/', get_villages_pk_maintenance_fee_period,name='get_villages_pk_maintenance_fee_period'),
+    
     
 
     

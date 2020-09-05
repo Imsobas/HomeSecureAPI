@@ -1030,6 +1030,16 @@ class MaintenanceFeePeriodViewSet(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
 
+    ## qr_history_screen_services
+    @action(detail=True, methods = 'GET')
+    def get_villages_pk_maintenance_fee_period(self, request, village_pk):
+        """ Return all qr codeinformation specific for qr history list service """
+        querySet = models.MaintenanceFeePeriod.objects.filter(fee_village=village_pk,is_active=True).all()
+        serializer = serializers.MaintenanceFeePeriodSerializer(querySet,many=True)
+        result = serializer.data
+            
+        return notFoundHandling(result)
+
 class MaintenanceFeeViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.MaintenanceFeeSerializer
     queryset = models.MaintenanceFee.objects.all()
