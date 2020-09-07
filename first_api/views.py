@@ -1053,7 +1053,31 @@ class MaintenanceFeeRecordViewSet(viewsets.ModelViewSet):
         """ Return all maintenance fee record according to specific village and maintenance"""
         querySet = models.MaintenanceFeeRecord.objects.filter(fee_period = pk, is_active=True).all()
         serializer = serializers.MaintenanceFeeRecordSerializer(querySet,many=True)
-        result = serializer.data
+
+        
+       
+
+        mfrResult = serializer.data
+        result = []
+
+        for mfr in mfrResult:
+            mfrDict = dict()
+            mfrDict['pk'] = mfr['pk']
+            mfrDict['fee_period'] = mfr['fee_period']
+            mfrDict['fee_home'] = mfr['fee_home']
+            mfrDict['fee_paid_date'] = mfr['fee_paid_date']
+            mfrDict['fee_house_space'] = mfr['fee_house_space']
+            mfrDict['fee_amount'] = mfr['fee_amount']
+            mfrDict['fee_paid_status'] = mfr['fee_paid_status']
+            mfrDict['is_active'] = mfr['is_active']
+            homePk = mfr['fee_home']
+
+            homeQuerySet = models.Home.objects.filter(pk = homePk, is_active=True).last()
+            serializer = serializers.HomeSerializer(homeQuerySet)
+            homeResult = serializer.data
+            mfrDict['home_number'] = homeResult['home_number']
+            result.append(mfrDict)
+        
 
         return notFoundHandling(result)
 
