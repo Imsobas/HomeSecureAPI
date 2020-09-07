@@ -1092,6 +1092,32 @@ class MaintenanceFeeRecordViewSet(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
 
+    @action(detail=True, methods = 'GET')
+    def mtr_check_isexist_and_isduplicate_home(self, request, home_number, mfp_pk):
+        """ Check is home exist and is this home already exist in this mfp"""
+        isExist = models.Home.objects.filter(home_number=home_number, is_active=True).exists()
+        if(isExist==False):
+            return Response({ "detail": "Not have this home number"},status=status.HTTP_404_NOT_FOUND)
+        else:
+            querySet = models.Home.objects.filter(home_number=home_number, is_active=True).last()
+            serializer = serializers.HomeSerializer(querySet)
+            result = serializer.data
+            # print(result) 
+           
+
+            isExistMtp = models.MaintenanceFeePeriod.objects.filter(pk=mfp_pk).exists()
+            if(isExistMtp==False):
+                return Response({ "detail": "Not have this maintenance fee period"},status=status.HTTP_404_NOT_FOUND)
+            else:
+                maintenancefeeperiod = models.MaintenanceFeePeriod.objects.only('pk').get(pk=mfp_pk)
+                home = models.Home.objects.only('pk').get(home_number=home_number)
+                isExist = models.MaintenanceFeeRecord.objects.filter(fee_period=mfp_pk, fee_home = home).exists()
+
+                if(isExist==False):
+                    return Response({"pk":result['pk'],"home_number":result['home_number'],"duplicate_check":False})
+                else:
+                    return Response({"pk":result['pk'],"home_number":result['home_number'],"duplicate_check":True})
+
 
     ## qr_history_screen_services
     @action(detail=True, methods = 'GET')
@@ -1099,9 +1125,6 @@ class MaintenanceFeeRecordViewSet(viewsets.ModelViewSet):
         """ Return all maintenance fee record according to specific village and maintenance period"""
         querySet = models.MaintenanceFeeRecord.objects.filter(fee_period = pk, is_active=True).all()
         serializer = serializers.MaintenanceFeeRecordSerializer(querySet,many=True)
-
-        
-       
 
         mfrResult = serializer.data
         result = []

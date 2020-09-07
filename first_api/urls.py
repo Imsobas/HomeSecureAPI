@@ -220,7 +220,9 @@ get_maintenance_fee_period_pk_maintenance_fee_record = views.MaintenanceFeeRecor
     'get': 'get_maintenance_fee_period_pk_maintenance_fee_record'
 })
 
-
+mtr_check_isexist_and_isduplicate_home = views.MaintenanceFeeRecordViewSet.as_view({
+    'get': 'mtr_check_isexist_and_isduplicate_home'
+})
 
 # Home Secure main routers
 urlpatterns = [
@@ -291,9 +293,7 @@ urlpatterns = [
 
     ## maintenancefeerecord
     path('maintenance_fee_period/<int:pk>/maintenance_fee_record/', get_maintenance_fee_period_pk_maintenance_fee_record, name='get_maintenance_fee_period_pk_maintenance_fee_record'),
-
-    
-    
+    path('maintenance_fee_record/checkisexist/homes/<str:home_number>/checkduplicate/maintenance_fee_period/<int:mfp_pk>/', mtr_check_isexist_and_isduplicate_home, name='mtr_check_isexist_and_isduplicate_home'),
 
     
     # path('hello-view/', views.HelloApiView.as_view()), 
