@@ -1033,12 +1033,33 @@ class MaintenanceFeePeriodViewSet(viewsets.ModelViewSet):
     ## qr_history_screen_services
     @action(detail=True, methods = 'GET')
     def get_villages_pk_maintenance_fee_period(self, request, village_pk):
-        """ Return all qr codeinformation specific for qr history list service """
+        """ Return all maintenance fee period according to specific village """
         querySet = models.MaintenanceFeePeriod.objects.filter(fee_village=village_pk,is_active=True).all()
         serializer = serializers.MaintenanceFeePeriodSerializer(querySet,many=True)
         result = serializer.data
             
         return notFoundHandling(result)
+
+    
+    @action(detail=True, methods=['post'])
+    def create_maintenance_fee_period(self, request):
+        """ Create maintenance fee period record along with all of maintenance fee record for each home in that village"""
+
+        data = request.data 
+
+        isExistVillage = models.Village.objects.filter(pk = data['fee_village']).exists()
+
+        if(isExistVillage==False):
+            return Response({ "detail": "not have this village to for creating maintenance_fee_period "},status=status.HTTP_404_NOT_FOUND)
+        else:
+            village = models.Village.objects.get(pk=data['fee_village'])
+            maintenanceFeePeriod = models.MaintenanceFeePeriod.objects.create(fee_village = village, fee_period_name= data['fee_period_name'], fee_start= data['fee_start'], fee_end=data['fee_end'], fee_deadline = data['fee_deadline'], is_active = True)
+            maintenanceFeePeriod.save()
+            serializer = serializers.MaintenanceFeePeriodSerializer(maintenanceFeePeriod)
+
+            return Response(serializer.data,status.HTTP_201_CREATED)
+
+     
 
 class MaintenanceFeeRecordViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.MaintenanceFeeRecordSerializer
@@ -1050,7 +1071,7 @@ class MaintenanceFeeRecordViewSet(viewsets.ModelViewSet):
     ## qr_history_screen_services
     @action(detail=True, methods = 'GET')
     def get_maintenance_fee_period_pk_maintenance_fee_record(self, request, pk):
-        """ Return all maintenance fee record according to specific village and maintenance"""
+        """ Return all maintenance fee record according to specific village and maintenance period"""
         querySet = models.MaintenanceFeeRecord.objects.filter(fee_period = pk, is_active=True).all()
         serializer = serializers.MaintenanceFeeRecordSerializer(querySet,many=True)
 

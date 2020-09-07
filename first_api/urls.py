@@ -205,10 +205,18 @@ get_villages_pk_maintenance_fee_period = views.MaintenanceFeePeriodViewSet.as_vi
     'get': 'get_villages_pk_maintenance_fee_period'
 })
 
+create_maintenance_fee_period = views.MaintenanceFeePeriodViewSet.as_view({
+    'post': 'create_maintenance_fee_period'
+})
+
+
+## MaintenanceFeeRecord
 
 get_maintenance_fee_period_pk_maintenance_fee_record = views.MaintenanceFeeRecordViewSet.as_view({
     'get': 'get_maintenance_fee_period_pk_maintenance_fee_record'
 })
+
+
 
 # Home Secure main routers
 urlpatterns = [
@@ -273,6 +281,9 @@ urlpatterns = [
 
     ## maintenancefeeperiod
     path('villages/<int:village_pk>/maintenance_fee_period/', get_villages_pk_maintenance_fee_period,name='get_villages_pk_maintenance_fee_period'),
+    path('maintenance_fee_period/create/maintenance_fee_record/', create_maintenance_fee_period,name='create_maintenance_fee_period'),
+
+    ## maintenancefeerecord
     path('maintenance_fee_period/<int:pk>/maintenance_fee_record/', get_maintenance_fee_period_pk_maintenance_fee_record, name='get_maintenance_fee_period_pk_maintenance_fee_record'),
 
     
