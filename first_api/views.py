@@ -215,7 +215,7 @@ class HomeViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, methods = 'GET')
     def get_homespk_number(self, request, home_number):
-        """ Return pk of homes according to request homeNumber"""
+        """ Return pk and home_number of homes according to request homeNumber"""
         isExist = models.Home.objects.filter(home_number=home_number, is_active=True).exists()
         if(isExist==False):
             return Response({ "detail": "Not have this home number"},status=status.HTTP_404_NOT_FOUND)
@@ -223,9 +223,9 @@ class HomeViewSet(viewsets.ModelViewSet):
             querySet = models.Home.objects.filter(home_number=home_number, is_active=True).last()
             serializer = serializers.HomeSerializer(querySet)
             result = serializer.data
-            print(result)
+            # print(result)
             
-            return Response({"pk":result['pk']})
+            return Response({"pk":result['pk'],"home_number":result['home_number']})
     
 
     @action(detail=True, methods = 'GET')
