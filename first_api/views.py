@@ -214,6 +214,21 @@ class HomeViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,)
 
     @action(detail=True, methods = 'GET')
+    def get_homespk_number(self, request, home_number):
+        """ Return pk of homes according to request homeNumber"""
+        isExist = models.Home.objects.filter(home_number=home_number, is_active=True).exists()
+        if(isExist==False):
+            return Response({ "detail": "Not have this home number"},status=status.HTTP_404_NOT_FOUND)
+        else:
+            querySet = models.Home.objects.filter(home_number=home_number, is_active=True).last()
+            serializer = serializers.HomeSerializer(querySet)
+            result = serializer.data
+            print(result)
+            
+            return Response({"pk":result['pk']})
+    
+
+    @action(detail=True, methods = 'GET')
     def get_homes_number(self, request, number):
         """ Return all homes filtered by home_number """
         querySet = models.Home.objects.filter(home_number=number, is_active=True).all()
@@ -412,6 +427,7 @@ class QrCodeViewSet(viewsets.ModelViewSet):
         currentQuerySet = models.Home.objects.filter(home_number=number, is_active=True).all()
         currentSerializer = serializers.HomeSerializer(currentQuerySet,many=True)
         currentData =  currentSerializer.data
+        
 
         result = []
         
