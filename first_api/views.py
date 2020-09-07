@@ -1105,13 +1105,13 @@ class MaintenanceFeeRecordViewSet(viewsets.ModelViewSet):
             # print(result) 
            
 
-            isExistMtp = models.MaintenanceFeePeriod.objects.filter(pk=mfp_pk).exists()
+            isExistMtp = models.MaintenanceFeePeriod.objects.filter(pk=mfp_pk, is_active=True).exists()
             if(isExistMtp==False):
                 return Response({ "detail": "Not have this maintenance fee period"},status=status.HTTP_404_NOT_FOUND)
             else:
                 maintenancefeeperiod = models.MaintenanceFeePeriod.objects.only('pk').get(pk=mfp_pk)
-                home = models.Home.objects.only('pk').get(home_number=home_number)
-                isExist = models.MaintenanceFeeRecord.objects.filter(fee_period=mfp_pk, fee_home = home).exists()
+                home = models.Home.objects.only('pk').get(home_number=home_number, is_active=True)
+                isExist = models.MaintenanceFeeRecord.objects.filter(fee_period=mfp_pk, fee_home = home, is_active=True).exists()
 
                 if(isExist==False):
                     return Response({"pk":result['pk'],"home_number":result['home_number'],"duplicate_check":False})
