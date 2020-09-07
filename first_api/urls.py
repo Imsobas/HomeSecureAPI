@@ -26,7 +26,7 @@ router.register(r'point_observation',views.PointObservationViewSet)
 router.register(r'point_observation_point_list',views.PointObservationPointListViewSet)
 router.register(r'point_observation_record',views.PointObservationRecordViewSet)
 router.register(r'maintenance_fee_period',views.MaintenanceFeePeriodViewSet)
-router.register(r'maintenance_fee',views.MaintenanceFeeViewSet)
+router.register(r'maintenance_fee_record',views.MaintenanceFeeRecordViewSet)
 
 ## Binding URL
 
@@ -205,6 +205,11 @@ get_villages_pk_maintenance_fee_period = views.MaintenanceFeePeriodViewSet.as_vi
     'get': 'get_villages_pk_maintenance_fee_period'
 })
 
+
+get_maintenance_fee_period_pk_maintenance_fee_record = views.MaintenanceFeeRecordViewSet.as_view({
+    'get': 'get_maintenance_fee_period_pk_maintenance_fee_record'
+})
+
 # Home Secure main routers
 urlpatterns = [
 
@@ -268,6 +273,8 @@ urlpatterns = [
 
     ## maintenancefeeperiod
     path('villages/<int:village_pk>/maintenance_fee_period/', get_villages_pk_maintenance_fee_period,name='get_villages_pk_maintenance_fee_period'),
+    path('maintenance_fee_period/<int:pk>/maintenance_fee_record/', get_maintenance_fee_period_pk_maintenance_fee_record, name='get_maintenance_fee_period_pk_maintenance_fee_record'),
+
     
     
 

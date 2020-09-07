@@ -1040,13 +1040,22 @@ class MaintenanceFeePeriodViewSet(viewsets.ModelViewSet):
             
         return notFoundHandling(result)
 
-class MaintenanceFeeViewSet(viewsets.ModelViewSet):
-    serializer_class = serializers.MaintenanceFeeSerializer
-    queryset = models.MaintenanceFee.objects.all()
+class MaintenanceFeeRecordViewSet(viewsets.ModelViewSet):
+    serializer_class = serializers.MaintenanceFeeRecordSerializer
+    queryset = models.MaintenanceFeeRecord.objects.all()
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
 
 
+    ## qr_history_screen_services
+    @action(detail=True, methods = 'GET')
+    def get_maintenance_fee_period_pk_maintenance_fee_record(self, request, pk):
+        """ Return all maintenance fee record according to specific village and maintenance"""
+        querySet = models.MaintenanceFeeRecord.objects.filter(fee_period = pk, is_active=True).all()
+        serializer = serializers.MaintenanceFeeRecordSerializer(querySet,many=True)
+        result = serializer.data
+
+        return notFoundHandling(result)
 
 
 

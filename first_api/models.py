@@ -308,17 +308,18 @@ class PointObservationRecord(models.Model):
 class MaintenanceFeePeriod(models.Model):
     fee_village = models.ForeignKey(Village,null=True, blank=True, on_delete=models.DO_NOTHING)
     fee_period_name = models.CharField(max_length=100)
-    fee_start = models.DateTimeField(null=True, blank=True)
-    fee_end = models.DateTimeField(null=True, blank=True)
-    fee_deadline = models.DateTimeField(null=True, blank=True)
+    fee_start = models.DateField(null=True, blank=True)
+    fee_end = models.DateField(null=True, blank=True)
+    fee_deadline = models.DateField(null=True, blank=True)
     is_active = models.BooleanField(default=True)
 
-class MaintenanceFee(models.Model):
+class MaintenanceFeeRecord(models.Model):
+    fee_period = models.ForeignKey(MaintenanceFeePeriod,null=True, blank=True, on_delete=models.DO_NOTHING)
     fee_home = models.ForeignKey(Home,null=True, blank=True, on_delete=models.DO_NOTHING)
-    fee_paid_date = models.DateTimeField(null=True, blank=True)
+    fee_paid_date = models.DateField(null=True, blank=True)
     fee_house_space = models.FloatField(default=0)
     fee_amount = models.FloatField(default=0)
-    fee_paid_status = models.BooleanField(default=True)
+    fee_paid_status = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
 
 

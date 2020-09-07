@@ -106,10 +106,10 @@ class MaintenanceFeePeriodSerializer(serializers.ModelSerializer):
         model = models.MaintenanceFeePeriod
         fields = ('pk', 'fee_village', 'fee_period_name','fee_start', 'fee_end','fee_deadline','is_active')
 
-class MaintenanceFeeSerializer(serializers.ModelSerializer):
+class MaintenanceFeeRecordSerializer(serializers.ModelSerializer):
     class Meta:
-        model = models.MaintenanceFee
-        fields = ('pk', 'fee_home', 'fee_paid_date','fee_house_space', 'fee_amount','is_active')
+        model = models.MaintenanceFeeRecord
+        fields = ('pk', 'fee_period','fee_home', 'fee_paid_date','fee_house_space', 'fee_amount', 'fee_paid_status','is_active')
 
 
 ## User serializer
