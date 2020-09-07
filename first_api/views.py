@@ -1057,6 +1057,15 @@ class MaintenanceFeePeriodViewSet(viewsets.ModelViewSet):
             maintenanceFeePeriod.save()
             serializer = serializers.MaintenanceFeePeriodSerializer(maintenanceFeePeriod)
 
+            ## create maintenance fee record for all home in this village 
+            homes = models.Home.objects.filter(home_village=village)
+            for home in homes:
+                print(home)
+                print(type(home))
+                
+                maintenanceFeeRecord = models.MaintenanceFeeRecord.objects.create(fee_period=maintenanceFeePeriod, fee_home=home,fee_paid_date=None, fee_house_space=None, fee_amount=None, fee_paid_status=False, is_active=True)
+                maintenanceFeeRecord.save()
+
             return Response(serializer.data,status.HTTP_201_CREATED)
 
      
