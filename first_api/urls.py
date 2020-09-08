@@ -225,6 +225,11 @@ get_maintenance_fee_period_total_amount_number_paid_home = views.MaintenanceFeeP
     'get': 'get_maintenance_fee_period_total_amount_number_paid_home'
 })
 
+## VoteTopic 
+get_villages_pk_votetopics = views.VoteTopicViewSet.as_view({
+    'get': 'get_villages_pk_votetopics'
+})
+
 
 ## MaintenanceFeeRecord
 
@@ -310,7 +315,10 @@ urlpatterns = [
     ## maintenancefeerecord
     path('maintenance_fee_period/<int:pk>/maintenance_fee_record/', get_maintenance_fee_period_pk_maintenance_fee_record, name='get_maintenance_fee_period_pk_maintenance_fee_record'),
     path('maintenance_fee_record/checkisexist/homes/<str:home_number>/checkduplicate/maintenance_fee_period/<int:mfp_pk>/', mtr_check_isexist_and_isduplicate_home, name='mtr_check_isexist_and_isduplicate_home'),
-
+    
+    ## votetopics
+    path('villages/<int:village_pk>/votetopics/', get_villages_pk_votetopics,name='get_villages_pk_votetopics'),
+    
     
     # path('hello-view/', views.HelloApiView.as_view()), 
     path('login/', views.UserLoginApiView.as_view()),

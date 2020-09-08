@@ -1221,6 +1221,16 @@ class VoteTopicViewSet(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
 
+    @action(detail=True, methods = 'GET')
+    def get_villages_pk_votetopics(self, request, village_pk):
+        """ Return all maintenance fee period according to specific village """
+        querySet = models.VoteTopic.objects.filter(vote_village=village_pk,is_active=True).all()
+        serializer = serializers.VoteTopicSerializer(querySet, many=True)
+        result = serializer.data 
+
+        return notFoundHandling(result)
+        
+
 class VoteChoiceViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.VoteChoiceSerializer
     queryset = models.VoteChoice.objects.all()
