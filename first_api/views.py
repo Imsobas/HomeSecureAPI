@@ -1220,10 +1220,10 @@ class VoteTopicViewSet(viewsets.ModelViewSet):
     queryset = models.VoteTopic.objects.all()
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
-
+    
     @action(detail=True, methods = 'GET')
     def get_villages_pk_votetopics(self, request, village_pk):
-        """ Return all maintenance fee period according to specific village """
+        """ Return all votetopics according to specific village """
         querySet = models.VoteTopic.objects.filter(vote_village=village_pk,is_active=True).all()
         serializer = serializers.VoteTopicSerializer(querySet, many=True)
         result = serializer.data 
@@ -1236,6 +1236,21 @@ class VoteChoiceViewSet(viewsets.ModelViewSet):
     queryset = models.VoteChoice.objects.all()
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
+
+    @action(detail=True, methods = 'GET')
+    def get_votetopics_pk_votechoices(self, request, votetopic_pk):
+        """ Return all votechoices fee period according to specific votetopic """
+
+        isExist = models.VoteTopic.objects.filter(pk= votetopic_pk, is_active=True).exists()
+        if(isExist==False):
+            return Response({ "detail": "Not have this maintenance fee period"},status=status.HTTP_404_NOT_FOUND)
+        else:
+            voteTopic = models.VoteTopic.objects.only('pk').get(pk=votetopic_pk)
+            querySet = models.VoteChoice.objects.filter( vote_topic_pk=voteTopic, is_active=True).all()
+            serializer = serializers.VoteTopicSerializer(querySet, many=True)
+            result = serializer.data 
+
+            return notFoundHandling(result)
 
 class VoteRecordViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.VoteRecordSerializer

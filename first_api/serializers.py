@@ -114,12 +114,12 @@ class MaintenanceFeeRecordSerializer(serializers.ModelSerializer):
 class VoteTopicSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.VoteTopic
-        fields = ('pk', 'vote_village','vote_thai_topic', 'vote_eng_topic','vote_chinese_topic', 'vote_start_date', 'vote_end_date','vote_confirm_status','is_active')
+        fields = ('pk', 'vote_village','vote_thai_topic','vote_thai_detail', 'vote_eng_topic','vote_chinese_topic', 'vote_start_date', 'vote_end_date','vote_confirm_status','is_active')
 
 class VoteChoiceSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.VoteChoice
-        fields = ('pk', 'vote_topic_pk','vote_thai_choice', 'vote_eng_choice','vote_chinese_choice', 'vote_confirmed_status', 'is_active')
+        fields = ('pk', 'vote_topic_pk','vote_thai_choice', 'vote_eng_choice','vote_chinese_choice', 'vote_is_result', 'is_active')
 
 class VoteRecordSerializer(serializers.ModelSerializer):
     class Meta:

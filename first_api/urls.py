@@ -230,6 +230,11 @@ get_villages_pk_votetopics = views.VoteTopicViewSet.as_view({
     'get': 'get_villages_pk_votetopics'
 })
 
+## VoteChoice
+get_votetopics_pk_votechoices = views.VoteChoiceViewSet.as_view({
+    'get': 'get_votetopics_pk_votechoices'
+})
+
 
 ## MaintenanceFeeRecord
 
@@ -316,10 +321,12 @@ urlpatterns = [
     path('maintenance_fee_period/<int:pk>/maintenance_fee_record/', get_maintenance_fee_period_pk_maintenance_fee_record, name='get_maintenance_fee_period_pk_maintenance_fee_record'),
     path('maintenance_fee_record/checkisexist/homes/<str:home_number>/checkduplicate/maintenance_fee_period/<int:mfp_pk>/', mtr_check_isexist_and_isduplicate_home, name='mtr_check_isexist_and_isduplicate_home'),
     
-    ## votetopics
+    ## votetopic
     path('villages/<int:village_pk>/votetopics/', get_villages_pk_votetopics,name='get_villages_pk_votetopics'),
     
-    
+    ## votechoice
+    path('votetopics/<int:votetopic_pk>/votechoices/', get_votetopics_pk_votechoices,name='get_votetopics_pk_votechoices'),
+
     # path('hello-view/', views.HelloApiView.as_view()), 
     path('login/', views.UserLoginApiView.as_view()),
     path('',include(router.urls))
