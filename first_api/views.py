@@ -21,6 +21,7 @@ from first_api import permission
 import json
 import datetime
 from django.db.models import Count
+from django.db.models import Sum
 
 ## helper function
 
@@ -1045,6 +1046,25 @@ class MaintenanceFeePeriodViewSet(viewsets.ModelViewSet):
     queryset = models.MaintenanceFeePeriod.objects.all()
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
+
+    @action(detail=True, methods = 'GET')
+    def get_maintenance_fee_period_total_amount_number_paid_home(self, request, pk):
+        """ Return total amount and number of paid home according to specific MaintenanceFeePeriod"""
+        
+        isExistMtp = models.MaintenanceFeePeriod.objects.filter(pk=pk, is_active=True).exists()
+        if(isExistMtp==False):
+            return Response({ "detail": "Not have this maintenance fee period"},status=status.HTTP_404_NOT_FOUND)
+        else:
+
+            maintenancefeeperiod = models.MaintenanceFeePeriod.objects.only('pk').get(pk=pk)
+            paidHomeNum = models.MaintenanceFeeRecord.objects.filter(fee_period=maintenancefeeperiod,fee_paid_status=True,is_active=True).count()
+            totalAmount = models.MaintenanceFeeRecord.objects.filter(fee_period=maintenancefeeperiod,fee_paid_status=True,is_active=True).aggregate(Sum('fee_amount'))['fee_amount__sum']
+            
+            print(paidHomeNum)
+            print(totalAmount)
+            result = {"total_amount": totalAmount, "paid_home_number":paidHomeNum}
+    
+            return notFoundHandling(result)
 
     ## qr_history_screen_services
     @action(detail=True, methods = 'GET')

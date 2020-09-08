@@ -214,6 +214,11 @@ create_maintenance_fee_period = views.MaintenanceFeePeriodViewSet.as_view({
 })
 
 
+get_maintenance_fee_period_total_amount_number_paid_home = views.MaintenanceFeePeriodViewSet.as_view({
+    'get': 'get_maintenance_fee_period_total_amount_number_paid_home'
+})
+
+
 ## MaintenanceFeeRecord
 
 get_maintenance_fee_period_pk_maintenance_fee_record = views.MaintenanceFeeRecordViewSet.as_view({
@@ -223,6 +228,7 @@ get_maintenance_fee_period_pk_maintenance_fee_record = views.MaintenanceFeeRecor
 mtr_check_isexist_and_isduplicate_home = views.MaintenanceFeeRecordViewSet.as_view({
     'get': 'mtr_check_isexist_and_isduplicate_home'
 })
+
 
 # Home Secure main routers
 urlpatterns = [
@@ -290,6 +296,8 @@ urlpatterns = [
     ## maintenancefeeperiod
     path('villages/<int:village_pk>/maintenance_fee_period/', get_villages_pk_maintenance_fee_period,name='get_villages_pk_maintenance_fee_period'),
     path('maintenance_fee_period/create/maintenance_fee_record/', create_maintenance_fee_period,name='create_maintenance_fee_period'),
+    path('maintenance_fee_period/<int:pk>/total_amount_and_paid_home_num/', get_maintenance_fee_period_total_amount_number_paid_home,name='get_maintenance_fee_period_total_amount_number_paid_home'),
+
 
     ## maintenancefeerecord
     path('maintenance_fee_period/<int:pk>/maintenance_fee_record/', get_maintenance_fee_period_pk_maintenance_fee_record, name='get_maintenance_fee_period_pk_maintenance_fee_record'),
