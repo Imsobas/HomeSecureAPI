@@ -111,6 +111,24 @@ class MaintenanceFeeRecordSerializer(serializers.ModelSerializer):
         model = models.MaintenanceFeeRecord
         fields = ('pk', 'fee_period','fee_home', 'fee_paid_date','fee_house_space', 'fee_amount', 'fee_paid_status','is_active')
 
+class VoteTopicSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.VoteTopic
+        fields = ('pk', 'vote_village','vote_thai_topic', 'vote_eng_topic','vote_chinese_topic', 'vote_start_date', 'vote_end_date','vote_confirm_status','is_active')
+
+class VoteChoiceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.VoteChoice
+        fields = ('pk', 'vote_topic_pk','vote_thai_choice', 'vote_eng_choice','vote_chinese_choice', 'vote_confirmed_status', 'is_active')
+
+class VoteRecordSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.VoteRecord
+        fields = ('pk', 'vote_topic_pk','vote_village', 'vote_selected_choice','vote_hiden')
+
+
+
+
 
 ## User serializer
 

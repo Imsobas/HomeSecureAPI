@@ -322,6 +322,46 @@ class MaintenanceFeeRecord(models.Model):
     fee_paid_status = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
 
+class VoteTopic(models.Model):
+    vote_village = models.ForeignKey(Village,null=True, blank=True, on_delete=models.DO_NOTHING)
+    vote_thai_topic = models.CharField(max_length=100)
+    vote_eng_topic = models.CharField(max_length=100)
+    vote_chinese_topic = models.CharField(max_length=100)
+    vote_start_date = models.DateField(null=True, blank=True)
+    vote_end_date = models.DateField(null=True, blank=True)
+    vote_confirm_status = models.BooleanField(default=True)
+    is_active = models.BooleanField(default=True)
+
+    def __str__(self):
+        """Return the model as a string"""
+        return str(self.pk)
+    
+    
+class VoteChoice(models.Model):
+    vote_topic_pk = models.ForeignKey(VoteTopic,null=True, blank=True, on_delete=models.DO_NOTHING)
+    vote_thai_choice = models.CharField(max_length=100)
+    vote_eng_choice= models.CharField(max_length=100)
+    vote_chinese_choice = models.CharField(max_length=100)
+    vote_confirmed_status = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
+
+    def __str__(self):
+        """Return the model as a string"""
+        return str(self.pk)
+
+class VoteRecord(models.Model):
+    vote_topic_pk = models.ForeignKey(VoteTopic,null=True, blank=True, on_delete=models.DO_NOTHING)
+    vote_village = models.ForeignKey(Village,null=True, blank=True, on_delete=models.DO_NOTHING)
+    vote_selected_choice = models.ForeignKey(VoteChoice,null=True, blank=True, on_delete=models.DO_NOTHING)
+    vote_hiden = models.BooleanField(default=False)
+
+    def __str__(self):
+        """Return the model as a string"""
+        return str(self.pk)
+
+    
+    
+
 
     # inspect_village = models.ForeignKey(Village, null=True, blank=True, on_delete=models.DO_NOTHING)
     # inspect_zone = models.ForeignKey(Zone, null=True, blank=True, on_delete=models.DO_NOTHING)

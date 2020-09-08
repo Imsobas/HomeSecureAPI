@@ -1215,6 +1215,24 @@ class MaintenanceFeeRecordViewSet(viewsets.ModelViewSet):
         return notFoundHandling(result)
 
 
+class VoteTopicViewSet(viewsets.ModelViewSet):
+    serializer_class = serializers.VoteTopicSerializer
+    queryset = models.VoteTopic.objects.all()
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+
+class VoteChoiceViewSet(viewsets.ModelViewSet):
+    serializer_class = serializers.VoteChoiceSerializer
+    queryset = models.VoteChoice.objects.all()
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+
+class VoteRecordViewSet(viewsets.ModelViewSet):
+    serializer_class = serializers.VoteRecordSerializer
+    queryset = models.VoteRecord.objects.all()
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+
 
 # old views.
 
