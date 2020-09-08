@@ -1247,7 +1247,7 @@ class VoteChoiceViewSet(viewsets.ModelViewSet):
         else:
             voteTopic = models.VoteTopic.objects.only('pk').get(pk=votetopic_pk)
             querySet = models.VoteChoice.objects.filter( vote_topic_pk=voteTopic, is_active=True).all()
-            serializer = serializers.VoteTopicSerializer(querySet, many=True)
+            serializer = serializers.VoteChoiceSerializer(querySet, many=True)
             result = serializer.data 
 
             return notFoundHandling(result)
