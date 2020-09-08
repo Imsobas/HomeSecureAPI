@@ -1066,7 +1066,7 @@ class MaintenanceFeePeriodViewSet(viewsets.ModelViewSet):
     
             return notFoundHandling(result)
 
-    ## qr_history_screen_services
+  
     @action(detail=True, methods = 'GET')
     def get_villages_pk_maintenance_fee_period(self, request, village_pk):
         """ Return all maintenance fee period according to specific village """
@@ -1083,12 +1083,28 @@ class MaintenanceFeePeriodViewSet(viewsets.ModelViewSet):
             mfp['home_number'] = homeNum
             mfp['paid_home_number'] = paidHomeNum
             result.append(mfp)
+
+        return notFoundHandling(result)
+
+    @action(detail=True, methods = 'GET')
+    def get_villages_pk_maintenance_fee_period_pk(self, request, village_pk, mfpPk):
+        """ Return all maintenance fee period according to specific village """
+        maintenancefeeperiod = models.MaintenanceFeePeriod.objects.filter(fee_village=village_pk, pk=mfpPk,is_active=True).last()
+        homeNum = models.MaintenanceFeeRecord.objects.filter(fee_period=maintenancefeeperiod,is_active=True).count()
+        paidHomeNum = models.MaintenanceFeeRecord.objects.filter(fee_period=maintenancefeeperiod,fee_paid_status=True,is_active=True).count()
+        totalAmount = models.MaintenanceFeeRecord.objects.filter(fee_period=maintenancefeeperiod,fee_paid_status=True,is_active=True).aggregate(Sum('fee_amount'))['fee_amount__sum']
+        serializer = serializers.MaintenanceFeePeriodSerializer(maintenancefeeperiod)
+        result = serializer.data
+        result['total_amount'] = totalAmount
+        result['home_number'] = homeNum
+        result['paid_home_number'] = paidHomeNum
         
+        return notFoundHandling(result)
         # serializer = serializers.MaintenanceFeePeriodSerializer(querySet,many=True)
         # result = serializer.data
 
             
-        return notFoundHandling(result)
+       
 
     
     @action(detail=True, methods=['post'])
