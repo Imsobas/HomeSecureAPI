@@ -1079,6 +1079,12 @@ class MaintenanceFeePeriodViewSet(viewsets.ModelViewSet):
             totalAmount = models.MaintenanceFeeRecord.objects.filter(fee_period=maintenancefeeperiod,fee_paid_status=True,is_active=True).aggregate(Sum('fee_amount'))['fee_amount__sum']
             serializer = serializers.MaintenanceFeePeriodSerializer(maintenancefeeperiod)
             mfp = serializer.data
+            if(totalAmount==None):
+                totalAmount=0
+            if(paidHomeNum==None):
+                paidHomeNum=0
+            if(homeNum==None):
+                homeNum=0
             mfp['total_amount'] = totalAmount
             mfp['home_number'] = homeNum
             mfp['paid_home_number'] = paidHomeNum
@@ -1094,6 +1100,12 @@ class MaintenanceFeePeriodViewSet(viewsets.ModelViewSet):
         paidHomeNum = models.MaintenanceFeeRecord.objects.filter(fee_period=maintenancefeeperiod,fee_paid_status=True,is_active=True).count()
         totalAmount = models.MaintenanceFeeRecord.objects.filter(fee_period=maintenancefeeperiod,fee_paid_status=True,is_active=True).aggregate(Sum('fee_amount'))['fee_amount__sum']
         serializer = serializers.MaintenanceFeePeriodSerializer(maintenancefeeperiod)
+        if(totalAmount==None):
+            totalAmount=0
+        if(paidHomeNum==None):
+            paidHomeNum=0
+        if(homeNum==None):
+            homeNum=0
         result = serializer.data
         result['total_amount'] = totalAmount
         result['home_number'] = homeNum
