@@ -342,7 +342,7 @@ class VoteChoice(models.Model):
     vote_thai_choice = models.CharField(max_length=100)
     vote_eng_choice= models.CharField(max_length=100)
     vote_chinese_choice = models.CharField(max_length=100)
-    vote_confirmed_status = models.BooleanField(default=False)
+    vote_is_result = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
 
     def __str__(self):
