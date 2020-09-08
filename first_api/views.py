@@ -1071,8 +1071,22 @@ class MaintenanceFeePeriodViewSet(viewsets.ModelViewSet):
     def get_villages_pk_maintenance_fee_period(self, request, village_pk):
         """ Return all maintenance fee period according to specific village """
         querySet = models.MaintenanceFeePeriod.objects.filter(fee_village=village_pk,is_active=True).all()
-        serializer = serializers.MaintenanceFeePeriodSerializer(querySet,many=True)
-        result = serializer.data
+        
+        result = []
+        for maintenancefeeperiod in querySet:
+            homeNum = models.MaintenanceFeeRecord.objects.filter(fee_period=maintenancefeeperiod,is_active=True).count()
+            paidHomeNum = models.MaintenanceFeeRecord.objects.filter(fee_period=maintenancefeeperiod,fee_paid_status=True,is_active=True).count()
+            totalAmount = models.MaintenanceFeeRecord.objects.filter(fee_period=maintenancefeeperiod,fee_paid_status=True,is_active=True).aggregate(Sum('fee_amount'))['fee_amount__sum']
+            serializer = serializers.MaintenanceFeePeriodSerializer(maintenancefeeperiod)
+            mfp = serializer.data
+            mfp['total_amount'] = totalAmount
+            mfp['home_number'] = homeNum
+            mfp['paid_home_number'] = paidHomeNum
+            result.append(mfp)
+        
+        # serializer = serializers.MaintenanceFeePeriodSerializer(querySet,many=True)
+        # result = serializer.data
+
             
         return notFoundHandling(result)
 
@@ -1101,6 +1115,8 @@ class MaintenanceFeePeriodViewSet(viewsets.ModelViewSet):
                 
                 maintenanceFeeRecord = models.MaintenanceFeeRecord.objects.create(fee_period=maintenanceFeePeriod, fee_home=home,fee_paid_date=None, fee_house_space=None, fee_amount=None, fee_paid_status=False, is_active=True)
                 maintenanceFeeRecord.save()
+
+            
 
             return Response(serializer.data,status.HTTP_201_CREATED)
 
