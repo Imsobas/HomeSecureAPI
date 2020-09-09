@@ -1235,7 +1235,7 @@ class VoteTopicViewSet(viewsets.ModelViewSet):
             voteTopic = models.VoteTopic.objects.filter(pk=votetopic_pk,is_active=True).last()
             voteTopicTitle = models.VoteTopic.objects.filter(pk=votetopic_pk,is_active=True).values('vote_thai_topic').last()
             print(voteTopicTitle)
-            result.append([{"voteTopicTitle":voteTopicTitle['vote_thai_topic']}])
+            result.append({"voteTopicTitle":voteTopicTitle['vote_thai_topic']})
             
             ### find vote record in percent
             voteRecords = models.VoteRecord.objects.filter(vote_topic_pk=voteTopic).values('vote_selected_choice').order_by('vote_selected_choice').annotate(count=Count('vote_selected_choice'))
