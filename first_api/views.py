@@ -1229,6 +1229,32 @@ class VoteTopicViewSet(viewsets.ModelViewSet):
         result = serializer.data 
 
         return notFoundHandling(result)
+
+    @action(detail=True, methods = 'GET')
+    def get_villages_pk_user_pk_votetopics(self, request, village_pk, user_pk):
+        """ Return all votetopics which the user not vote yet according to specific village """
+        
+        querySet = models.VoteTopic.objects.filter(vote_village=village_pk,is_active=True).all()
+        serializer = serializers.VoteTopicSerializer(querySet, many=True)
+        result = serializer.data 
+
+        isHomeExist = models.Home.objects.filter(pk=user_pk).exists()
+        if(isHomeExist==False):
+            return Response({ "detail": "Not have this home"},status=status.HTTP_404_NOT_FOUND)
+        else:
+            home = models.Home.objects.only('pk').get(pk=user_pk)
+
+            
+            result = []
+            for voteTopic in querySet:
+             
+                isVoted = models.VoteRecord.objects.filter(vote_topic_pk=voteTopic, vote_home = home).exists()
+                if(isVoted==False):
+                    serializer = serializers.VoteTopicSerializer(voteTopic)
+                    result.append(serializer.data)
+
+
+            return notFoundHandling(result)
         
 
 class VoteChoiceViewSet(viewsets.ModelViewSet):
@@ -1257,6 +1283,10 @@ class VoteRecordViewSet(viewsets.ModelViewSet):
     queryset = models.VoteRecord.objects.all()
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
+
+
+
+
 
 
 # old views.

@@ -352,7 +352,9 @@ class VoteChoice(models.Model):
 
 class VoteRecord(models.Model):
     vote_topic_pk = models.ForeignKey(VoteTopic,null=True, blank=True, on_delete=models.DO_NOTHING)
-    vote_village = models.ForeignKey(Village,null=True, blank=True, on_delete=models.DO_NOTHING)
+    # vote_village = models.ForeignKey(Village,null=True, blank=True, on_delete=models.DO_NOTHING)
+    vote_home = models.ForeignKey(Home,null=True, blank=True, on_delete=models.DO_NOTHING)
+    vote_user = models.ForeignKey(GeneralUser,null=True, blank=True, on_delete=models.DO_NOTHING)
     vote_selected_choice = models.ForeignKey(VoteChoice,null=True, blank=True, on_delete=models.DO_NOTHING)
     vote_hiden = models.BooleanField(default=False)
 

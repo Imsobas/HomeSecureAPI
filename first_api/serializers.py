@@ -124,7 +124,7 @@ class VoteChoiceSerializer(serializers.ModelSerializer):
 class VoteRecordSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.VoteRecord
-        fields = ('pk', 'vote_topic_pk','vote_village', 'vote_selected_choice','vote_hiden')
+        fields = ('pk', 'vote_topic_pk','vote_home', 'vote_user', 'vote_selected_choice','vote_hiden')
 
 
 
