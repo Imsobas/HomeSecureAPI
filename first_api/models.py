@@ -365,7 +365,21 @@ class VoteRecord(models.Model):
     class Meta:
         unique_together = ('vote_home', 'vote_topic_pk')
     
-
+class Problem(models.Model):
+    problem_village = models.ForeignKey(Village,null=True, blank=True, on_delete=models.DO_NOTHING)
+    problem_home = models.ForeignKey(Home,null=True, blank=True, on_delete=models.DO_NOTHING)
+    problem_date = models.DateTimeField(null=True, blank=True,auto_now_add=True)
+    problem_type = models.CharField(max_length=100,null=True, blank=True)
+    problem_detail = models.CharField(max_length=400,null=True, blank=True)
+    problem_feedback = models.CharField(max_length=400,null=True, blank=True)
+    is_active = models.BooleanField(default=True)
+    is_active_admin = models.BooleanField(default=True)
+    
+   
+    def __str__(self):
+        """Return the model as a string"""
+        return str(self.pk)
+    
 
     # inspect_village = models.ForeignKey(Village, null=True, blank=True, on_delete=models.DO_NOTHING)
     # inspect_zone = models.ForeignKey(Zone, null=True, blank=True, on_delete=models.DO_NOTHING)

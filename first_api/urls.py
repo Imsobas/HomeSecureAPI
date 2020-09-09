@@ -30,6 +30,7 @@ router.register(r'maintenance_fee_record',views.MaintenanceFeeRecordViewSet)
 router.register(r'votetopic',views.VoteTopicViewSet)
 router.register(r'votechoice',views.VoteChoiceViewSet)
 router.register(r'voterecord',views.VoteRecordViewSet)
+router.register(r'problem',views.ProblemViewSet)
 
 ## Binding URL
 
@@ -258,6 +259,11 @@ mtr_check_isexist_and_isduplicate_home = views.MaintenanceFeeRecordViewSet.as_vi
     'get': 'mtr_check_isexist_and_isduplicate_home'
 })
 
+## Problem 
+
+get_homes_pk_problems = views.ProblemViewSet.as_view({
+    'get': 'get_homes_pk_problems'
+})
 
 
 
@@ -344,7 +350,10 @@ urlpatterns = [
     
     ## votechoice
     path('votetopics/<int:votetopic_pk>/votechoices/', get_votetopics_pk_votechoices,name='get_votetopics_pk_votechoices'),
-
+    
+    ## problem 
+    path('homes/<int:home_pk>/problems/',  get_homes_pk_problems,name='get_homes_pk_problems'),
+   
     # path('hello-view/', views.HelloApiView.as_view()), 
     path('login/', views.UserLoginApiView.as_view()),
     path('',include(router.urls))

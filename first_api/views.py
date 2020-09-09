@@ -1428,6 +1428,27 @@ class VoteRecordViewSet(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
 
+class ProblemViewSet(viewsets.ModelViewSet):
+    serializer_class = serializers.ProblemSerializer
+    queryset = models.Problem.objects.all()
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+
+    @action(detail=True, methods = 'GET')
+    def get_homes_pk_problems(self, request, home_pk):
+        """ Return all votetopics according to specific village """
+
+        isExist = models.Home.objects.filter(pk= home_pk, is_active=True).exists()
+        if(isExist==False):
+            return Response({ "detail": "Not have this home in system"},status=status.HTTP_404_NOT_FOUND)
+        else:
+            home = models.Home.objects.only('pk').get(pk=home_pk)
+            querySet = models.Problem.objects.filter( problem_home=home, is_active=True).all()
+            serializer = serializers.ProblemSerializer(querySet, many=True)
+            result = serializer.data 
+
+            return notFoundHandling(result)
+
 
 
 

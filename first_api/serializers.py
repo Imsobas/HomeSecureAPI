@@ -127,7 +127,11 @@ class VoteRecordSerializer(serializers.ModelSerializer):
         fields = ('pk', 'vote_topic_pk','vote_home', 'vote_user', 'vote_selected_choice','vote_hiden')
 
 
-
+class ProblemSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Problem
+        fields =('pk', 'problem_village','problem_home','problem_date','problem_type','problem_detail','problem_feedback', 'is_active', 'is_active_admin')
+        
 
 
 ## User serializer
