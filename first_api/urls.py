@@ -237,6 +237,11 @@ get_villages_pk_user_pk_votetopics = views.VoteTopicViewSet.as_view({
 get_votetopics_pk_result = views.VoteTopicViewSet.as_view({
     'get': 'get_votetopics_pk_result'
 })
+
+get_votetopics_pk_result_admin = views.VoteTopicViewSet.as_view({
+    'get': 'get_votetopics_pk_result_admin'
+})
+
 ## VoteChoice
 get_votetopics_pk_votechoices = views.VoteChoiceViewSet.as_view({
     'get': 'get_votetopics_pk_votechoices'
@@ -252,6 +257,8 @@ get_maintenance_fee_period_pk_maintenance_fee_record = views.MaintenanceFeeRecor
 mtr_check_isexist_and_isduplicate_home = views.MaintenanceFeeRecordViewSet.as_view({
     'get': 'mtr_check_isexist_and_isduplicate_home'
 })
+
+
 
 
 # Home Secure main routers
@@ -332,6 +339,7 @@ urlpatterns = [
     path('villages/<int:village_pk>/votetopics/', get_villages_pk_votetopics,name='get_villages_pk_votetopics'),
     path('villages/<int:village_pk>/homes/<int:home_pk>/votetopics/', get_villages_pk_user_pk_votetopics,name='get_villages_pk_user_pk_votetopics'),
     path('votetopics/<int:votetopic_pk>/result/', get_votetopics_pk_result,name='get_votetopics_pk_result'),
+    path('votetopics/<int:votetopic_pk>/result/admin/', get_votetopics_pk_result_admin,name='get_votetopics_pk_result_admin'),
     
     
     ## votechoice

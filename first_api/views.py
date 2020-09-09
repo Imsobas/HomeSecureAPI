@@ -1221,6 +1221,70 @@ class VoteTopicViewSet(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
 
+    @action(detail=True, methods = 'GET')
+    def get_votetopics_pk_result_admin(self, request, votetopic_pk):
+        """ Return result of voting information according to specific village """
+
+        isVoteTopicExist = models.VoteTopic.objects.filter(pk=votetopic_pk,is_active=True).exists()
+        if(isVoteTopicExist==False):
+            return Response({ "detail": "Not have this vote topics"},status=status.HTTP_404_NOT_FOUND)
+        else:
+            result = []
+            ### find vote topic
+            voteTopic = models.VoteTopic.objects.filter(pk=votetopic_pk,is_active=True).last()
+            voteTopicTitle = models.VoteTopic.objects.filter(pk=votetopic_pk,is_active=True).values('vote_thai_topic').last()
+            print(voteTopicTitle)
+            result.append({"voteTopicTitle":voteTopicTitle['vote_thai_topic']})
+            
+            ### find vote record in percent
+            voteRecords = models.VoteRecord.objects.filter(vote_topic_pk=voteTopic).values('vote_selected_choice').order_by('vote_selected_choice').annotate(count=Count('vote_selected_choice'))
+            voteRecordsCountAll = models.VoteRecord.objects.filter(vote_topic_pk=voteTopic).count()
+
+            
+            percent_result= []
+            for voteRecord in voteRecords:
+                resultDict = dict()
+                
+                voteChoicePk = voteRecord['vote_selected_choice']
+
+                
+                voteChoice = models.VoteChoice.objects.filter(pk = voteChoicePk).values('vote_thai_choice').last()
+                resultDict['voteChocePk'] = voteRecord['vote_selected_choice']
+                resultDict['voteChoiceTitle'] = voteChoice['vote_thai_choice']
+                resultDict['count'] = voteRecord['count']
+                resultDict['percent'] = (resultDict['count']/voteRecordsCountAll)*100
+                
+
+                percent_result.append(resultDict)
+            
+            result.append(percent_result)
+
+            ## find vote record for individual home
+            voteRecords = models.VoteRecord.objects.filter(vote_topic_pk=voteTopic).values('vote_home','vote_selected_choice','vote_hiden').order_by('vote_selected_choice')
+
+            individual_result = []
+            for voteRecord in voteRecords:
+                resultDict = dict()
+                
+                
+                homePk = voteRecord['vote_home']
+                voteChoicePk = voteRecord['vote_selected_choice']
+                
+                home = models.Home.objects.filter(pk=homePk).values('home_number').last()
+                voteChoice = models.VoteChoice.objects.filter(pk = voteChoicePk).values('vote_thai_choice').last()
+                resultDict['homePk'] = voteRecord['vote_home']
+                resultDict['homeNumber'] = home['home_number']
+               
+                resultDict['voteChoiceTitle'] = voteChoice['vote_thai_choice']
+                resultDict['voteChoicePk'] = voteRecord['vote_selected_choice']
+                
+
+                individual_result.append(resultDict)
+
+            result.append(individual_result)
+
+            return notFoundHandling(result)
+
 
     @action(detail=True, methods = 'GET')
     def get_votetopics_pk_result(self, request, votetopic_pk):
@@ -1276,8 +1340,8 @@ class VoteTopicViewSet(viewsets.ModelViewSet):
                 resultDict['homePk'] = voteRecord['vote_home']
                 resultDict['homeNumber'] = home['home_number']
                 if(voteRecord['vote_hiden']==True):
-                    resultDict['voteChoiceTitle'] = None
-                    resultDict['voteChoicePk'] = None
+                    resultDict['voteChoiceTitle'] = "ไม่เปิดเผย"
+                    resultDict['voteChoicePk'] = "ไม่เปิดเผย"
                 else:
                     resultDict['voteChoiceTitle'] = voteChoice['vote_thai_choice']
                     resultDict['voteChoicePk'] = voteRecord['vote_selected_choice']
@@ -1305,7 +1369,7 @@ class VoteTopicViewSet(viewsets.ModelViewSet):
     def get_villages_pk_user_pk_votetopics(self, request, village_pk, home_pk):
         """ Return all votetopics which the user not vote yet according to specific village """
         
-        querySet = models.VoteTopic.objects.filter(vote_village=village_pk,is_active=True).all()
+        querySet = models.VoteTopic.objects.filter(vote_village=village_pk, vote_end_date__gte=datetime.date.today(), is_active=True).all()
         serializer = serializers.VoteTopicSerializer(querySet, many=True)
         result = serializer.data 
 
