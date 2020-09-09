@@ -327,7 +327,7 @@ urlpatterns = [
     
     ## votetopic
     path('villages/<int:village_pk>/votetopics/', get_villages_pk_votetopics,name='get_villages_pk_votetopics'),
-    path('villages/<int:village_pk>/users/<int:user_pk>/votetopics/', get_villages_pk_user_pk_votetopics,name='get_villages_pk_user_pk_votetopics'),
+    path('villages/<int:village_pk>/homes/<int:home_pk>/votetopics/', get_villages_pk_user_pk_votetopics,name='get_villages_pk_user_pk_votetopics'),
     
     
     ## votechoice

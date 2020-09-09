@@ -1231,18 +1231,18 @@ class VoteTopicViewSet(viewsets.ModelViewSet):
         return notFoundHandling(result)
 
     @action(detail=True, methods = 'GET')
-    def get_villages_pk_user_pk_votetopics(self, request, village_pk, user_pk):
+    def get_villages_pk_user_pk_votetopics(self, request, village_pk, home_pk):
         """ Return all votetopics which the user not vote yet according to specific village """
         
         querySet = models.VoteTopic.objects.filter(vote_village=village_pk,is_active=True).all()
         serializer = serializers.VoteTopicSerializer(querySet, many=True)
         result = serializer.data 
 
-        isHomeExist = models.Home.objects.filter(pk=user_pk).exists()
+        isHomeExist = models.Home.objects.filter(pk=home_pk).exists()
         if(isHomeExist==False):
             return Response({ "detail": "Not have this home"},status=status.HTTP_404_NOT_FOUND)
         else:
-            home = models.Home.objects.only('pk').get(pk=user_pk)
+            home = models.Home.objects.only('pk').get(pk=home_pk)
 
             
             result = []
