@@ -1231,9 +1231,10 @@ class VoteTopicViewSet(viewsets.ModelViewSet):
             return Response({ "detail": "Not have this vote topics"},status=status.HTTP_404_NOT_FOUND)
         else:
             result = []
+            ### find vote topic
             voteTopic = models.VoteTopic.objects.filter(pk=votetopic_pk,is_active=True).last()
-
-            voteRecords = models.VoteRecord.objects.filter(vote_topic_pk=voteTopic).values('vote_selected_choice').annotate(count=Count('vote_selected_choice'))
+            ### find vote record in percent
+            voteRecords = models.VoteRecord.objects.filter(vote_topic_pk=voteTopic).values('vote_selected_choice').order_by('vote_selected_choice').annotate(count=Count('vote_selected_choice'))
             voteRecordsCountAll = models.VoteRecord.objects.filter(vote_topic_pk=voteTopic).count()
 
             
@@ -1241,21 +1242,46 @@ class VoteTopicViewSet(viewsets.ModelViewSet):
             for voteRecord in voteRecords:
                 resultDict = dict()
                 
-                count = voteRecord['count']
                 voteChoicePk = voteRecord['vote_selected_choice']
 
                 
                 voteChoice = models.VoteChoice.objects.filter(pk = voteChoicePk).values('vote_thai_choice').last()
                 resultDict['voteChocePk'] = voteRecord['vote_selected_choice']
+                resultDict['voteChoiceTitle'] = voteChoice['vote_thai_choice']
                 resultDict['count'] = voteRecord['count']
                 resultDict['percent'] = (resultDict['count']/voteRecordsCountAll)*100
-                resultDict['voteChoiceTitle'] = voteChoice['vote_thai_choice']
+                
 
                 percent_result.append(resultDict)
             
             result.append(percent_result)
 
+            ## find vote record for individual home
+            voteRecords = models.VoteRecord.objects.filter(vote_topic_pk=voteTopic).values('vote_home','vote_selected_choice','vote_hiden').order_by('vote_selected_choice')
 
+            individual_result = []
+            for voteRecord in voteRecords:
+                resultDict = dict()
+                
+                
+                homePk = voteRecord['vote_home']
+                voteChoicePk = voteRecord['vote_selected_choice']
+                
+                home = models.Home.objects.filter(pk=homePk).values('home_number').last()
+                voteChoice = models.VoteChoice.objects.filter(pk = voteChoicePk).values('vote_thai_choice').last()
+                resultDict['homePk'] = voteRecord['vote_home']
+                resultDict['homeNumber'] = home['home_number']
+                if(voteRecord['vote_hiden']==True):
+                    resultDict['voteChoiceTitle'] = None
+                    resultDict['voteChoicePk'] = None
+                else:
+                    resultDict['voteChoiceTitle'] = voteChoice['vote_thai_choice']
+                    resultDict['voteChoicePk'] = voteRecord['vote_selected_choice']
+                
+
+                individual_result.append(resultDict)
+
+            result.append(individual_result)
 
             return notFoundHandling(result)
                 
