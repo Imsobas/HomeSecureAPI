@@ -1291,12 +1291,6 @@ class VoteTopicViewSet(viewsets.ModelViewSet):
                 
                
 
-
-        # Members.objects.values('designation').annotate(dcount=Count('designation'))
-
-        # serializer = serializers.VoteTopicSerializer(querySet, many=True)
-        # result = serializer.data 
-
     
     @action(detail=True, methods = 'GET')
     def get_villages_pk_votetopics(self, request, village_pk):
@@ -1332,6 +1326,8 @@ class VoteTopicViewSet(viewsets.ModelViewSet):
 
 
             return notFoundHandling(result)
+
+   
         
 
 class VoteChoiceViewSet(viewsets.ModelViewSet):

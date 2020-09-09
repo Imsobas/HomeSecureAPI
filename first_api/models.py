@@ -330,7 +330,7 @@ class VoteTopic(models.Model):
     vote_chinese_topic = models.CharField(max_length=100,null=True, blank=True)
     vote_start_date = models.DateField(null=True, blank=True)
     vote_end_date = models.DateField(null=True, blank=True)
-    vote_confirm_status = models.BooleanField(default=True)
+    vote_confirm_status = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
 
     def __str__(self):
