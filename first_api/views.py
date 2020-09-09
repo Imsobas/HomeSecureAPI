@@ -1230,13 +1230,14 @@ class VoteTopicViewSet(viewsets.ModelViewSet):
         if(isVoteTopicExist==False):
             return Response({ "detail": "Not have this vote topics"},status=status.HTTP_404_NOT_FOUND)
         else:
-
+            result = []
             voteTopic = models.VoteTopic.objects.filter(pk=votetopic_pk,is_active=True).last()
 
             voteRecords = models.VoteRecord.objects.filter(vote_topic_pk=voteTopic).values('vote_selected_choice').annotate(count=Count('vote_selected_choice'))
             voteRecordsCountAll = models.VoteRecord.objects.filter(vote_topic_pk=voteTopic).count()
+
             
-            result = []
+            percent_result= []
             for voteRecord in voteRecords:
                 resultDict = dict()
                 
@@ -1250,7 +1251,11 @@ class VoteTopicViewSet(viewsets.ModelViewSet):
                 resultDict['percent'] = (resultDict['count']/voteRecordsCountAll)*100
                 resultDict['voteChoiceTitle'] = voteChoice['vote_thai_choice']
 
-                result.append(resultDict)
+                percent_result.append(resultDict)
+            
+            result.append(percent_result)
+
+
 
             return notFoundHandling(result)
                 

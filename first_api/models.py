@@ -362,7 +362,8 @@ class VoteRecord(models.Model):
         """Return the model as a string"""
         return str(self.pk)
 
-    
+    class Meta:
+        unique_together = ('vote_home', 'vote_topic_pk')
     
 
 
