@@ -1287,7 +1287,7 @@ class VoteTopicViewSet(viewsets.ModelViewSet):
 
 
     @action(detail=True, methods = 'GET')
-    def get_votetopics_pk_result(self, request, votetopic_pk):
+    def get_votetopics_pk_result_user_home_pk(self, request, votetopic_pk, home_pk):
         """ Return result of voting information according to specific village """
 
         isVoteTopicExist = models.VoteTopic.objects.filter(pk=votetopic_pk,is_active=True).exists()
@@ -1322,7 +1322,7 @@ class VoteTopicViewSet(viewsets.ModelViewSet):
 
                 percent_result.append(resultDict)
             
-            result.append(percent_result)
+            
 
             ## find vote record for individual home
             voteRecords = models.VoteRecord.objects.filter(vote_topic_pk=voteTopic).values('vote_home','vote_selected_choice','vote_hiden').order_by('vote_selected_choice')
@@ -1339,16 +1339,23 @@ class VoteTopicViewSet(viewsets.ModelViewSet):
                 voteChoice = models.VoteChoice.objects.filter(pk = voteChoicePk).values('vote_thai_choice').last()
                 resultDict['homePk'] = voteRecord['vote_home']
                 resultDict['homeNumber'] = home['home_number']
-                if(voteRecord['vote_hiden']==True):
-                    resultDict['voteChoiceTitle'] = "ไม่เปิดเผย"
-                    resultDict['voteChoicePk'] = "ไม่เปิดเผย"
-                else:
+                if(resultDict['homePk']==home_pk):
+                    result[0]['currentHomePk'] = voteRecord['vote_home']
+                    result[0]['currentChoiceTitle'] = voteChoice['vote_thai_choice']
                     resultDict['voteChoiceTitle'] = voteChoice['vote_thai_choice']
                     resultDict['voteChoicePk'] = voteRecord['vote_selected_choice']
+                else:
+                    if(voteRecord['vote_hiden']==True):
+                        resultDict['voteChoiceTitle'] = "ไม่เปิดเผย"
+                        resultDict['voteChoicePk'] = "ไม่เปิดเผย"
+                    else:
+                        resultDict['voteChoiceTitle'] = voteChoice['vote_thai_choice']
+                        resultDict['voteChoicePk'] = voteRecord['vote_selected_choice']
                 
 
                 individual_result.append(resultDict)
 
+            result.append(percent_result)
             result.append(individual_result)
 
             return notFoundHandling(result)
