@@ -1220,6 +1220,48 @@ class VoteTopicViewSet(viewsets.ModelViewSet):
     queryset = models.VoteTopic.objects.all()
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
+
+
+    @action(detail=True, methods = 'GET')
+    def get_votetopics_pk_result(self, request, votetopic_pk):
+        """ Return result of voting information according to specific village """
+
+        isVoteTopicExist = models.VoteTopic.objects.filter(pk=votetopic_pk,is_active=True).exists()
+        if(isVoteTopicExist==False):
+            return Response({ "detail": "Not have this vote topics"},status=status.HTTP_404_NOT_FOUND)
+        else:
+
+            voteTopic = models.VoteTopic.objects.filter(pk=votetopic_pk,is_active=True).last()
+
+            voteRecords = models.VoteRecord.objects.filter(vote_topic_pk=voteTopic).values('vote_selected_choice').annotate(count=Count('vote_selected_choice'))
+            voteRecordsCountAll = models.VoteRecord.objects.filter(vote_topic_pk=voteTopic).count()
+            
+            result = []
+            for voteRecord in voteRecords:
+                resultDict = dict()
+                
+                count = voteRecord['count']
+                voteChoicePk = voteRecord['vote_selected_choice']
+
+                
+                voteChoice = models.VoteChoice.objects.filter(pk = voteChoicePk).values('vote_thai_choice').last()
+                resultDict['voteChocePk'] = voteRecord['vote_selected_choice']
+                resultDict['count'] = voteRecord['count']
+                resultDict['percent'] = (resultDict['count']/voteRecordsCountAll)*100
+                resultDict['voteChoiceTitle'] = voteChoice['vote_thai_choice']
+
+                result.append(resultDict)
+
+            return notFoundHandling(result)
+                
+               
+
+
+        # Members.objects.values('designation').annotate(dcount=Count('designation'))
+
+        # serializer = serializers.VoteTopicSerializer(querySet, many=True)
+        # result = serializer.data 
+
     
     @action(detail=True, methods = 'GET')
     def get_villages_pk_votetopics(self, request, village_pk):

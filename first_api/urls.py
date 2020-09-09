@@ -234,6 +234,9 @@ get_villages_pk_user_pk_votetopics = views.VoteTopicViewSet.as_view({
     'get': 'get_villages_pk_user_pk_votetopics'
 })
 
+get_votetopics_pk_result = views.VoteTopicViewSet.as_view({
+    'get': 'get_votetopics_pk_result'
+})
 ## VoteChoice
 get_votetopics_pk_votechoices = views.VoteChoiceViewSet.as_view({
     'get': 'get_votetopics_pk_votechoices'
@@ -328,6 +331,7 @@ urlpatterns = [
     ## votetopic
     path('villages/<int:village_pk>/votetopics/', get_villages_pk_votetopics,name='get_villages_pk_votetopics'),
     path('villages/<int:village_pk>/homes/<int:home_pk>/votetopics/', get_villages_pk_user_pk_votetopics,name='get_villages_pk_user_pk_votetopics'),
+    path('votetopics/<int:votetopic_pk>/result/', get_votetopics_pk_result,name='get_votetopics_pk_result'),
     
     
     ## votechoice
