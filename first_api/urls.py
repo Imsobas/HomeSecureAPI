@@ -265,6 +265,10 @@ get_homes_pk_problems = views.ProblemViewSet.as_view({
     'get': 'get_homes_pk_problems'
 })
 
+get_problems_with_home_number  = views.ProblemViewSet.as_view({
+    'get': 'get_problems_with_home_number'
+})
+
 
 
 # Home Secure main routers
@@ -353,7 +357,10 @@ urlpatterns = [
     
     ## problem 
     path('homes/<int:home_pk>/problems/',  get_homes_pk_problems,name='get_homes_pk_problems'),
-   
+    path('problems_with_home_number/',  get_problems_with_home_number,name='get_problems_with_home_number'),
+    
+
+
     # path('hello-view/', views.HelloApiView.as_view()), 
     path('login/', views.UserLoginApiView.as_view()),
     path('',include(router.urls))

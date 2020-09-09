@@ -1449,6 +1449,39 @@ class ProblemViewSet(viewsets.ModelViewSet):
 
             return notFoundHandling(result)
 
+    @action(detail=True, methods = 'GET')
+    def get_problems_with_home_number(self, request):
+        """ Return all votetopics according to specific village """
+
+        querySet = models.Problem.objects.filter(is_active=True).all()
+        serializer = serializers.ProblemSerializer(querySet, many=True)
+        # result = serializer.data 
+        problemData = serializer.data 
+
+
+        result = []
+        # print(problemData)
+        for problem in problemData:
+            newDict = dict()
+            print(problem)
+            homePk = problem['problem_home']
+            home = models.Home.objects.filter(pk = homePk).last()
+            serializer = serializers.HomeSerializer(home,)
+            homeData = serializer.data
+            newDict['pk'] = problem['pk']
+            newDict['problem_village'] = problem['problem_village']
+            newDict['problem_home'] = problem['problem_home']
+            newDict['problem_home_number'] = homeData['home_number']
+            newDict['problem_date'] = problem['problem_date']
+            newDict['problem_type'] = problem['problem_type']
+            newDict['problem_detail'] = problem['problem_detail']
+            newDict['problem_feedback'] = problem['problem_feedback']
+            newDict['is_active'] = problem['is_active']
+            newDict['is_active_admin'] = problem['is_active_admin']
+            result.append(newDict)
+
+        return notFoundHandling(result)
+
 
 
 
