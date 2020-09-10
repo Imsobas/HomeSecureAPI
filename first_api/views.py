@@ -23,6 +23,10 @@ import datetime
 from django.db.models import Count
 from django.db.models import Sum
 
+from django.conf import settings
+from django.utils.timezone import make_aware
+from django.utils.timezone import localtime, now
+
 ## helper function
 
 def notFoundHandling(result,error_message="Not found."):
@@ -503,6 +507,18 @@ class SecureLocationViewSet(viewsets.ModelViewSet):
     queryset = models.SecureLocation.objects.all()
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
+
+    @action(detail=True, methods = 'GET')
+    def get_secureguards_pk_securelocation(self, request, secure_guard_pk):
+        """ Return all secure location correspond to specific secure guard and also delete old set  """
+       
+        delQuerySet = models.SecureLocation.objects.filter(secure_location_time__lt=datetime.date.today()).all().delete()
+        querySet = models.SecureLocation.objects.filter(secure_pk=secure_guard_pk).order_by('secure_location_time').all()[::-1]
+        serializer = serializers.SecureLocationSerializer(querySet,many=True)
+        result = serializer.data
+
+        return notFoundHandling(result)
+
 
 class QrCodeViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.QrCodeSerializer
