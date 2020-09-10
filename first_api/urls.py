@@ -66,6 +66,10 @@ get_villages_pk_homes = views.HomeViewSet.as_view({
     'get': 'get_villages_pk_homes'
 })
 
+get_villages_pk_zones_null_homes = views.HomeViewSet.as_view({
+    'get': 'get_villages_pk_zones_null_homes'
+})
+
 get_villages_pk_zones_pk_homes = views.HomeViewSet.as_view({
     'get': 'get_villages_pk_zones_pk_homes'
 })
@@ -77,6 +81,7 @@ get_homes_active = views.HomeViewSet.as_view({
 get_homespk_number = views.HomeViewSet.as_view({
     'get': 'get_homespk_number'
 })
+
 
 ##general users
 
@@ -316,8 +321,9 @@ urlpatterns = [
     path('villages/<int:village_pk>/homes/',get_villages_pk_homes, name='get_villages_pk_homes'),
     path('villages/zones/homes/', get_villages_zones_homes, name='get_villages_zones_homes'),
     path('villages/<int:village_pk>/zones/<int:zone_pk>/homes/', get_villages_pk_zones_pk_homes, name='get_villages_pk_zones_pk_homes'),
+    path('villages/<int:village_pk>/zones/null/homes/', get_villages_pk_zones_null_homes, name='get_villages_pk_zones_null_homes'),
     path('homes/<str:home_number>/check_home_exist/', get_homespk_number, name='get_homespk_number'),
-
+        
 
     ##general user end point 
     path('general_users_active/', get_general_users_active, name='get_general_users_active'),
