@@ -434,6 +434,66 @@ class SecureGuardViewSet(viewsets.ModelViewSet):
             
         return notFoundHandling(result)
 
+    @action(detail=True, methods = 'GET')
+    def get_villages_pk_secureguards_for_location(self, request, village_pk):
+        """ Return all secureguards correspond to specific village for selecting screen """
+        querySet = models.SecureGuard.objects.filter(secure_village=village_pk, is_active=True).all()
+        serializer = serializers.SecureGuardSerializer(querySet,many=True)
+        secureGuardData = serializer.data
+
+        result = []
+        for secure in secureGuardData:
+            secureDict = dict()
+            secureDict['pk'] = secure['pk']
+            secureDict['secure_firstname'] = secure['secure_firstname']
+            secureDict['secure_lastname'] = secure['secure_lastname']
+            secureDict['secure_now_latitude'] = secure['secure_now_latitude']
+            secureDict['secure_now_lontitude'] = secure['secure_now_lontitude']
+            secureDict['secure_now_lontitude'] = secure['secure_now_lontitude']
+            # secureDict['secure_now_location_time'] = secureDict['secure_now_location_time']
+
+            workPk = secure['secure_work_shift']
+            
+            work = models.Work.objects.filter(pk=workPk, is_active=True).last()
+            serializer = serializers.WorkSerializer(work)
+            workData = serializer.data
+            secureDict['secure_work_name'] = workData['work_name']
+            result.append(secureDict)
+
+            
+        return notFoundHandling(result)
+
+    @action(detail=True, methods = 'GET')
+    def get_villages_pk_zones_pk_secureguards_for_location(self, request, village_pk, zone_pk):
+        """ Return all secureguards correspond to specific village and zonefor selecting screen """
+        querySet = models.SecureGuard.objects.filter(secure_village=village_pk, secure_zone=zone_pk, is_active=True).all()
+        serializer = serializers.SecureGuardSerializer(querySet,many=True)
+        secureGuardData = serializer.data
+
+        result = []
+        for secure in secureGuardData:
+            secureDict = dict()
+            secureDict['pk'] = secure['pk']
+            secureDict['secure_firstname'] = secure['secure_firstname']
+            secureDict['secure_lastname'] = secure['secure_lastname']
+            secureDict['secure_now_latitude'] = secure['secure_now_latitude']
+            secureDict['secure_now_lontitude'] = secure['secure_now_lontitude']
+            secureDict['secure_now_lontitude'] = secure['secure_now_lontitude']
+            # secureDict['secure_now_location_time'] = secureDict['secure_now_location_time']
+
+            workPk = secure['secure_work_shift']
+            
+            work = models.Work.objects.filter(pk=workPk, is_active=True).last()
+            serializer = serializers.WorkSerializer(work)
+            workData = serializer.data
+            secureDict['secure_work_name'] = workData['work_name']
+            result.append(secureDict)
+
+            
+        return notFoundHandling(result)
+
+    
+
 
 
 class QrCodeViewSet(viewsets.ModelViewSet):

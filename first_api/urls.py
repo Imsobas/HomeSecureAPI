@@ -101,6 +101,14 @@ get_villages_pk_zones_pk_secureguards = views.SecureGuardViewSet.as_view({
     'get': 'get_villages_pk_zones_pk_secureguards'
 })
 
+get_villages_pk_secureguards_for_location = views.SecureGuardViewSet.as_view({
+    'get': 'get_villages_pk_secureguards_for_location'
+})
+
+get_villages_pk_zones_pk_secureguards_for_location = views.SecureGuardViewSet.as_view({
+    'get': 'get_villages_pk_zones_pk_secureguards_for_location'
+})
+
 ## user
 
 get_profiles_check  = views.UserProfileViewSet.as_view({
@@ -315,7 +323,10 @@ urlpatterns = [
     ##secure guard 
     path('villages/<int:village_pk>/secure_guards/', get_villages_pk_secureguards, name='get_villages_pk_secureguards'),
     path('villages/<int:village_pk>/zones/<int:zone_pk>/secure_guards/', get_villages_pk_zones_pk_secureguards, name='get_villages_pk_zones_pk_secureguards'),
+    path('villages/<int:village_pk>/secure_guards/for_location/',  get_villages_pk_secureguards_for_location, name='get_villages_pk_secureguards_for_location'),
+    path('villages/<int:village_pk>/zones/<int:zone_pk>/secure_guards/for_location/', get_villages_pk_zones_pk_secureguards_for_location, name='get_villages_pk_zones_pk_secureguards_for_location'),
     
+   
     
     ##checkpoint 
     path('villages/<int:village_pk>/checkpoints/', get_villages_pk_checkpoints, name='get_villages_pk_checkpoints'),
