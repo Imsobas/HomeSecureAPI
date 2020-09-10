@@ -31,6 +31,7 @@ router.register(r'votetopic',views.VoteTopicViewSet)
 router.register(r'votechoice',views.VoteChoiceViewSet)
 router.register(r'voterecord',views.VoteRecordViewSet)
 router.register(r'problem',views.ProblemViewSet)
+router.register(r'secure_location',views.SecureLocationViewSet)
 
 ## Binding URL
 

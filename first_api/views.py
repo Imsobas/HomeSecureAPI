@@ -498,7 +498,11 @@ class SecureGuardViewSet(viewsets.ModelViewSet):
 
     
 
-
+class SecureLocationViewSet(viewsets.ModelViewSet):
+    serializer_class = serializers.SecureLocationSerializer
+    queryset = models.SecureLocation.objects.all()
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
 
 class QrCodeViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.QrCodeSerializer
