@@ -91,6 +91,16 @@ get_villages_pk_general_users = views.GeneralUserViewSet.as_view({
     'get': 'get_villages_pk_general_users'
 })
 
+##secure guard 
+
+get_villages_pk_secureguards = views.SecureGuardViewSet.as_view({
+    'get': 'get_villages_pk_secureguards'
+})
+
+get_villages_pk_zones_pk_secureguards = views.SecureGuardViewSet.as_view({
+    'get': 'get_villages_pk_zones_pk_secureguards'
+})
+
 ## user
 
 get_profiles_check  = views.UserProfileViewSet.as_view({
@@ -301,6 +311,11 @@ urlpatterns = [
     
     ##user
     path('profiles_check/<str:new_username>/', get_profiles_check, name='get_profiles_check'),
+
+    ##secure guard 
+    path('villages/<int:village_pk>/secure_guards/', get_villages_pk_secureguards, name='get_villages_pk_secureguards'),
+    path('villages/<int:village_pk>/zones/<int:zone_pk>/secure_guards/', get_villages_pk_zones_pk_secureguards, name='get_villages_pk_zones_pk_secureguards'),
+    
     
     ##checkpoint 
     path('villages/<int:village_pk>/checkpoints/', get_villages_pk_checkpoints, name='get_villages_pk_checkpoints'),

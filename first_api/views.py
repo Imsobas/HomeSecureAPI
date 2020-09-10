@@ -416,6 +416,26 @@ class SecureGuardViewSet(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
 
+    @action(detail=True, methods = 'GET')
+    def get_villages_pk_secureguards(self, request, village_pk):
+        """ Return all secureguards correspond to specific village """
+        querySet = models.SecureGuard.objects.filter(secure_village=village_pk, is_active=True).all()
+        serializer = serializers.SecureGuardSerializer(querySet,many=True)
+        result = serializer.data
+            
+        return notFoundHandling(result)
+    
+    @action(detail=True, methods = 'GET')
+    def get_villages_pk_zones_pk_secureguards(self, request, village_pk, zone_pk):
+        """ Return all checkpoints correspond to specific zone and correspond to specific village """
+        querySet = models.SecureGuard.objects.filter(secure_village=village_pk, secure_zone=zone_pk, is_active=True).all()
+        serializer = serializers.SecureGuardSerializer(querySet,many=True)
+        result = serializer.data
+            
+        return notFoundHandling(result)
+
+
+
 class QrCodeViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.QrCodeSerializer
     queryset = models.Qrcode.objects.all()
