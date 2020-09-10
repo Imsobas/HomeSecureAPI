@@ -134,9 +134,9 @@ class GeneralUser(models.Model):
     ## 2. one user can be both general and secure
 
     GENERAL_USER_ROLE_CHOICE = (
-        ('Villager','Villager'),
-        ('Manager','Manager'),
-        ('Caretaker','Caretaker')
+        ('ลูกบ้าน','ลูกบ้าน'),
+        ('กรรมการหมู่บ้าน','กรรมการหมู่บ้าน'),
+        ('ผู้ดูแลหมู่บ้าน','ผู้ดูแลหมู่บ้าน')
     )
 
     gen_user_firstname = models.CharField(max_length=100)
@@ -174,10 +174,10 @@ class Work(models.Model):
 class SecureGuard(models.Model):
 
     SECURITY_POSITION_CHOICE = (
-        ('SecureBoss','SecureBoss'),
-        ('Enter','Enter'),
-        ('Exit','Exit'),
-        ('Inside','Inside')
+        ('หัวหน้า','หัวหน้า'),
+        ('ขาเข้า','ขาเข้า'),
+        ('ขาออก','ขาออก'),
+        ('ในหมู่บ้าน','ในหมู่บ้าน')
     )
 
     secure_firstname = models.CharField(max_length=100)
