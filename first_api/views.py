@@ -447,6 +447,7 @@ class SecureGuardViewSet(viewsets.ModelViewSet):
             secureDict['pk'] = secure['pk']
             secureDict['secure_firstname'] = secure['secure_firstname']
             secureDict['secure_lastname'] = secure['secure_lastname']
+            secureDict['secure_type'] = secure['secure_type']
             secureDict['secure_now_latitude'] = secure['secure_now_latitude']
             secureDict['secure_now_lontitude'] = secure['secure_now_lontitude']
             secureDict['secure_now_lontitude'] = secure['secure_now_lontitude']
@@ -457,6 +458,7 @@ class SecureGuardViewSet(viewsets.ModelViewSet):
             work = models.Work.objects.filter(pk=workPk, is_active=True).last()
             serializer = serializers.WorkSerializer(work)
             workData = serializer.data
+            secureDict['secure_work_shift'] = secure['secure_work_shift']
             secureDict['secure_work_name'] = workData['work_name']
             result.append(secureDict)
 
@@ -476,6 +478,7 @@ class SecureGuardViewSet(viewsets.ModelViewSet):
             secureDict['pk'] = secure['pk']
             secureDict['secure_firstname'] = secure['secure_firstname']
             secureDict['secure_lastname'] = secure['secure_lastname']
+            secureDict['secure_type'] = secure['secure_type']
             secureDict['secure_now_latitude'] = secure['secure_now_latitude']
             secureDict['secure_now_lontitude'] = secure['secure_now_lontitude']
             secureDict['secure_now_lontitude'] = secure['secure_now_lontitude']
@@ -486,6 +489,7 @@ class SecureGuardViewSet(viewsets.ModelViewSet):
             work = models.Work.objects.filter(pk=workPk, is_active=True).last()
             serializer = serializers.WorkSerializer(work)
             workData = serializer.data
+            secureDict['secure_work_shift'] = secure['secure_work_shift']
             secureDict['secure_work_name'] = workData['work_name']
             result.append(secureDict)
 

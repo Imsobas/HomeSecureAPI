@@ -203,7 +203,16 @@ class SecureGuard(models.Model):
         """Return the model as a string"""
         return str(self.secure_firstname)+" "+str(self.secure_lastname)
 
-
+class SecureLocation(models.Model):
+    secure_pk = models.ForeignKey(SecureGuard, null=True, blank=True, on_delete=models.DO_NOTHING)
+    secure_location_type = models.CharField(max_length=30,null=True, blank=True)
+    secure_location_time = models.DateTimeField(null=True, blank=True,auto_now_add=True)
+    secure_lat = models.DecimalField(max_digits=11, decimal_places=8,  null=True, blank=True)
+    secure_lon = models.DecimalField(max_digits=11, decimal_places=8,  null=True, blank=True)
+    
+    def __str__(self):
+        """Return the model as a string"""
+        return str(self.pk)
 
 
 class Qrcode(models.Model):
