@@ -35,6 +35,13 @@ router.register(r'secure_location',views.SecureLocationViewSet)
 router.register(r'secure_work',views.SecureWorkViewSet)
 ## Binding URL
 
+## profile 
+get_profiles_detail = views.UserProfileViewSet.as_view({
+    'get': 'get_profiles_detail'
+})
+   
+
+
 ## village
 get_villages_active = views.VillageViewSet.as_view({
     'get': 'get_villages_active'
@@ -323,6 +330,10 @@ delete_secureguards_pk_works_pk = views.SecureWorkViewSet.as_view({
 urlpatterns = [
 
     ##Note: if most end point unless viewset default especially list function will return if is_active = true, 
+
+    ## username 
+    path('profiles/<str:username>/',get_profiles_detail,name='get_profiles_detail'),
+    
 
     ## village end point 
     path('villages_active/',get_villages_active,name='get_villages_active'),

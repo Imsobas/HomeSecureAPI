@@ -63,6 +63,49 @@ class UserProfileViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_404_NOT_FOUND)
         else:
             return Response({'detail':'useable username'})
+
+    
+    @action(detail=True, methods = 'GET')
+    def get_profiles_detail(self, request, username):
+        """ Return their own profile according to username"""
+        querySet = models.UserProfile.objects.filter(username=username).last()
+        serializer = serializers.UserProfileSerializer(querySet)
+        result = serializer.data
+        
+        result.pop('groups', None)
+
+        if(result['user_role']=='SecureBoss' or result['user_role']=='SecureGuard'):
+            usernamePk = result['pk']
+            username = models.UserProfile.objects.only('pk').get(pk=usernamePk)
+            secure = models.SecureGuard.objects.filter(secure_username=username).last()
+            serializer = serializers.SecureGuardSerializer(secure)
+            secureData = serializer.data
+        
+            secureDict = dict()
+            secureDict["pk"] = secureData["pk"]
+            secureDict["secure_firstname"] = secureData["secure_firstname"]
+            secureDict["secure_lastname"]= secureData["secure_lastname"]
+            secureDict["secure_username"]= secureData["secure_username"]
+            secureDict["secure_type"]= secureData["secure_type"]
+            secureDict["secure_zone"]= secureData["secure_zone"]
+            secureDict["secure_village"]= secureData["secure_village"]
+            secureDict["secure_company"]= secureData["secure_company"]
+
+            result['secure_guard'] = secureDict
+
+        elif(result['user_role']=='GeneralUser'):
+            usernamePk = result['pk']
+            username = models.UserProfile.objects.only('pk').get(pk=usernamePk)
+            genuser = models.GeneralUser.objects.filter(gen_user_username=username).last()
+            serializer = serializers.GeneralUserSerializer(genuser)
+            genUserData = serializer.data
+            genUserData.pop('is_active', None)
+
+            result['general_user'] = genUserData
+
+
+
+        return notFoundHandling(result)
         
 
 # Home Secure main views 
