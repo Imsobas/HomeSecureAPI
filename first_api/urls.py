@@ -32,7 +32,7 @@ router.register(r'votechoice',views.VoteChoiceViewSet)
 router.register(r'voterecord',views.VoteRecordViewSet)
 router.register(r'problem',views.ProblemViewSet)
 router.register(r'secure_location',views.SecureLocationViewSet)
-
+router.register(r'secure_work',views.SecureWorkViewSet)
 ## Binding URL
 
 ## village
@@ -113,6 +113,14 @@ get_villages_pk_secureguards_for_location = views.SecureGuardViewSet.as_view({
 
 get_villages_pk_zones_pk_secureguards_for_location = views.SecureGuardViewSet.as_view({
     'get': 'get_villages_pk_zones_pk_secureguards_for_location'
+})
+
+get_villages_pk_secureguards_for_mainfetching = views.SecureGuardViewSet.as_view({
+    'get': 'get_villages_pk_secureguards_for_mainfetching'
+})
+
+get_villages_pk_zones_pk_secureguards_for_mainfetching = views.SecureGuardViewSet.as_view({
+    'get': 'get_villages_pk_zones_pk_secureguards_for_mainfetching'
 })
 
 ##secure location 
@@ -299,6 +307,16 @@ get_problems_with_home_number  = views.ProblemViewSet.as_view({
     'get': 'get_problems_with_home_number'
 })
 
+## Secure Work 
+
+get_secureguards_pk_works = views.SecureWorkViewSet.as_view({
+    'get': 'get_secureguards_pk_works'
+})
+
+delete_secureguards_pk_works_pk = views.SecureWorkViewSet.as_view({
+    'get': 'delete_secureguards_pk_works_pk'
+})
+
 
 
 # Home Secure main routers
@@ -338,6 +356,8 @@ urlpatterns = [
     path('villages/<int:village_pk>/zones/<int:zone_pk>/secure_guards/', get_villages_pk_zones_pk_secureguards, name='get_villages_pk_zones_pk_secureguards'),
     path('villages/<int:village_pk>/secure_guards/for_location/',  get_villages_pk_secureguards_for_location, name='get_villages_pk_secureguards_for_location'),
     path('villages/<int:village_pk>/zones/<int:zone_pk>/secure_guards/for_location/', get_villages_pk_zones_pk_secureguards_for_location, name='get_villages_pk_zones_pk_secureguards_for_location'),
+    path('villages/<int:village_pk>/secure_guards/for_mainfetching/',  get_villages_pk_secureguards_for_mainfetching, name='get_villages_pk_secureguards_for_mainfetching'),
+    path('villages/<int:village_pk>/zones/<int:zone_pk>/secure_guards/for_mainfetching/',get_villages_pk_zones_pk_secureguards_for_mainfetching, name='get_villages_pk_zones_pk_secureguards_for_mainfetching'),
     
     ##secure location 
     path('secure_guards/<int:secure_guard_pk>/securelocations/', get_secureguards_pk_securelocation, name='get_secureguards_pk_securelocation'),
@@ -401,7 +421,10 @@ urlpatterns = [
     path('homes/<int:home_pk>/problems/',  get_homes_pk_problems,name='get_homes_pk_problems'),
     path('problems_with_home_number/',  get_problems_with_home_number,name='get_problems_with_home_number'),
     
-
+    ## securework 
+    path('secure_guards/<int:secureguard_pk>/works/',  get_secureguards_pk_works,name='get_secureguards_pk_works'),
+    path('secure_guards/<int:secureguard_pk>/works/<int:work_pk>/delete/',  delete_secureguards_pk_works_pk,name='delete_secureguards_pk_works_pk'),
+   
 
     # path('hello-view/', views.HelloApiView.as_view()), 
     path('login/', views.UserLoginApiView.as_view()),

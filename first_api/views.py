@@ -423,6 +423,8 @@ class WorkViewSet(viewsets.ModelViewSet):
         
         return notFoundHandling(result)
 
+    
+
 class SecureGuardViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.SecureGuardSerializer
     queryset = models.SecureGuard.objects.all()
@@ -509,6 +511,46 @@ class SecureGuardViewSet(viewsets.ModelViewSet):
             
         return notFoundHandling(result)
 
+    @action(detail=True, methods = 'GET')
+    def get_villages_pk_secureguards_for_mainfetching(self, request, village_pk):
+        """ Return all secureguards correspond to specific village for selecting screen """
+        querySet = models.SecureGuard.objects.filter(secure_village=village_pk, is_active=True).all()
+        serializer = serializers.SecureGuardSerializer(querySet,many=True)
+        secureGuardData = serializer.data
+
+        result = []
+        for secure in secureGuardData:
+            secureDict = dict()
+            secureDict['pk'] = secure['pk']
+            secureDict['secure_firstname'] = secure['secure_firstname']
+            secureDict['secure_lastname'] = secure['secure_lastname']
+            secureDict['secure_type'] = secure['secure_type']
+            secureDict['secure_village'] = secure['secure_village']
+            secureDict['secure_zone'] = secure['secure_zone']
+            result.append(secureDict)
+
+        return notFoundHandling(result)
+
+    @action(detail=True, methods = 'GET')
+    def get_villages_pk_zones_pk_secureguards_for_mainfetching(self, request, village_pk, zone_pk):
+        """ Return all secureguards correspond to specific village and zonefor selecting screen """
+        querySet = models.SecureGuard.objects.filter(secure_village=village_pk, secure_zone=zone_pk, is_active=True).all()
+        serializer = serializers.SecureGuardSerializer(querySet,many=True)
+        secureGuardData = serializer.data
+
+        result = []
+        for secure in secureGuardData:
+            secureDict = dict()
+            secureDict['pk'] = secure['pk']
+            secureDict['secure_firstname'] = secure['secure_firstname']
+            secureDict['secure_lastname'] = secure['secure_lastname']
+            secureDict['secure_type'] = secure['secure_type']
+            secureDict['secure_village'] = secure['secure_village']
+            secureDict['secure_zone'] = secure['secure_zone']
+            result.append(secureDict)
+
+        return notFoundHandling(result)
+
     
 
 class SecureLocationViewSet(viewsets.ModelViewSet):
@@ -525,6 +567,52 @@ class SecureLocationViewSet(viewsets.ModelViewSet):
         querySet = models.SecureLocation.objects.filter(secure_pk=secure_guard_pk).order_by('secure_location_time').all()[::-1]
         serializer = serializers.SecureLocationSerializer(querySet,many=True)
         result = serializer.data
+
+        return notFoundHandling(result)
+
+class SecureWorkViewSet(viewsets.ModelViewSet):
+    serializer_class = serializers.SecureWorkSerializer
+    queryset = models.SecureWork.objects.all()
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+
+    @action(detail=True, methods = 'GET')
+    def delete_secureguards_pk_works_pk(self, request, secureguard_pk, work_pk):
+        """ Delete a record according to specific secure_guard, work """
+       
+        delQuerySet = models.SecureWork.objects.filter(secure_pk=secureguard_pk, work_pk=work_pk).all().delete()
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    @action(detail=True, methods = 'GET')
+    def get_secureguards_pk_works(self, request, secureguard_pk):
+        """ Return all work to specific village"""
+        querySet = models.SecureWork.objects.filter(secure_pk=secureguard_pk).all()
+        serializer = serializers.SecureWorkSerializer(querySet,many=True)
+        # result = serializer.data
+        secureWork = serializer.data
+
+        # secure = models.SecureGuard.objects.filter(pk=secureguard_pk).last()
+        # serializer = serializers.SecureGuardSerializer(secure)
+        # secureData = serializer.data
+        
+
+        result =[]
+        for sw in secureWork:
+            swDict= dict()
+            swPk = sw['pk']
+            # swDict['secure_work_pk'] = sw['pk']
+            swDict["secure_pk"] =  sw['secure_pk']
+            # swDict['secure_village'] = secureData['secure_village']
+            swDict["work_pk"] =  sw['work_pk']
+            work = models.Work.objects.filter(pk=sw['work_pk']).last()
+            serializer = serializers.WorkSerializer(work)
+            workData = serializer.data
+            swDict['work_name'] =  workData['work_name']
+            swDict['work_start_time'] =  workData['work_start_time']
+            swDict['work_end_time'] =  workData['work_end_time']
+            secure = models.SecureGuard.objects.filter(pk=secureguard_pk).last()
+            result.append(swDict)
 
         return notFoundHandling(result)
 

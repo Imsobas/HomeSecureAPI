@@ -187,7 +187,7 @@ class SecureGuard(models.Model):
     secure_zone = models.ForeignKey(Zone, null=True, blank=True, on_delete=models.DO_NOTHING)
     secure_village = models.ForeignKey(Village, null=True, blank=True, on_delete=models.DO_NOTHING)
     secure_company = models.ForeignKey(Company, null=True, blank=True, on_delete=models.DO_NOTHING)
-    secure_join_date = models.DateTimeField(null=True, blank=True)
+    secure_join_date = models.DateTimeField(null=True, blank=True, auto_now_add=True)
     secure_left_date = models.DateTimeField(null=True, blank=True)
     secure_work_start_time = models.DateTimeField(null=True, blank=True)
     secure_work_end_time = models.DateTimeField(null=True, blank=True)
@@ -213,6 +213,14 @@ class SecureLocation(models.Model):
     def __str__(self):
         """Return the model as a string"""
         return str(self.pk)
+
+
+class SecureWork(models.Model):
+    secure_pk = models.ForeignKey(SecureGuard, null=True, blank=True, on_delete=models.DO_NOTHING)
+    work_pk = models.ForeignKey(Work, null=True, blank=True, on_delete=models.DO_NOTHING)
+
+    class Meta:
+        unique_together = ('secure_pk', 'work_pk',)
 
 
 class Qrcode(models.Model):

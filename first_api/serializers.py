@@ -60,8 +60,13 @@ class SecureGuardSerializer(serializers.ModelSerializer):
     
 class SecureLocationSerializer(serializers.ModelSerializer):
     class Meta:
-            model = models.SecureLocation
-            fields = ('pk', 'secure_pk', 'secure_location_type', 'secure_location_time', 'secure_lat', 'secure_lon')
+        model = models.SecureLocation
+        fields = ('pk', 'secure_pk', 'secure_location_type', 'secure_location_time', 'secure_lat', 'secure_lon')
+
+class SecureWorkSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.SecureWork
+        fields = ('pk', 'secure_pk', 'work_pk')
 
 class QrCodeSerializer(serializers.ModelSerializer):
     class Meta:
