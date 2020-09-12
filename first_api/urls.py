@@ -34,7 +34,7 @@ router.register(r'problem',views.ProblemViewSet)
 router.register(r'secure_location',views.SecureLocationViewSet)
 router.register(r'secure_work',views.SecureWorkViewSet)
 router.register(r'checkin_checkpoints',views.CheckinCheckpointViewSet)
-
+router.register(r'working_records',views.WorkingRecordViewSet)
 
 ## Binding URL
 

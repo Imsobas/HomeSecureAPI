@@ -1787,7 +1787,11 @@ class ProblemViewSet(viewsets.ModelViewSet):
         return notFoundHandling(result)
 
 
-
+class WorkingRecordViewSet(viewsets.ModelViewSet):
+    serializer_class = serializers.WorkingRecordSerializer
+    queryset = models.WorkingRecord.objects.all()
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
 
 
 

@@ -141,8 +141,12 @@ class ProblemSerializer(serializers.ModelSerializer):
         model = models.Problem
         fields =('pk', 'problem_village','problem_home','problem_date','problem_type','problem_detail','problem_feedback', 'is_active', 'is_active_admin')
         
-
-
+class WorkingRecordSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.WorkingRecord
+        fields =('pk', 'working_secure','working_date','work_checkin_checkpoint','working_in_out','working_device')
+     
+    
 ## User serializer
 
 class UserProfileSerializer(serializers.ModelSerializer):
