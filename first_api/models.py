@@ -411,12 +411,13 @@ class WorkingRecord(models.Model):
         ('ออก','ออก'),
   
     )
+    working_village = models.ForeignKey(Village,null=True, blank=True, on_delete=models.DO_NOTHING)
     working_secure = models.ForeignKey(SecureGuard,null=True, blank=True, on_delete=models.DO_NOTHING)
     working_date = models.DateTimeField(null=True, blank=True,auto_now_add=True)
     work_checkin_checkpoint = models.ForeignKey(CheckinCheckpoint,null=True, blank=True, on_delete=models.DO_NOTHING)
     working_in_out = models.CharField(max_length=5,null=True, blank=True,choices= IN_OUT_CHOICE)
     working_device = models.CharField(max_length=100,null=True, blank=True)
-
+    
     def __str__(self):
         """Return the model as a string"""
         return str(self.pk)
