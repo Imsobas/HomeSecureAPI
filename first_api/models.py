@@ -71,22 +71,22 @@ class UserProfile(AbstractBaseUser, PermissionsMixin):
 
 # Home Secure main models 
 
-class Company(models.Model):
-    company_name = models.CharField(max_length=100)
-    company_address = models.CharField(max_length=100, null=True, blank=True)
-    company_phone = models.CharField(max_length=100, null=True, blank=True)
-    ## to delete with out remove data
-    is_active = models.BooleanField(default=True)
+# class Company(models.Model):
+#     company_name = models.CharField(max_length=100)
+#     company_address = models.CharField(max_length=100, null=True, blank=True)
+#     company_phone = models.CharField(max_length=100, null=True, blank=True)
+#     ## to delete with out remove data
+#     is_active = models.BooleanField(default=True)
 
-    def __str__(self):
-         """Return the model as a string"""
-         return self.company_name
+#     def __str__(self):
+#          """Return the model as a string"""
+#          return self.company_name
 
 class Village(models.Model):
     village_name = models.CharField(max_length=100)
     village_address = models.CharField(max_length=200, null=True, blank=True)
     ## fk company
-    village_company = models.ForeignKey(Company,null=True, blank=True, on_delete=models.DO_NOTHING) 
+    # village_company = models.ForeignKey(Company,null=True, blank=True, on_delete=models.DO_NOTHING) 
     ##old lat lon is 11,7
     village_lat = models.DecimalField(max_digits=11, decimal_places=8, null=True, blank=True)
     village_lon = models.DecimalField(max_digits=11, decimal_places=8, null=True, blank=True)

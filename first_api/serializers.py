@@ -11,12 +11,6 @@ class CompanySerializer(serializers.ModelSerializer):
         model = models.Company
         fields = ('pk','company_name','company_address','company_phone','is_active')
 
-class CompanySerializer(serializers.ModelSerializer):
-    """Serializes company items"""
-    class Meta:
-        model = models.Company
-        fields = ('pk','company_name','company_address','company_phone','is_active')
-
 class VillageSerializer(serializers.ModelSerializer):
     """Serializes village items"""
     class Meta:
