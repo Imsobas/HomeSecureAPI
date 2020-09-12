@@ -51,6 +51,10 @@ get_villages_zones = views.ZoneViewSet.as_view({
     'get': 'get_villages_zones'
 })
 
+get_companys_pk_villages_zones = views.ZoneViewSet.as_view({
+    'get': 'get_companys_pk_villages_zones'
+})
+
 get_companys_pk_villages = views.VillageViewSet.as_view({
     'get': 'get_companys_pk_villages'
 })
@@ -62,6 +66,8 @@ get_villages_pk_zones = views.ZoneViewSet.as_view({
 get_villages_pk_zones_pk = views.ZoneViewSet.as_view({
     'get': 'get_villages_pk_zones_pk'
 })
+
+
 
 
 ## home
@@ -88,6 +94,8 @@ get_homes_active = views.HomeViewSet.as_view({
 get_homespk_number = views.HomeViewSet.as_view({
     'get': 'get_homespk_number'
 })
+
+
 
 
 ##general users
@@ -341,9 +349,11 @@ urlpatterns = [
     path('villages/location/<int:villagePk>', get_villages_location_pk, name='get_villages_location_pk'),
 
     ##zone end point
+     path('companys/<int:company_pk>/villages/zones/', get_companys_pk_villages_zones ,name='get_companys_pk_villages_zones'),
     path('villages/zones/', get_villages_zones ,name='villages_zones'),
     path('villages/<int:pk>/zones/', get_villages_pk_zones ,name='villages_pk_zones'),
     path('villages/<int:village_pk>/zones/<int:zone_pk>/', get_villages_pk_zones_pk ,name='villages_pk_zones_pk'),
+    
     
     ##home end point
     path('homes_active/', get_homes_active, name='get_homes_active'),

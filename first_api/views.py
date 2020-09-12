@@ -186,6 +186,39 @@ class ZoneViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,)
 
     @action(detail=True, methods = 'GET')
+    def get_companys_pk_villages_zones(self, request, company_pk):
+        """ Return all zone according to all village, filter by company pkNote: get only active village """
+        
+        result_list = []
+
+        villageQuerySet = models.Village.objects.filter(village_company=company_pk,is_active=True).all()
+        villageSerializer = serializers.VillageSerializer(villageQuerySet,many=True)
+        villageData = villageSerializer.data
+
+        for village in villageData:
+            village_dict = dict()
+            village_dict["pk"] = village["pk"]
+            village_dict["village_name"] = village["village_name"]
+
+            zone_list = []
+            zoneQuerySet = models.Zone.objects.filter(zone_village=village_dict["pk"],is_active=True).all()
+            zoneSerializer = serializers.ZoneSerializer(zoneQuerySet,many=True)
+            zoneData = zoneSerializer.data
+            
+            for zone in zoneData:
+                zone_dict = dict()
+                zone_dict["pk"] = zone["pk"]
+                zone_dict["zone_name"] = zone["zone_name"]
+                zone_dict["zone_number"] = zone["zone_number"]
+    
+                zone_list.append(zone_dict)
+
+            village_dict['zone'] = zone_list
+            result_list.append(village_dict)
+
+        return notFoundHandling(result_list)
+
+    @action(detail=True, methods = 'GET')
     def get_villages_zones(self, request):
         """ Return all zone according to all village, Note: get only active village """
         
@@ -658,6 +691,7 @@ class SecureWorkViewSet(viewsets.ModelViewSet):
             swDict['work_name'] =  workData['work_name']
             swDict['work_start_time'] =  workData['work_start_time']
             swDict['work_end_time'] =  workData['work_end_time']
+            swDict['work_hour_split'] = workData['work_hour_split']
             secure = models.SecureGuard.objects.filter(pk=secureguard_pk).last()
             result.append(swDict)
 
