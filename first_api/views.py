@@ -113,6 +113,7 @@ class UserProfileViewSet(viewsets.ModelViewSet):
 class CompanyViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.CompanySerializer
     queryset = models.Company.objects.all()
+    authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
 
     @action(detail=True, methods = 'GET')
