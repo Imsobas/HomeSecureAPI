@@ -42,6 +42,11 @@ class CheckpointSerializer(serializers.ModelSerializer):
         model = models.Checkpoint
         fields = ('pk', 'point_name', 'point_active', 'point_zone', 'point_company','point_village', 'point_lat', 'point_lon', 'is_active')
 
+class CheckinCheckpointSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.CheckinCheckpoint
+        fields = ('pk', 'point_name', 'point_active','point_village', 'point_company', 'point_lat', 'point_lon', 'is_active')
+
 class WorkSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Work

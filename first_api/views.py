@@ -485,6 +485,28 @@ class CheckpointViewSet(viewsets.ModelViewSet):
             
         return notFoundHandling(result)
 
+class CheckinCheckpointViewSet(viewsets.ModelViewSet):
+    serializer_class = serializers.CheckinCheckpointSerializer
+    queryset = models.CheckinCheckpoint.objects.all()
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+    
+    @action(detail=True, methods = 'GET')
+    def get_villages_pk_checkincheckpoints(self, request, village_pk):
+        """ Return all checkpoints correspond to specific village """
+        # print("get here")
+        # print(village_pk)
+        village = models.Village.objects.only('pk').get(pk=village_pk)
+        
+        querySet = models.CheckinCheckpoint.objects.filter(point_village=village, is_active=True).all()
+        print(querySet)
+        # for q in querySet:
+        #     print(q)
+        serializer = serializers.CheckinCheckpointSerializer(querySet,many=True)
+        result = serializer.data
+            
+        return notFoundHandling(result)
+
 class WorkViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.WorkSerializer
     queryset = models.Work.objects.all()

@@ -279,6 +279,16 @@ class Checkpoint(models.Model):
     point_lon = models.DecimalField(max_digits=11, decimal_places=8, default=0.000000)
     is_active = models.BooleanField(default=True)
 
+class CheckinCheckpoint(models.Model):
+    point_name = models.CharField(max_length=100)
+    ## point_active is status to active point in app 
+    point_active = models.BooleanField(default=True)
+    point_village = models.ForeignKey(Village, null=True, blank=True, on_delete=models.DO_NOTHING)
+    point_company = models.ForeignKey(Company,null=True, blank=True, on_delete=models.DO_NOTHING) 
+    point_lat = models.DecimalField(max_digits=11, decimal_places=8, default=0.000000)
+    point_lon = models.DecimalField(max_digits=11, decimal_places=8, default=0.000000)
+    is_active = models.BooleanField(default=True)
+
 
 class Setting(models.Model):
     setting_village = models.ForeignKey(Village,null=True, blank=True, on_delete=models.DO_NOTHING)

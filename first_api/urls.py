@@ -33,6 +33,9 @@ router.register(r'voterecord',views.VoteRecordViewSet)
 router.register(r'problem',views.ProblemViewSet)
 router.register(r'secure_location',views.SecureLocationViewSet)
 router.register(r'secure_work',views.SecureWorkViewSet)
+router.register(r'checkin_checkpoints',views.CheckinCheckpointViewSet)
+
+
 ## Binding URL
 
 ## profile 
@@ -158,6 +161,12 @@ get_villages_pk_checkpoints = views.CheckpointViewSet.as_view({
 
 get_villages_pk_zones_pk_checkpoints = views.CheckpointViewSet.as_view({
     'get': 'get_villages_pk_zones_pk_checkpoints'
+})
+
+##checkincheckpoint
+
+get_villages_pk_checkincheckpoints = views.CheckinCheckpointViewSet.as_view({
+    'get': 'get_villages_pk_checkincheckpoints'
 })
 
 ## work 
@@ -388,6 +397,10 @@ urlpatterns = [
     ##checkpoint 
     path('villages/<int:village_pk>/checkpoints/', get_villages_pk_checkpoints, name='get_villages_pk_checkpoints'),
     path('villages/<int:village_pk>/zones/<int:zone_pk>/checkpoints/', get_villages_pk_zones_pk_checkpoints, name='get_villages_pk_zones_pk_checkpoints'),
+    
+    ##checkincheckpoint 
+    path('villages/<int:village_pk>/checkin_checkpoints/', get_villages_pk_checkincheckpoints, name='get_villages_pk_checkincheckpoints'),
+    
 
     ##work 
     path('villages/<int:pk>/works/', get_villages_pk_works ,name='get_villages_pk_works'),
