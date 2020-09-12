@@ -430,7 +430,7 @@ urlpatterns = [
     
     ## problem 
     path('homes/<int:home_pk>/problems/',  get_homes_pk_problems,name='get_homes_pk_problems'),
-    path('problems_with_home_number/',  get_problems_with_home_number,name='get_problems_with_home_number'),
+    path('problems_with_home_number/<int:village_pk>/',  get_problems_with_home_number,name='get_problems_with_home_number'),
     
     ## securework 
     path('secure_guards/<int:secureguard_pk>/works/',  get_secureguards_pk_works,name='get_secureguards_pk_works'),

@@ -506,9 +506,12 @@ class SecureGuardViewSet(viewsets.ModelViewSet):
             secureDict['secure_firstname'] = secure['secure_firstname']
             secureDict['secure_lastname'] = secure['secure_lastname']
             secureDict['secure_type'] = secure['secure_type']
-            secureDict['secure_now_latitude'] = secure['secure_now_latitude']
-            secureDict['secure_now_lontitude'] = secure['secure_now_lontitude']
-            secureDict['secure_now_lontitude'] = secure['secure_now_lontitude']
+            secureDict['secure_village'] = secure['secure_village']
+            secureDict['secure_zone'] = secure['secure_zone']
+
+            # secureDict['secure_now_latitude'] = secure['secure_now_latitude']
+            # secureDict['secure_now_lontitude'] = secure['secure_now_lontitude']
+            # secureDict['secure_now_lontitude'] = secure['secure_now_lontitude']
             # secureDict['secure_now_location_time'] = secureDict['secure_now_location_time']
 
             workPk = secure['secure_work_shift']
@@ -537,9 +540,9 @@ class SecureGuardViewSet(viewsets.ModelViewSet):
             secureDict['secure_firstname'] = secure['secure_firstname']
             secureDict['secure_lastname'] = secure['secure_lastname']
             secureDict['secure_type'] = secure['secure_type']
-            secureDict['secure_now_latitude'] = secure['secure_now_latitude']
-            secureDict['secure_now_lontitude'] = secure['secure_now_lontitude']
-            secureDict['secure_now_lontitude'] = secure['secure_now_lontitude']
+            secureDict['secure_village'] = secure['secure_village']
+            secureDict['secure_zone'] = secure['secure_zone']
+            
             # secureDict['secure_now_location_time'] = secureDict['secure_now_location_time']
 
             workPk = secure['secure_work_shift']
@@ -1694,10 +1697,10 @@ class ProblemViewSet(viewsets.ModelViewSet):
             return notFoundHandling(result)
 
     @action(detail=True, methods = 'GET')
-    def get_problems_with_home_number(self, request):
+    def get_problems_with_home_number(self, request, village_pk ):
         """ Return all votetopics according to specific village """
 
-        querySet = models.Problem.objects.filter(is_active=True).all()
+        querySet = models.Problem.objects.filter(problem_village = village_pk,is_active=True).all()
         serializer = serializers.ProblemSerializer(querySet, many=True)
         # result = serializer.data 
         problemData = serializer.data 

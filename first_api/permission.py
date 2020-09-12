@@ -29,8 +29,17 @@ class UpdateOwnProfile(permissions.BasePermission):
 
     def has_object_permission(self, request, view, obj):
         """Check user is trying to edit their own profle"""
-        if(request.user.user_role == 'Admin'):
+        # print(request.user.is_staff)
+ 
+        if(request.user.user_role == 'Admin' or request.user.is_staff == True):
             return True
+
+        if(request.user.pk == obj.pk):
+            return True
+
+
+        # if(request.user.pk == obj.pk)
+        # if(request.user.username = )
         # print(request.user.user_role==user_role_list[2]) ## work
         # print('enterUpdateOwnProfile')
         
