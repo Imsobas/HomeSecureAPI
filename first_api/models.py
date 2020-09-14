@@ -293,6 +293,7 @@ class CheckinCheckpoint(models.Model):
 class Setting(models.Model):
     setting_village = models.ForeignKey(Village,null=True, blank=True, on_delete=models.DO_NOTHING)
     inside_scan_duration = models.DurationField(default=timedelta(minutes=6))
+    point_scan_distance = models.IntegerField(default=25)
 
     def __str__(self):
         """Return the model as a string"""

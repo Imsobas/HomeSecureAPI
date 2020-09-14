@@ -1793,6 +1793,12 @@ class WorkingRecordViewSet(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
 
+    # @action(detail=True, methods = 'GET')
+    # def get_villages_pk_workingrecords(self, request, village_pk):
+    #     """ Return all votetopics according to specific village """
+    #     querySet = models.VoteTopic.objects.filter(vote_village=village_pk,is_active=True).all()
+    #     serializer = serializers.VoteTopicSerializer(querySet, many=True)
+    #     result = serializer.data 
 
 
 # old views.

@@ -83,7 +83,7 @@ class QrCodeSerializer(serializers.ModelSerializer):
 class SettingSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Setting
-        fields = ('pk', 'setting_village', 'inside_scan_duration')
+        fields = ('pk', 'setting_village', 'inside_scan_duration','point_scan_distance')
 
 # class PointInspectionSerializer(serializers.ModelSerializer):
 #     class Meta:
@@ -144,9 +144,9 @@ class ProblemSerializer(serializers.ModelSerializer):
 class WorkingRecordSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.WorkingRecord
-        fields =('pk', 'working_secure','working_date','work_checkin_checkpoint','working_in_out','working_device')
+        fields =('pk', 'working_village','working_secure','working_date','work_checkin_checkpoint','working_in_out','working_device')
      
-    
+        
 ## User serializer
 
 class UserProfileSerializer(serializers.ModelSerializer):
