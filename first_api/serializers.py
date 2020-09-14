@@ -144,7 +144,7 @@ class ProblemSerializer(serializers.ModelSerializer):
 class WorkingRecordSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.WorkingRecord
-        fields =('pk', 'working_village','working_secure','working_date','work_checkin_checkpoint','working_in_out','working_device')
+        fields =('pk', 'working_village','working_secure','working_work', 'working_date','work_checkin_checkpoint','working_in_out','working_device')
      
         
 ## User serializer

@@ -1793,6 +1793,15 @@ class WorkingRecordViewSet(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
 
+    @action(detail=True, methods = 'GET')
+    def get_secure_pk_workingrecord_lasted(self, request, secureguard_pk):
+        """ Return all votetopics according to specific village """
+        querySet = models.WorkingRecord.objects.filter(working_secure=secureguard_pk).last()
+        serializer = serializers.WorkingRecordSerializer(querySet)
+        result = serializer.data 
+
+        return notFoundHandling(result)
+
     # @action(detail=True, methods = 'GET')
     # def get_villages_pk_workingrecords(self, request, village_pk):
     #     """ Return all votetopics according to specific village """

@@ -341,6 +341,12 @@ delete_secureguards_pk_works_pk = views.SecureWorkViewSet.as_view({
     'get': 'delete_secureguards_pk_works_pk'
 })
 
+## WorkingRecord
+
+get_secure_pk_workingrecord_lasted = views.WorkingRecordViewSet.as_view({
+    'get': 'get_secure_pk_workingrecord_lasted'
+})
+
 
 
 # Home Secure main routers
@@ -458,7 +464,10 @@ urlpatterns = [
     ## securework 
     path('secure_guards/<int:secureguard_pk>/works/',  get_secureguards_pk_works,name='get_secureguards_pk_works'),
     path('secure_guards/<int:secureguard_pk>/works/<int:work_pk>/delete/',  delete_secureguards_pk_works_pk,name='delete_secureguards_pk_works_pk'),
-   
+    
+    ## workingrecord
+    path('secure_guards/<int:secureguard_pk>/workingrecords/lasted/',  get_secure_pk_workingrecord_lasted,name='get_secure_pk_workingrecord_lasted'),
+    
 
     # path('hello-view/', views.HelloApiView.as_view()), 
     path('login/', views.UserLoginApiView.as_view()),
