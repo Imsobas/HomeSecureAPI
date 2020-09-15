@@ -368,6 +368,12 @@ fetch_detailed_workingrecord = views.WorkingRecordViewSet.as_view({
     'get': 'fetch_detailed_workingrecord'
 })
 
+## notification 
+
+create_enter_qrcode_and_notificaton = views.NotificationViewSet.as_view({
+    'post': 'create_enter_qrcode_and_notificaton'
+})
+
 # Home Secure main routers
 urlpatterns = [
 
@@ -492,6 +498,10 @@ urlpatterns = [
     path('fetch_workingrecord/villages/<int:village_pk>/zones/null/works/null/dates/<str:date_str>/', fetch_workingrecord_null_zone_null_work, name='fetch_workingrecord_null_zone_null_work'),
     path('detailed_fetch_workingrecord/villages/<int:village_pk>/zones/<int:zone_pk>/works/<int:work_pk>/dates/<str:date_str>/secure_guard/<int:secure_pk>/', fetch_detailed_workingrecord, name='fetch_detailed_workingrecord'),
 
+    ##notification 
+
+    
+    path('qrcodes/create_enter_and_notification/',  create_enter_qrcode_and_notificaton,name='create_enter_qrcode_and_notificaton'),
     
 
     # path('hello-view/', views.HelloApiView.as_view()), 
