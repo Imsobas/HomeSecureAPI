@@ -347,6 +347,9 @@ get_secure_pk_workingrecord_lasted = views.WorkingRecordViewSet.as_view({
     'get': 'get_secure_pk_workingrecord_lasted'
 })
 
+fetch_workingrecord  = views.WorkingRecordViewSet.as_view({
+    'get': 'fetch_workingrecord'
+})
 
 
 # Home Secure main routers
@@ -467,7 +470,7 @@ urlpatterns = [
     
     ## workingrecord
     path('secure_guards/<int:secureguard_pk>/workingrecords/lasted/',  get_secure_pk_workingrecord_lasted,name='get_secure_pk_workingrecord_lasted'),
-    
+    path('fetch_workingrecord/villages/<int:village_pk>/zones/<int:zone_pk>/works/<int:work_pk>/dates/<str:date_str>/', fetch_workingrecord ,name='fetch_workingrecord'),
 
     # path('hello-view/', views.HelloApiView.as_view()), 
     path('login/', views.UserLoginApiView.as_view()),

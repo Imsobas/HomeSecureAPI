@@ -413,6 +413,7 @@ class WorkingRecord(models.Model):
   
     )
     working_village = models.ForeignKey(Village,null=True, blank=True, on_delete=models.DO_NOTHING)
+    working_zone = models.ForeignKey(Zone,null=True, blank=True, on_delete=models.DO_NOTHING)
     working_secure = models.ForeignKey(SecureGuard,null=True, blank=True, on_delete=models.DO_NOTHING)
     working_work = models.ForeignKey(Work,null=True, blank=True, on_delete=models.DO_NOTHING)
     working_date = models.DateTimeField(null=True, blank=True,auto_now_add=True)

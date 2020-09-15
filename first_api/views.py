@@ -1786,7 +1786,6 @@ class ProblemViewSet(viewsets.ModelViewSet):
 
         return notFoundHandling(result)
 
-
 class WorkingRecordViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.WorkingRecordSerializer
     queryset = models.WorkingRecord.objects.all()
@@ -1802,12 +1801,61 @@ class WorkingRecordViewSet(viewsets.ModelViewSet):
 
         return notFoundHandling(result)
 
-    # @action(detail=True, methods = 'GET')
-    # def get_villages_pk_workingrecords(self, request, village_pk):
-    #     """ Return all votetopics according to specific village """
-    #     querySet = models.VoteTopic.objects.filter(vote_village=village_pk,is_active=True).all()
-    #     serializer = serializers.VoteTopicSerializer(querySet, many=True)
-    #     result = serializer.data 
+    @action(detail=True, methods = 'GET')
+    def fetch_workingrecord(self, request, village_pk, zone_pk, work_pk, date_str):
+        """ Return all votetopics according to specific village """
+        print(date_str)
+        newdate = date_str.split("-")
+        print(newdate[0])
+        isExistWR = models.WorkingRecord.objects.filter(working_village=village_pk, working_zone=zone_pk, working_secure=work_pk,working_date__date=datetime.date(int(newdate[0]),int(newdate[1]),int(newdate[2]))).exists()
+        if(isExistWR==False):
+            return Response({ "detail": "Not found."},status=status.HTTP_404_NOT_FOUND)
+        else:
+            workingRecord = models.WorkingRecord.objects.filter(working_village=village_pk, working_zone=zone_pk, working_secure=work_pk,working_date__date=datetime.date(int(newdate[0]),int(newdate[1]),int(newdate[2]))).values('working_secure','working_work').distinct()
+            
+            result = []
+
+            for wr in workingRecord:
+                # print(wr)
+                wrDict = dict()
+
+                workPk = wr['working_work']
+                securePk = wr['working_secure']
+
+                workQuerySet = models.Work.objects.filter(pk=workPk).last()
+                serializer = serializers.WorkSerializer(workQuerySet)
+                workData = serializer.data
+
+                newWorkData = dict()
+                newWorkData ['working_work'] = wr['working_work']
+                newWorkData ['work_name'] = workData['work_name']
+
+                secureQuerySet = models.SecureGuard.objects.filter(pk=securePk).last()
+                serializer = serializers.SecureGuardSerializer(secureQuerySet)
+                secureData = serializer.data
+                newSecureData = dict()
+                newSecureData['secure_firstname'] = secureData['secure_firstname']
+                newSecureData['secure_lastname'] = secureData['secure_lastname']
+                newSecureData['secure_type'] = secureData['secure_type']
+                zonePk = secureData['secure_zone']
+
+                zoneQuerySet = models.Zone.objects.filter(pk=zonePk).last()
+                serializer = serializers.ZoneSerializer(zoneQuerySet)
+                zoneData = serializer.data
+                newZoneData = dict()
+                newZoneData['zone_name'] = zoneData['zone_name']
+                newZoneData['zone_number'] = zoneData['zone_number']
+
+                # wrDict['pk'] = wr['pk']
+                wrDict['work'] = newWorkData
+                wrDict['secure'] = newSecureData
+                wrDict['zone'] = newZoneData
+
+                result.append(wrDict)
+            
+
+            return notFoundHandling(result)
+
 
 
 # old views.
