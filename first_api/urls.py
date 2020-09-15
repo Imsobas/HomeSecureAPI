@@ -351,6 +351,17 @@ fetch_workingrecord  = views.WorkingRecordViewSet.as_view({
     'get': 'fetch_workingrecord'
 })
 
+fetch_workingrecord_null_work = views.WorkingRecordViewSet.as_view({
+    'get': 'fetch_workingrecord_null_work'
+})
+
+fetch_workingrecord_null_zone = views.WorkingRecordViewSet.as_view({
+    'get': 'fetch_workingrecord_null_zone'
+})
+
+fetch_workingrecord_null_zone_null_work = views.WorkingRecordViewSet.as_view({
+    'get': 'fetch_workingrecord_null_zone_null_work'
+})
 
 # Home Secure main routers
 urlpatterns = [
@@ -471,6 +482,10 @@ urlpatterns = [
     ## workingrecord
     path('secure_guards/<int:secureguard_pk>/workingrecords/lasted/',  get_secure_pk_workingrecord_lasted,name='get_secure_pk_workingrecord_lasted'),
     path('fetch_workingrecord/villages/<int:village_pk>/zones/<int:zone_pk>/works/<int:work_pk>/dates/<str:date_str>/', fetch_workingrecord ,name='fetch_workingrecord'),
+    path('fetch_workingrecord/villages/<int:village_pk>/zones/null/works/<int:work_pk>/dates/<str:date_str>/', fetch_workingrecord_null_zone, name='fetch_workingrecord_null_zone'),
+    path('fetch_workingrecord/villages/<int:village_pk>/zones/<int:zone_pk>/works/null/dates/<str:date_str>/', fetch_workingrecord_null_work, name='fetch_workingrecord_null_work'),
+    path('fetch_workingrecord/villages/<int:village_pk>/zones/null/works/null/dates/<str:date_str>/', fetch_workingrecord_null_zone_null_work, name='fetch_workingrecord_null_zone_null_work'),
+    
 
     # path('hello-view/', views.HelloApiView.as_view()), 
     path('login/', views.UserLoginApiView.as_view()),
