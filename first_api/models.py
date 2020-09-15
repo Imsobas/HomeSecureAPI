@@ -236,7 +236,7 @@ class Qrcode(models.Model):
     qr_enter_secure = models.ForeignKey(SecureGuard,null=True, blank=True, on_delete=models.DO_NOTHING, related_name='qr_enter_secure') 
     qr_inside_secure = models.ForeignKey(SecureGuard,null=True, blank=True, on_delete=models.DO_NOTHING, related_name='qr_inside_secure') 
     qr_exit_secure = models.ForeignKey(SecureGuard,null=True, blank=True, on_delete=models.DO_NOTHING, related_name='qr_exit_secure') 
-    qr_enter_time = models.DateTimeField(null=True, blank=True,auto_now_add=True)
+    qr_enter_time = models.DateTimeField(null=True, blank=True)
     qr_inside_time = models.DateTimeField(null=True, blank=True)
     qr_home_time = models.DateTimeField(null=True, blank=True) ## changed name
     qr_exit_time = models.DateTimeField(null=True, blank=True)
