@@ -1680,7 +1680,7 @@ class VoteTopicViewSet(viewsets.ModelViewSet):
     def get_villages_pk_user_pk_votetopics(self, request, village_pk, home_pk):
         """ Return all votetopics which the user not vote yet according to specific village """
         
-        querySet = models.VoteTopic.objects.filter(vote_village=village_pk, vote_end_date__gte=datetime.date.today(), is_active=True).all()
+        querySet = models.VoteTopic.objects.filter(vote_village=village_pk, vote_end_date__gte=datetime.date.today(), vote_confirm_status=False,is_active=True).all()
         serializer = serializers.VoteTopicSerializer(querySet, many=True)
         result = serializer.data 
 
