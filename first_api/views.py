@@ -2034,7 +2034,14 @@ class WorkingRecordViewSet(viewsets.ModelViewSet):
 
             result = []
             for wrData in workingRecordData:
+                checkincheckpointPk = wrData['work_checkin_checkpoint']
+                ccSet = models.CheckinCheckpoint.objects.filter(pk=checkincheckpointPk).last()
+                serializer = serializers.CheckinCheckpointSerializer(ccSet)
+                ccData = serializer.data
+
+                wrData['checkpoint_name'] = ccData['point_name']
                 wrData.pop('pk')
+                wrData.pop('work_checkin_checkpoint')
                 wrData.pop('working_village')
                 wrData.pop('working_zone')
                 wrData.pop('working_secure')
