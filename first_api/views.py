@@ -1827,13 +1827,14 @@ class WorkingRecordViewSet(viewsets.ModelViewSet):
                 workData = serializer.data
 
                 newWorkData = dict()
-                newWorkData ['working_work'] = wr['working_work']
-                newWorkData ['work_name'] = workData['work_name']
+                newWorkData['pk'] = workData['pk']
+                newWorkData['work_name'] = workData['work_name']
 
                 secureQuerySet = models.SecureGuard.objects.filter(pk=securePk).last()
                 serializer = serializers.SecureGuardSerializer(secureQuerySet)
                 secureData = serializer.data
                 newSecureData = dict()
+                newSecureData['pk'] = secureData['pk']
                 newSecureData['secure_firstname'] = secureData['secure_firstname']
                 newSecureData['secure_lastname'] = secureData['secure_lastname']
                 newSecureData['secure_type'] = secureData['secure_type']
@@ -1843,6 +1844,7 @@ class WorkingRecordViewSet(viewsets.ModelViewSet):
                 serializer = serializers.ZoneSerializer(zoneQuerySet)
                 zoneData = serializer.data
                 newZoneData = dict()
+                newZoneData['pk'] = zoneData['pk']
                 newZoneData['zone_name'] = zoneData['zone_name']
                 newZoneData['zone_number'] = zoneData['zone_number']
 
@@ -1881,13 +1883,14 @@ class WorkingRecordViewSet(viewsets.ModelViewSet):
                 workData = serializer.data
 
                 newWorkData = dict()
-                newWorkData ['working_work'] = wr['working_work']
-                newWorkData ['work_name'] = workData['work_name']
+                newWorkData['pk'] = workData['pk']
+                newWorkData['work_name'] = workData['work_name']
 
                 secureQuerySet = models.SecureGuard.objects.filter(pk=securePk).last()
                 serializer = serializers.SecureGuardSerializer(secureQuerySet)
                 secureData = serializer.data
                 newSecureData = dict()
+                newSecureData['pk'] = secureData['pk']
                 newSecureData['secure_firstname'] = secureData['secure_firstname']
                 newSecureData['secure_lastname'] = secureData['secure_lastname']
                 newSecureData['secure_type'] = secureData['secure_type']
@@ -1897,6 +1900,7 @@ class WorkingRecordViewSet(viewsets.ModelViewSet):
                 serializer = serializers.ZoneSerializer(zoneQuerySet)
                 zoneData = serializer.data
                 newZoneData = dict()
+                newZoneData['pk'] = zoneData['pk']
                 newZoneData['zone_name'] = zoneData['zone_name']
                 newZoneData['zone_number'] = zoneData['zone_number']
 
@@ -1905,6 +1909,7 @@ class WorkingRecordViewSet(viewsets.ModelViewSet):
                 wrDict['zone'] = newZoneData
 
                 result.append(wrDict)
+            
             
 
             return notFoundHandling(result)
@@ -1935,13 +1940,14 @@ class WorkingRecordViewSet(viewsets.ModelViewSet):
                 workData = serializer.data
 
                 newWorkData = dict()
-                newWorkData ['working_work'] = wr['working_work']
-                newWorkData ['work_name'] = workData['work_name']
+                newWorkData['pk'] = workData['pk']
+                newWorkData['work_name'] = workData['work_name']
 
                 secureQuerySet = models.SecureGuard.objects.filter(pk=securePk).last()
                 serializer = serializers.SecureGuardSerializer(secureQuerySet)
                 secureData = serializer.data
                 newSecureData = dict()
+                newSecureData['pk'] = secureData['pk']
                 newSecureData['secure_firstname'] = secureData['secure_firstname']
                 newSecureData['secure_lastname'] = secureData['secure_lastname']
                 newSecureData['secure_type'] = secureData['secure_type']
@@ -1951,6 +1957,7 @@ class WorkingRecordViewSet(viewsets.ModelViewSet):
                 serializer = serializers.ZoneSerializer(zoneQuerySet)
                 zoneData = serializer.data
                 newZoneData = dict()
+                newZoneData['pk'] = zoneData['pk']
                 newZoneData['zone_name'] = zoneData['zone_name']
                 newZoneData['zone_number'] = zoneData['zone_number']
 
@@ -1959,6 +1966,7 @@ class WorkingRecordViewSet(viewsets.ModelViewSet):
                 wrDict['zone'] = newZoneData
 
                 result.append(wrDict)
+            
             
 
             return notFoundHandling(result)
@@ -1989,13 +1997,14 @@ class WorkingRecordViewSet(viewsets.ModelViewSet):
                 workData = serializer.data
 
                 newWorkData = dict()
-                newWorkData ['working_work'] = wr['working_work']
-                newWorkData ['work_name'] = workData['work_name']
+                newWorkData['pk'] = workData['pk']
+                newWorkData['work_name'] = workData['work_name']
 
                 secureQuerySet = models.SecureGuard.objects.filter(pk=securePk).last()
                 serializer = serializers.SecureGuardSerializer(secureQuerySet)
                 secureData = serializer.data
                 newSecureData = dict()
+                newSecureData['pk'] = secureData['pk']
                 newSecureData['secure_firstname'] = secureData['secure_firstname']
                 newSecureData['secure_lastname'] = secureData['secure_lastname']
                 newSecureData['secure_type'] = secureData['secure_type']
@@ -2005,6 +2014,7 @@ class WorkingRecordViewSet(viewsets.ModelViewSet):
                 serializer = serializers.ZoneSerializer(zoneQuerySet)
                 zoneData = serializer.data
                 newZoneData = dict()
+                newZoneData['pk'] = zoneData['pk']
                 newZoneData['zone_name'] = zoneData['zone_name']
                 newZoneData['zone_number'] = zoneData['zone_number']
 
@@ -2013,6 +2023,7 @@ class WorkingRecordViewSet(viewsets.ModelViewSet):
                 wrDict['zone'] = newZoneData
 
                 result.append(wrDict)
+            
             
 
             return notFoundHandling(result)
