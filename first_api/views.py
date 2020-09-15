@@ -2085,7 +2085,7 @@ class NotificationViewSet(viewsets.ModelViewSet):
             serializer = serializers.HomeSerializer(home)
             homeData = serializer.data
 
-            print(homeData)
+            # print(homeData)
 
 
             ### using in qr code enter 
@@ -2103,16 +2103,46 @@ class NotificationViewSet(viewsets.ModelViewSet):
             village = models.Village.objects.only('pk').get(pk=homeVillage)
             zone = models.Zone.objects.only('pk').get(pk=homeZone)
             company = models.Company.objects.only('pk').get(pk=homeCompany)
-            print("company")
-            print(homeCompany)
-            print(homePk)
             home = models.Home.objects.only('pk').get(pk=homePk)
             secure = models.SecureGuard.objects.only('pk').get(pk=data['qr_enter_secure'])
-
 
             qrcode = models.Qrcode.objects.create(qr_content=data['qr_content'], qr_type=data['qr_type'], qr_car_number=data['qr_car_number'],qr_home_number=homeNumber, qr_car_color = data['qr_car_color'], qr_car_brand=data['qr_car_brand'], qr_company = company, qr_village = village, qr_zone =zone, qr_home =home, qr_enter_secure=secure, qr_enter_status=True, qr_home_lat=homeLat,qr_home_lon= homeLon)
             qrcode.save
             serializer = serializers.QrCodeSerializer(qrcode)
+
+
+
+            ## create notification 
+            genUserQuerySet = models.GeneralUser.objects.filter(gen_user_home= home, is_active=True).all()
+            # genUserSerializer = serializers.GeneralUserSerializer(genUserQuerySet, many=True)
+            # genUserData = genUserSerializer.data
+            
+            # user_list = []
+            # for user in genUserData:
+            #     user_list.append(user['pk'])
+
+            #     print(user)
+            
+            for user in genUserQuerySet:
+                print(user)
+                notification = models.Notification.objects.create(noti_home=home,noti_general_user=user, noti_qr = qrcode)
+                notification.save()
+
+
+            ### for future, incase want to add secure warning
+            # secureGuardQuerySet = models.SecureGuard.objects.filter(secure_zone= zone, is_active=True).all()
+            # secureGuardSerializer = serializers.SecureGuardSerializer(secureGuardQuerySet, many=True)
+            # secureGuardData = secureGuardSerializer.data
+
+            # secure_list = []
+            # for secure in secureGuardData:
+            #     secure_list.append(secure['pk'])
+
+            # print(secure_list)
+
+
+           
+
 
             return Response(serializer.data,status.HTTP_201_CREATED)
         
