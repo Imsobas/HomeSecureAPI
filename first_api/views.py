@@ -2110,7 +2110,7 @@ class NotificationViewSet(viewsets.ModelViewSet):
             secure = models.SecureGuard.objects.only('pk').get(pk=data['qr_enter_secure'])
 
 
-            qrcode = models.Qrcode.objects.create(qr_content=data['qr_content'], qr_type=data['qr_type'], qr_car_number=data['qr_car_number'],qr_home_number=homeNumber, qr_car_color = data['qr_car_color'], qr_car_brand=data['qr_car_brand'], qr_company = company, qr_village = village, qr_zone =zone, qr_home =home, qr_enter_secure=secure, qr_enter_status=True, qr_home_lat = data['qr_home_lat'],qr_home_lon= data['qr_home_lon'])
+            qrcode = models.Qrcode.objects.create(qr_content=data['qr_content'], qr_type=data['qr_type'], qr_car_number=data['qr_car_number'],qr_home_number=homeNumber, qr_car_color = data['qr_car_color'], qr_car_brand=data['qr_car_brand'], qr_company = company, qr_village = village, qr_zone =zone, qr_home =home, qr_enter_secure=secure, qr_enter_status=True, qr_home_lat=homeLat,qr_home_lon= homeLon)
             qrcode.save
             serializer = serializers.QrCodeSerializer(qrcode)
 
