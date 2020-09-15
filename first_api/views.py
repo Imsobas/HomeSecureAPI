@@ -2067,15 +2067,45 @@ class NotificationViewSet(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
 
+
+    @action(detail=True, methods = 'GET')
+    def get_notification_generaluser_pk(self, request, user_pk):
+        """ Return all votetopics according to specific village """
+        user = models.GeneralUser.objects.only('pk').get(pk=user_pk)
+    
+        notification = models.Notification.objects.filter(noti_general_user=user).all()[::-1]
+        serializer = serializers.NotificationSerializer(notification,many=True)
+        notiData = serializer.data
+
+
+        result =[]
+        for noti in notiData:
+            
+            qrPk = noti['noti_qr']
+            print(qrPk)
+
+            qrcode = models.Qrcode.objects.filter(pk=qrPk).last()
+            serializer = serializers.QrCodeSerializer(qrcode)
+            qrcodeData = serializer.data
+            
+            qrDict = dict()
+            qrDict['noti_pk'] = noti['pk']
+            qrDict['qr_enter_time'] = qrcodeData['qr_enter_time']
+            qrDict['qr_home_number'] = qrcodeData['qr_home_number']
+            qrDict['qr_car_number'] = qrcodeData['qr_car_number']
+            qrDict['qr_car_brand'] = qrcodeData['qr_car_brand']
+            qrDict['qr_car_color'] = qrcodeData['qr_car_color']
+            result.append(qrDict)
+
+            # print(result)
+        
+        return notFoundHandling(result)
+
     @action(detail=True, methods=['post'])
     def create_enter_qrcode_and_notificaton(self, request):
         """ Create qr code on enter screen along with generate notification for each user"""
         
         data = request.data 
-        
-        # print(data['qr_home'])
-
-        
 
         isExistHome = models.Home.objects.filter(pk=data['qr_home'], is_active=True).exists()
         if(isExistHome==False):
@@ -2128,7 +2158,6 @@ class NotificationViewSet(viewsets.ModelViewSet):
                 notification = models.Notification.objects.create(noti_home=home,noti_general_user=user, noti_qr = qrcode)
                 notification.save()
 
-
             ### for future, incase want to add secure warning
             # secureGuardQuerySet = models.SecureGuard.objects.filter(secure_zone= zone, is_active=True).all()
             # secureGuardSerializer = serializers.SecureGuardSerializer(secureGuardQuerySet, many=True)
@@ -2139,10 +2168,6 @@ class NotificationViewSet(viewsets.ModelViewSet):
             #     secure_list.append(secure['pk'])
 
             # print(secure_list)
-
-
-           
-
 
             return Response(serializer.data,status.HTTP_201_CREATED)
         

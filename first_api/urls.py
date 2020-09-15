@@ -374,6 +374,10 @@ create_enter_qrcode_and_notificaton = views.NotificationViewSet.as_view({
     'post': 'create_enter_qrcode_and_notificaton'
 })
 
+get_notification_generaluser_pk = views.NotificationViewSet.as_view({
+    'get': 'get_notification_generaluser_pk'
+})
+
 # Home Secure main routers
 urlpatterns = [
 
@@ -502,6 +506,7 @@ urlpatterns = [
 
     
     path('qrcodes/create_enter_and_notification/',  create_enter_qrcode_and_notificaton,name='create_enter_qrcode_and_notificaton'),
+    path('general_users/<int:user_pk>/notification/',  get_notification_generaluser_pk,name='get_notification_generaluser_pk'),
     
     ##fcm 
     # url(r'fcm/', include('fcm.urls')),
