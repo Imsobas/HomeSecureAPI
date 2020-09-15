@@ -2,7 +2,7 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from rest_framework import renderers
 from first_api import views
-
+from django.conf.urls import include, url
 
 router = DefaultRouter() ## router use with viewset 
 # router.register('hello-viewset', views.HelloViewSet, basename='hello-viewset')
@@ -503,6 +503,9 @@ urlpatterns = [
     
     path('qrcodes/create_enter_and_notification/',  create_enter_qrcode_and_notificaton,name='create_enter_qrcode_and_notificaton'),
     
+    ##fcm 
+    # url(r'fcm/', include('fcm.urls')),
+
 
     # path('hello-view/', views.HelloApiView.as_view()), 
     path('login/', views.UserLoginApiView.as_view()),

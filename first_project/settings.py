@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'first_api',
+     "fcm_django",
 
 ]
 
@@ -102,6 +103,19 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
+FCM_DJANGO_SETTINGS = {
+        "APP_VERBOSE_NAME": "[string for AppConfig's verbose_name]",
+         # default: _('FCM Django')
+        "FCM_SERVER_KEY": "AAAAeiAAs5g:APA91bEhmNN_LndCp982owIqU7ADL3s1JGOSAAm8AEWt08XfCREf4bcWUn6417ceWpCI_0zYgrswgYmHpm6tn20S-oanSTUy2GEy3YvoUU4MEibHtU3DSXQK8Uk_eAkg1SZXjQQwxOLH",
+         # true if you want to have only one active device per registered user at a time
+         # default: False
+        "ONE_DEVICE_PER_USER": True,
+         # devices to which notifications cannot be sent,
+         # are deleted upon receiving error response from FCM
+         # default: False
+        "DELETE_INACTIVE_DEVICES": False,
+}
 
 
 # Internationalization
