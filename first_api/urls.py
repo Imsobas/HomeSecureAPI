@@ -35,6 +35,7 @@ router.register(r'secure_location',views.SecureLocationViewSet)
 router.register(r'secure_work',views.SecureWorkViewSet)
 router.register(r'checkin_checkpoints',views.CheckinCheckpointViewSet)
 router.register(r'working_records',views.WorkingRecordViewSet)
+router.register(r'notification',views.NotificationViewSet)
 
 ## Binding URL
 
@@ -430,7 +431,7 @@ urlpatterns = [
     path('villages/<int:pk>/works/', get_villages_pk_works ,name='get_villages_pk_works'),
 
     ##qr
-    path('qrcodes/homedetails/<int:number>', get_qrcodes_homedetails ,name='get_qrcodes_homedetails'),
+    path('qrcodes/homedetails/<str:number>/', get_qrcodes_homedetails ,name='get_qrcodes_homedetails'),
     path('villages/<int:village_pk>/qrcodes/', get_villages_pk_qrcodes, name = 'get_villages_pk_qrcodes'),
     path('villages/<int:village_pk>/homes/<int:home_pk>/qrcodes/', get_villages_pk_homes_pk_qrcodes, name = 'get_villages_pk_homes_pk_qrcodes'),
     path('villages/<int:village_pk>/contents/<str:content>/qrcodes/', get_villages_pk_contents_content_qrcodes, name = 'get_villages_pk_contents_content_qrcodes'),

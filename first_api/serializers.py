@@ -172,6 +172,14 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
         return user 
 
+class NotificationSerializer(serializers.ModelSerializer):
+     """Notification Serializer for user profile objecft"""
+     class Meta:
+        model = models.Notification
+        fields =('pk', 'noti_home', 'noti_general_user','noti_qr','noti_read_status')
+
+
+
 
 # class ProfileFeedItemSerializer(serializers.ModelSerializer):
 #     """Serializes profile feed items"""

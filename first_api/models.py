@@ -259,7 +259,7 @@ class Qrcode(models.Model):
 
     def __str__(self):
         """Return the model as a string"""
-        return str(self.qr_content)
+        return str(self.pk)
         
     
 
@@ -428,7 +428,15 @@ class WorkingRecord(models.Model):
     # inspect_zone = models.ForeignKey(Zone, null=True, blank=True, on_delete=models.DO_NOTHING)
     # insepect_work = models.ForeignKey(Work, null=True, blank=True, on_delete=models.DO_NOTHING)
 
+class Notification(models.Model):
+    noti_home = models.ForeignKey(Home,null=True, blank=True, on_delete=models.DO_NOTHING)
+    noti_general_user = models.ForeignKey(GeneralUser,null=True, blank=True, on_delete=models.DO_NOTHING)
+    noti_qr = models.ForeignKey(Qrcode,null=True, blank=True, on_delete=models.DO_NOTHING)
+    noti_read_status = models.BooleanField(default=False)
 
+    def __str__(self):
+        """Return the model as a string"""
+        return str(self.pk)
 
 
 

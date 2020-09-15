@@ -2059,49 +2059,15 @@ class WorkingRecordViewSet(viewsets.ModelViewSet):
                 wrData.pop('working_work')
                 result.append(wrData)
   
-            # result = []
-
-            # for wr in workingRecord:
-            #     print(wr)
-                # wrDict = dict()
-
-                # workPk = wr['working_work']
-                # securePk = wr['working_secure']
-
-                # workQuerySet = models.Work.objects.filter(pk=workPk).last()
-                # serializer = serializers.WorkSerializer(workQuerySet)
-                # workData = serializer.data
-
-                # newWorkData = dict()
-                # newWorkData ['pk'] = workData['pk']
-                # newWorkData ['work_name'] = workData['work_name']
-
-                # secureQuerySet = models.SecureGuard.objects.filter(pk=securePk).last()
-                # serializer = serializers.SecureGuardSerializer(secureQuerySet)
-                # secureData = serializer.data
-                # newSecureData = dict()
-                # newSecureData['pk'] = secureData['pk']
-                # newSecureData['secure_firstname'] = secureData['secure_firstname']
-                # newSecureData['secure_lastname'] = secureData['secure_lastname']
-                # newSecureData['secure_type'] = secureData['secure_type']
-                # zonePk = secureData['secure_zone']
-
-                # zoneQuerySet = models.Zone.objects.filter(pk=zonePk).last()
-                # serializer = serializers.ZoneSerializer(zoneQuerySet)
-                # zoneData = serializer.data
-                # newZoneData = dict()
-                # newZoneData['pk'] = zoneData['pk']
-                # newZoneData['zone_name'] = zoneData['zone_name']
-                # newZoneData['zone_number'] = zoneData['zone_number']
-
-                # wrDict['work'] = newWorkData
-                # wrDict['secure'] = newSecureData
-                # wrDict['zone'] = newZoneData
-
-                # result.append(wrDict)
-            
-
             return notFoundHandling(result)
+
+class NotificationViewSet(viewsets.ModelViewSet):
+    serializer_class = serializers.NotificationSerializer
+    queryset = models.Notification.objects.all()
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+
+    
 
 
 # old views.
