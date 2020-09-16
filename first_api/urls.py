@@ -378,6 +378,10 @@ get_notification_generaluser_pk = views.NotificationViewSet.as_view({
     'get': 'get_notification_generaluser_pk'
 })
 
+get_unread_notification_count = views.NotificationViewSet.as_view({
+    'get': 'get_unread_notification_count'
+})
+
 # Home Secure main routers
 urlpatterns = [
 
@@ -507,6 +511,8 @@ urlpatterns = [
     
     path('qrcodes/create_enter_and_notification/',  create_enter_qrcode_and_notificaton,name='create_enter_qrcode_and_notificaton'),
     path('general_users/<int:user_pk>/notification/',  get_notification_generaluser_pk,name='get_notification_generaluser_pk'),
+    path('general_users/<int:user_pk>/unread_notification/count/',  get_unread_notification_count,name='get_unread_notification_count'),
+    
     
     ##fcm 
     # url(r'fcm/', include('fcm.urls')),

@@ -2069,6 +2069,17 @@ class NotificationViewSet(viewsets.ModelViewSet):
 
 
     @action(detail=True, methods = 'GET')
+    def get_unread_notification_count(self, request, user_pk):
+        """ Return all votetopics according to specific village """
+        user = models.GeneralUser.objects.only('pk').get(pk=user_pk)
+    
+        count = models.Notification.objects.filter(noti_general_user=user,noti_read_status=False).count()
+        result = [count]
+            # print(result)
+        
+        return notFoundHandling(result)
+
+    @action(detail=True, methods = 'GET')
     def get_notification_generaluser_pk(self, request, user_pk):
         """ Return all votetopics according to specific village """
         user = models.GeneralUser.objects.only('pk').get(pk=user_pk)
