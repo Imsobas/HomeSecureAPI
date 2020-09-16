@@ -1695,16 +1695,8 @@ class VoteTopicViewSet(viewsets.ModelViewSet):
             result.append({"voteTopicTitle":voteTopicTitle['vote_thai_topic']})
             
 
-
-            ## test, try new way to retrieve all record 
-            # voteRecordsAll = models.VoteRecord.objects.filter(vote_topic_pk=voteTopic).all()
-            # serializer = serializers.VoteRecordSerializer(voteRecordsAll,many=True)
-            # voteRecordData = serializer.data
-
-            # voteDict = []
-            # for vote in voteRecordData:
-            #     print(vote['vote_topic_pk'])
-                
+            ### find vote record in percent
+            
             voteChoices = models.VoteChoice.objects.filter(vote_topic_pk= voteTopic).values('pk','vote_thai_choice')
             ### dict for keep pk string map to name
             voteChoiceNameDict = dict()
@@ -1728,13 +1720,21 @@ class VoteTopicViewSet(viewsets.ModelViewSet):
                 resultDict['voteChoicePk'] = choice['pk']
                 resultDict['voteChoiceTitle'] = choice['vote_thai_choice']
                 resultDict['count'] = voteCountDict[str(choice['pk'])]
-                resultDict['percent'] = (resultDict['count']/voteRecordsCountAll)*100
+                if(voteRecordsCountAll==0):
+                    resultDict['percent'] = 0
+                else:
+                    resultDict['percent'] = (resultDict['count']/voteRecordsCountAll)*100
 
                 percent_result.append(resultDict)
 
             result.append(percent_result)
 
+            
+            
         
+            ##-------------------------------
+            ##---old method------------------
+
             # ### find vote record in percent
             # voteRecords = models.VoteRecord.objects.filter(vote_topic_pk=voteTopic).values('vote_selected_choice').order_by('vote_selected_choice').annotate(count=Count('vote_selected_choice'))
             # voteRecordsCountAll = models.VoteRecord.objects.filter(vote_topic_pk=voteTopic).count()
@@ -1757,6 +1757,9 @@ class VoteTopicViewSet(viewsets.ModelViewSet):
             #     percent_result.append(resultDict)
             
             # result.append(percent_result)
+
+
+            ##-------------------------------
 
             ## find vote record for individual home
             voteRecords = models.VoteRecord.objects.filter(vote_topic_pk=voteTopic).values('vote_home','vote_selected_choice','vote_hiden').order_by('vote_selected_choice')
