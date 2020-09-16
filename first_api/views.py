@@ -296,6 +296,21 @@ class HomeViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,)
 
     @action(detail=True, methods = 'GET')
+    def get_homes_pk_homenumber(self, request, home_pk):
+        """ Return pk and home_number of homes according to request homePk"""
+        isExist = models.Home.objects.filter(pk=home_pk, is_active=True).exists()
+        if(isExist==False):
+            return Response({ "detail": "Not have this home number"},status=status.HTTP_404_NOT_FOUND)
+        else:
+            querySet = models.Home.objects.filter(pk=home_pk, is_active=True).last()
+            serializer = serializers.HomeSerializer(querySet)
+            result = serializer.data
+            # print(result)
+            
+            return Response({"pk":result['pk'],"home_number":result['home_number']})
+
+
+    @action(detail=True, methods = 'GET')
     def get_homespk_number(self, request, home_number):
         """ Return pk and home_number of homes according to request homeNumber"""
         isExist = models.Home.objects.filter(home_number=home_number, is_active=True).exists()

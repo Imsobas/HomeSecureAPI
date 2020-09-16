@@ -99,6 +99,11 @@ get_homespk_number = views.HomeViewSet.as_view({
     'get': 'get_homespk_number'
 })
 
+get_homes_pk_homenumber = views.HomeViewSet.as_view({
+    'get': 'get_homes_pk_homenumber'
+})
+
+
 
 
 
@@ -415,7 +420,8 @@ urlpatterns = [
     path('villages/<int:village_pk>/zones/<int:zone_pk>/homes/', get_villages_pk_zones_pk_homes, name='get_villages_pk_zones_pk_homes'),
     path('villages/<int:village_pk>/zones/null/homes/', get_villages_pk_zones_null_homes, name='get_villages_pk_zones_null_homes'),
     path('homes/<str:home_number>/check_home_exist/', get_homespk_number, name='get_homespk_number'),
-        
+    path('homes/<int:home_pk>/home_number/', get_homes_pk_homenumber, name='get_homes_pk_homenumber'),
+    
 
     ##general user end point 
     path('general_users_active/', get_general_users_active, name='get_general_users_active'),
