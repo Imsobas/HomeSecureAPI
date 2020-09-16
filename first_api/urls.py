@@ -196,6 +196,10 @@ get_villages_pk_qrcodes = views.QrCodeViewSet.as_view({
     'get': 'get_villages_pk_qrcodes'
 })
 
+get_villages_pk_zone_pk_qrcodes = views.QrCodeViewSet.as_view({
+    'get': 'get_villages_pk_zone_pk_qrcodes'
+})
+
 ## qr_user_screen services
 get_villages_pk_homes_pk_qrcodes = views.QrCodeViewSet.as_view({
      'get': 'get_villages_pk_homes_pk_qrcodes'
@@ -407,7 +411,7 @@ urlpatterns = [
     path('villages/location/<int:villagePk>', get_villages_location_pk, name='get_villages_location_pk'),
 
     ##zone end point
-     path('companys/<int:company_pk>/villages/zones/', get_companys_pk_villages_zones ,name='get_companys_pk_villages_zones'),
+    path('companys/<int:company_pk>/villages/zones/', get_companys_pk_villages_zones ,name='get_companys_pk_villages_zones'),
     path('villages/zones/', get_villages_zones ,name='villages_zones'),
     path('villages/<int:pk>/zones/', get_villages_pk_zones ,name='villages_pk_zones'),
     path('villages/<int:village_pk>/zones/<int:zone_pk>/', get_villages_pk_zones_pk ,name='villages_pk_zones_pk'),
@@ -458,6 +462,10 @@ urlpatterns = [
     ##qr
     path('qrcodes/homedetails/<str:number>/', get_qrcodes_homedetails ,name='get_qrcodes_homedetails'),
     path('villages/<int:village_pk>/qrcodes/', get_villages_pk_qrcodes, name = 'get_villages_pk_qrcodes'),
+    path('villages/<int:village_pk>/zones/<int:zone_pk>/qrcodes/', get_villages_pk_zone_pk_qrcodes, name = 'get_villages_pk_zone_pk_qrcodes'),
+
+
+
     path('villages/<int:village_pk>/homes/<int:home_pk>/qrcodes/', get_villages_pk_homes_pk_qrcodes, name = 'get_villages_pk_homes_pk_qrcodes'),
     path('villages/<int:village_pk>/contents/<str:content>/qrcodes/', get_villages_pk_contents_content_qrcodes, name = 'get_villages_pk_contents_content_qrcodes'),
     path('historyservice/list/villages/<int:village_pk>/zones/<int:zone_pk>/dates/<int:year>/<int:month>/<int:day>/qrcodes/', get_historyservice_list_villages_pk_zones_pk_dates_year_month_day_qrcodes, name = 'get_historyservice_list_villages_pk_zones_pk_dates_year_month_day_qrcodes'),
