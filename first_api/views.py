@@ -779,63 +779,71 @@ class QrCodeViewSet(viewsets.ModelViewSet):
             qrcode.save
             serializer = serializers.QrCodeSerializer(qrcode)
 
-            ## create notification 
-            genUserQuerySet = models.GeneralUser.objects.filter(gen_user_home= home, is_active=True).all()
-            for user in genUserQuerySet:
-                print(user)
-                notification = models.Notification.objects.create(noti_home=home,noti_general_user=user, noti_qr = qrcode)
-                notification.save()
+            # ## create notification 
+            # genUserQuerySet = models.GeneralUser.objects.filter(gen_user_home= home, is_active=True).all()
+            # for user in genUserQuerySet:
+            #     print(user)
+            #     notification = models.Notification.objects.create(noti_home=home,noti_general_user=user, noti_qr = qrcode)
+            #     notification.save()
 
             return Response(serializer.data,status.HTTP_201_CREATED)
         
 
     @action(detail=True, methods = 'GET')
-    def get_qrcodes_homedetails(self, request, number):
+    def get_qrcodes_village_pk_home_number_homedetails(self, request, home_number, village_pk):
 
-        currentQuerySet = models.Home.objects.filter(home_number=number, is_active=True).all()
-        currentSerializer = serializers.HomeSerializer(currentQuerySet,many=True)
-        currentData =  currentSerializer.data
-        
+        # models.PointObservation.objects.only('pk').get(observation_village=village_pk, observation_zone=zone_pk, observation_work=work_pk, observation_secure=secure_pk, observation_date=date)
 
-        result = []
-        
-        for home in currentData:
-            home_dict = dict()
-            home_dict["home_pk"] = home["pk"]
-            home_dict['home_zone'] = home['home_zone']
-            home_dict['home_lat'] = home['home_lat']
-            home_dict['home_lon'] = home['home_lon']
+        isExistVillage= models.Village.objects.filter(pk=village_pk, is_active=True).exists()
+        if(isExistVillage==False):
+            return Response({ "detail": "not have this village number "},status=status.HTTP_404_NOT_FOUND)
+        else:
 
-            genUserQuerySet = models.GeneralUser.objects.filter(gen_user_home= home_dict["home_pk"], is_active=True).all()
-            genUserSerializer = serializers.GeneralUserSerializer(genUserQuerySet, many=True)
-            genUserData = genUserSerializer.data
+            village = models.Village.objects.only('pk').get(pk=village_pk, is_active=True)
+            currentQuerySet = models.Home.objects.filter(home_number=home_number,home_village=village, is_active=True).all()
+            currentSerializer = serializers.HomeSerializer(currentQuerySet,many=True)
+            currentData =  currentSerializer.data
             
-            user_list = []
-            for user in genUserData:
-                user_list.append(user['pk'])
 
-            home_dict['genuser_pk_list']  = user_list
-
-            secureGuardQuerySet = models.SecureGuard.objects.filter(secure_zone= home_dict["home_zone"], is_active=True).all()
-            secureGuardSerializer = serializers.SecureGuardSerializer(secureGuardQuerySet, many=True)
-            secureGuardData = secureGuardSerializer.data
-
-            secure_list = []
-            for secure in secureGuardData:
-                secure_list.append(secure['pk'])
-
-            home_dict['secure_pk_list'] = secure_list
-
-            result.append(home_dict)
-        
-
-        if(len(result)<1 ):
-            return Response({ "detail": "Not found."},status=status.HTTP_404_NOT_FOUND)
-        if(len(result)>1 ):
-            return Response({ "detail": "Error, multiple home"},status=status.HTTP_404_NOT_FOUND)
-       
-        return notFoundHandling(result[0])
+            result = []
             
+            for home in currentData:
+                home_dict = dict()
+                home_dict["home_pk"] = home["pk"]
+                home_dict['home_zone'] = home['home_zone']
+                home_dict['home_lat'] = home['home_lat']
+                home_dict['home_lon'] = home['home_lon']
+
+                genUserQuerySet = models.GeneralUser.objects.filter(gen_user_home= home_dict["home_pk"], is_active=True).all()
+                genUserSerializer = serializers.GeneralUserSerializer(genUserQuerySet, many=True)
+                genUserData = genUserSerializer.data
+                
+                user_list = []
+                for user in genUserData:
+                    user_list.append(user['pk'])
+
+                home_dict['genuser_pk_list']  = user_list
+
+                secureGuardQuerySet = models.SecureGuard.objects.filter(secure_zone= home_dict["home_zone"], is_active=True).all()
+                secureGuardSerializer = serializers.SecureGuardSerializer(secureGuardQuerySet, many=True)
+                secureGuardData = secureGuardSerializer.data
+
+                secure_list = []
+                for secure in secureGuardData:
+                    secure_list.append(secure['pk'])
+
+                home_dict['secure_pk_list'] = secure_list
+
+                result.append(home_dict)
+            
+
+            if(len(result)<1 ):
+                return Response({ "detail": "Not found."},status=status.HTTP_404_NOT_FOUND)
+            if(len(result)>1 ):
+                return Response({ "detail": "Error, multiple home"},status=status.HTTP_404_NOT_FOUND)
+        
+            return notFoundHandling(result[0])
+                
 
 
     ## qr_inside_screen_services 
@@ -907,7 +915,7 @@ class QrCodeViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods = 'GET')
     def get_villages_pk_homes_pk_qrcodes(self, request, village_pk, home_pk):
         """ Return all information specific to qr_user_services """
-        querySet = models.Qrcode.objects.filter(qr_village=village_pk, qr_home=home_pk, is_active=True, qr_home_status=False).all()
+        querySet = models.Qrcode.objects.filter(qr_village=village_pk, qr_home=home_pk, is_active=True, qr_home_status=False, qr_complete_status=False, qr_exit_without_enter=False).all()
         serializer = serializers.QrCodeSerializer(querySet,many=True)
         result = serializer.data
             

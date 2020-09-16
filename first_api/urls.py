@@ -183,8 +183,8 @@ get_villages_pk_works = views.WorkViewSet.as_view({
 
 ## qrcodes 
 
-get_qrcodes_homedetails = views.QrCodeViewSet.as_view({
-    'get': 'get_qrcodes_homedetails'
+get_qrcodes_village_pk_home_number_homedetails = views.QrCodeViewSet.as_view({
+    'get': 'get_qrcodes_village_pk_home_number_homedetails'
 })
 
 get_villages_location_pk = views.VillageViewSet.as_view({
@@ -460,7 +460,7 @@ urlpatterns = [
     path('villages/<int:pk>/works/', get_villages_pk_works ,name='get_villages_pk_works'),
 
     ##qr
-    path('qrcodes/homedetails/<str:number>/', get_qrcodes_homedetails ,name='get_qrcodes_homedetails'),
+    path('qrcodes/village/<int:village_pk>/home_number/<str:home_number>/homedetails/', get_qrcodes_village_pk_home_number_homedetails ,name='get_qrcodes_village_pk_home_number_homedetails'),
     path('villages/<int:village_pk>/qrcodes/', get_villages_pk_qrcodes, name = 'get_villages_pk_qrcodes'),
     path('villages/<int:village_pk>/zones/<int:zone_pk>/qrcodes/', get_villages_pk_zone_pk_qrcodes, name = 'get_villages_pk_zone_pk_qrcodes'),
 

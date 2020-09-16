@@ -112,7 +112,7 @@ class Zone(models.Model):
 class Home(models.Model):
     
     
-    home_number = models.CharField(max_length=100, null=True, blank=True, unique=True)
+    home_number = models.CharField(max_length=100, null=True, blank=True)
     home_address = models.CharField(max_length=200, null=True, blank=True)
     home_company = models.ForeignKey(Company,null=True, blank=True, on_delete=models.DO_NOTHING) 
     home_village = models.ForeignKey(Village, null=True, blank=True, on_delete=models.DO_NOTHING)
@@ -121,6 +121,9 @@ class Home(models.Model):
     home_lat = models.DecimalField(max_digits=11, decimal_places=8, null=True, blank=True)
     home_lon = models.DecimalField(max_digits=11, decimal_places=8, null=True, blank=True)
     is_active = models.BooleanField(default=True)
+
+    class Meta:
+        unique_together = ('home_number', 'home_village')
 
     def __str__(self):
         """Return the model as a string"""
