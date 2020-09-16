@@ -726,6 +726,54 @@ class QrCodeViewSet(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
 
+    @action(detail=True, methods=['post'])
+    def create_qrcodes_home_pk_nocopon(self, request):
+        """ Create qr code from user incase report the vehicle which not have enter history"""
+        
+        data = request.data 
+
+        isExistHome = models.Home.objects.filter(pk=data['home_pk'], is_active=True).exists()
+        if(isExistHome==False):
+            return Response({ "detail": "not have this home number "},status=status.HTTP_404_NOT_FOUND)
+        else:
+            home = models.Home.objects.filter(pk=data['home_pk'], is_active=True).last()
+            serializer = serializers.HomeSerializer(home)
+            homeData = serializer.data
+
+
+            ### using in response data back 
+            homePk = homeData['pk']
+            homeZone = homeData['home_zone']
+            # homeLat = homeData['home_lat']
+            # homeLon = homeData['home_lon']
+            homeVillage = homeData['home_village']
+            homeCompany = homeData['home_company']
+            homeNumber = homeData['home_number']
+
+        
+
+            ### create qrcode 
+            ### example models.Village.objects.only('pk').get(pk=village_pk)
+            village = models.Village.objects.only('pk').get(pk=homeVillage)
+            zone = models.Zone.objects.only('pk').get(pk=homeZone)
+            company = models.Company.objects.only('pk').get(pk=homeCompany)
+            home = models.Home.objects.only('pk').get(pk=homePk)
+           
+
+            qrcode = models.Qrcode.objects.create(qr_enter_time=datetime.datetime.now(), qr_car_number=data['qr_car_number'],qr_home_number=homeNumber, qr_car_color = data['qr_car_color'], qr_car_brand=data['qr_car_brand'], qr_company = company, qr_village = village, qr_zone =zone, qr_home =home, qr_exit_without_enter=True)
+            qrcode.save
+            serializer = serializers.QrCodeSerializer(qrcode)
+
+            ## create notification 
+            genUserQuerySet = models.GeneralUser.objects.filter(gen_user_home= home, is_active=True).all()
+            for user in genUserQuerySet:
+                print(user)
+                notification = models.Notification.objects.create(noti_home=home,noti_general_user=user, noti_qr = qrcode)
+                notification.save()
+
+            return Response(serializer.data,status.HTTP_201_CREATED)
+        
+
     @action(detail=True, methods = 'GET')
     def get_qrcodes_homedetails(self, request, number):
 
@@ -735,7 +783,6 @@ class QrCodeViewSet(viewsets.ModelViewSet):
         
 
         result = []
-        
         
         for home in currentData:
             home_dict = dict()
@@ -2156,15 +2203,6 @@ class NotificationViewSet(viewsets.ModelViewSet):
 
             ## create notification 
             genUserQuerySet = models.GeneralUser.objects.filter(gen_user_home= home, is_active=True).all()
-            # genUserSerializer = serializers.GeneralUserSerializer(genUserQuerySet, many=True)
-            # genUserData = genUserSerializer.data
-            
-            # user_list = []
-            # for user in genUserData:
-            #     user_list.append(user['pk'])
-
-            #     print(user)
-            
             for user in genUserQuerySet:
                 print(user)
                 notification = models.Notification.objects.create(noti_home=home,noti_general_user=user, noti_qr = qrcode)
@@ -2184,66 +2222,6 @@ class NotificationViewSet(viewsets.ModelViewSet):
             return Response(serializer.data,status.HTTP_201_CREATED)
         
        
-
-        #     genUserQuerySet = models.GeneralUser.objects.filter(gen_user_home= homePk, is_active=True).all()
-        #     genUserSerializer = serializers.GeneralUserSerializer(genUserQuerySet, many=True)
-        #     genUserData = genUserSerializer.data
-            
-        #     user_list = []
-        #     for user in genUserData:
-        #         user_list.append(user['pk'])
-
-        #     secure_list = []
-        #     for secure in secureGuardData:
-        #         secure_list.append(secure['pk'])
-
-        #     home_dict['secure_pk_list'] = secure_list
-            
-        # "": qrCode.content,
-        # "": qrCode.type,
-        # "": qrCode.carNumber,
-        # "": qrCode.homeNumber,
-        # "": qrCode.carColor,
-        # "": qrCode.carBrand,
-        # "": qrCode.companyPk,
-        # "": qrCode.villagePk,
-        # "qr_zone": qrCode.zonePk,
-        # # "qr_home": qrCode.homePk,
-        # # "qr_user": qrCode.userPk,
-        # "qr_enter_secure": qrCode.enterSecure,
-        # "qr_enter_time": TimeHelper.getStringFromDateTime(qrCode.enterTime),
-        # "qr_enter_status": qrCode.enterStatus,
-        # #  "qr_home_lat":
-        #       CalculateHelper.fixDecimal(val: qrCode.userHomeLocation.latitude),
-        # #   "qr_home_lon": CalculateHelper.fixDecimal(
-        #       val: qrCode.userHomeLocation.longitude),
-        #   "qr_complete_status": false,
-        # return Response({ "detail": "test "},status=status.HTTP_404_NOT_FOUND)
-
-
-
-        # isExistVillage = models.Village.objects.filter(pk = data['fee_village']).exists()
-
-        # if(isExistVillage==False):
-        #     return Response({ "detail": "not have this village to for creating maintenance_fee_period "},status=status.HTTP_404_NOT_FOUND)
-        # else:
-        #     village = models.Village.objects.get(pk=data['fee_village'])
-        #     maintenanceFeePeriod = models.MaintenanceFeePeriod.objects.create(fee_village = village, fee_period_name= data['fee_period_name'], fee_start= data['fee_start'], fee_end=data['fee_end'], fee_deadline = data['fee_deadline'], is_active = True)
-        #     maintenanceFeePeriod.save()
-        #     serializer = serializers.MaintenanceFeePeriodSerializer(maintenanceFeePeriod)
-
-        #     ## create maintenance fee record for all home in this village 
-        #     homes = models.Home.objects.filter(home_village=village)
-        #     for home in homes:
-        #         print(home)
-        #         print(type(home))
-                
-        #         maintenanceFeeRecord = models.MaintenanceFeeRecord.objects.create(fee_period=maintenanceFeePeriod, fee_home=home,fee_paid_date=None, fee_house_space=None, fee_amount=None, fee_paid_status=False, is_active=True)
-        #         maintenanceFeeRecord.save()
-
-            
-
-        #     return Response(serializer.data,status.HTTP_201_CREATED)
 
     
 
