@@ -307,7 +307,7 @@ class HomeViewSet(viewsets.ModelViewSet):
             result = serializer.data
             # print(result)
             
-            return Response({"pk":result['pk'],"home_number":result['home_number']})
+            return Response({"home_number":result['home_number']})
 
 
     @action(detail=True, methods = 'GET')
@@ -842,9 +842,32 @@ class QrCodeViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods = 'GET')
     def get_villages_pk_qrcodes(self, request, village_pk):
         """ Return all information specific to qr_inside_screen services """
-        querySet = models.Qrcode.objects.filter(qr_village=village_pk, is_active=True, qr_inside_status=False).all()
+        querySet = models.Qrcode.objects.filter(qr_village=village_pk, is_active=True, qr_inside_status=False, qr_complete_status=False, qr_exit_without_enter=False).all()
         serializer = serializers.QrCodeSerializer(querySet,many=True)
-        result = serializer.data
+        qrData = serializer.data
+        ### note: if error in this method please delete below and use common way of return result from serializer.data directly
+        result = []
+        for qr in qrData:
+            qrDict = dict()
+            qrDict['pk'] =  qr['pk']
+            qrDict['qr_content'] = qr['qr_content']
+            qrDict['qr_type'] = qr['qr_type']
+            qrDict['qr_car_number'] = qr['qr_car_number']
+            qrDict['qr_home_number'] = qr['qr_home_number']
+            qrDict['qr_car_color'] = qr['qr_car_color']
+            qrDict['qr_car_brand'] = qr['qr_car_brand']
+            qrDict['qr_home'] = qr['qr_home']
+            qrDict['qr_enter_time'] = qr['qr_enter_time']
+            qrDict['qr_home_lat'] = qr['qr_home_lat']
+            qrDict['qr_home_lon'] =  qr['qr_home_lon']
+            qrDict['is_active'] = qr['is_active']
+
+            zone = models.Zone.objects.filter(pk=qr['qr_zone']).last()
+            serializer = serializers.ZoneSerializer(zone)
+            zoneData = serializer.data
+            qrDict['qr_zone_name'] = zoneData['zone_name']
+
+            result.append(qrDict)
             
         return notFoundHandling(result)
 
