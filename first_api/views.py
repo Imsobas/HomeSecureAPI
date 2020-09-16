@@ -2106,6 +2106,7 @@ class NotificationViewSet(viewsets.ModelViewSet):
             qrDict['qr_car_number'] = qrcodeData['qr_car_number']
             qrDict['qr_car_brand'] = qrcodeData['qr_car_brand']
             qrDict['qr_car_color'] = qrcodeData['qr_car_color']
+            qrDict['noti_read_status'] = noti['noti_read_status']
             result.append(qrDict)
 
             # print(result)

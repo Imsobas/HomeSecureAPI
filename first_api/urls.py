@@ -201,7 +201,7 @@ get_villages_pk_contents_content_qrcodes = views.QrCodeViewSet.as_view({
      'get': 'get_villages_pk_contents_content_qrcodes'
 })
 
-## qr_history_screen services (filter by village, zone, date) 
+## qr_history_screen services (filter by village, zone, date) ## using
 get_historyservice_list_villages_pk_zones_pk_dates_year_month_day_qrcodes = views.QrCodeViewSet.as_view({
      'get': 'get_historyservice_list_villages_pk_zones_pk_dates_year_month_day_qrcodes'
 })
@@ -210,7 +210,7 @@ get_historyservice_list_villages_pk_zones_pk_qrcodes = views.QrCodeViewSet.as_vi
      'get': 'get_historyservice_list_villages_pk_zones_pk_qrcodes'
 })
 
-## qr_history_screen services (filter by village, date) 
+## qr_history_screen services (filter by village, date)  ## using
 get_historyservice_list_villages_pk_dates_year_month_day_qrcodes = views.QrCodeViewSet.as_view({
      'get': 'get_historyservice_list_villages_pk_dates_year_month_day_qrcodes'
 })

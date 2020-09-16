@@ -221,8 +221,8 @@ class SecureWork(models.Model):
 
 
 class Qrcode(models.Model):
-    qr_content = models.CharField(max_length=200)
-    qr_type = models.CharField(max_length=20)
+    qr_content = models.CharField(max_length=200,null=True, blank=True)
+    qr_type = models.CharField(max_length=20,null=True, blank=True)
     qr_car_number = models.CharField(max_length=10)
     qr_home_number = models.CharField(max_length=20)
     qr_car_color = models.CharField(max_length=20)
@@ -231,6 +231,7 @@ class Qrcode(models.Model):
     qr_village = models.ForeignKey(Village,null=True, blank=True, on_delete=models.DO_NOTHING)
     qr_zone = models.ForeignKey(Zone,null=True, blank=True, on_delete=models.DO_NOTHING)
     qr_home = models.ForeignKey(Home,null=True, blank=True, on_delete=models.DO_NOTHING)
+    ## user who checked this qr_code
     qr_user = models.ForeignKey(GeneralUser,null=True, blank=True, on_delete=models.DO_NOTHING)
     ## security who check this in village
     qr_enter_secure = models.ForeignKey(SecureGuard,null=True, blank=True, on_delete=models.DO_NOTHING, related_name='qr_enter_secure') 
@@ -255,6 +256,7 @@ class Qrcode(models.Model):
     qr_detail = models.CharField(null=True,blank=True,max_length=200,default=None)
     qr_livehome_status = models.BooleanField(null=True,blank=True,default=None)  
     qr_complete_status = models.BooleanField(default=False)
+    qr_exit_without_enter = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
 
     def __str__(self):

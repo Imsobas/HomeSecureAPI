@@ -78,7 +78,7 @@ class QrCodeSerializer(serializers.ModelSerializer):
           'qr_inside_lat', 'qr_inside_lon', 
           'qr_home_lat', 'qr_home_lon', 
           'qr_exit_lat', 'qr_exit_lon','qr_detail', 'qr_livehome_status',
-          'qr_complete_status', 'is_active')
+          'qr_complete_status', 'qr_exit_without_enter', 'is_active')
 
 class SettingSerializer(serializers.ModelSerializer):
     class Meta:
