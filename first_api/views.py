@@ -1679,6 +1679,49 @@ class VoteTopicViewSet(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
 
+    #  @action(detail=True, methods=['post'])
+    # def create_enter_qrcode_and_notificaton(self, request):
+    #     """ Create qr code on enter screen along with generate notification for each user"""
+        
+    #     data = request.data 
+
+    @action(detail=True, methods = ['patch'])
+    def patch_votetopics_result(self, request, pk):
+        votetopic = self.get_object()
+        data = request.data
+        updateData = {'vote_confirm_status':True}
+        voteSerializer = serializers.VoteTopicSerializer(votetopic, updateData, partial=True)
+        voteSerializer.is_valid(raise_exception=True)
+        voteSerializer.save()
+        
+        
+        
+        
+        votechoice = models.VoteChoice.objects.get(pk = data['selected_confirm_choice_pk'],is_active=True)
+        # print(votechoice)
+        updateData = {'vote_is_result':True}
+        choiceSerializer = serializers.VoteChoiceSerializer(votechoice, updateData,partial=True)
+        choiceSerializer.is_valid(raise_exception=True)
+        choiceSerializer.save()
+
+        # print(voteSerializer.data)
+        result = voteSerializer.data
+        result['votechoice_pk'] = data['selected_confirm_choice_pk']
+        result['vote_is_result'] = True
+
+
+        return Response(result)
+        
+    # @detail_route(methods=['POST','GET'])
+    # def assign(self, request, pk):
+    #     rocnation = self.get_object()
+    #     data = {'roc_views': rocnation.roc_views + 1}
+    #     serializer = RocNationSerializer(rocnation, data, partial=True)
+    #     serializer.is_valid(raise_exception=True)
+    #     serializer.save()
+    #     return Response(serializer.data)
+        
+
     @action(detail=True, methods = 'GET')
     def get_votetopics_pk_result_admin(self, request, votetopic_pk):
         """ Return result of voting information according to specific village """
@@ -1694,6 +1737,7 @@ class VoteTopicViewSet(viewsets.ModelViewSet):
             # print(voteTopicTitle)
             result.append({"voteTopicTitle":voteTopicTitle['vote_thai_topic']})
             
+            ### -----------------------------
 
             ### find vote record in percent
             
@@ -1706,10 +1750,10 @@ class VoteTopicViewSet(viewsets.ModelViewSet):
                 voteChoiceNameDict[str(choice['pk'])] = choice['vote_thai_choice']
                 voteCountDict[str(choice['pk'])] = 0
 
-            voteRecords = models.VoteRecord.objects.filter(vote_topic_pk=voteTopic).values('vote_selected_choice')
+            voteRecordsAll = models.VoteRecord.objects.filter(vote_topic_pk=voteTopic).values('vote_selected_choice')
 
             ### count number of vote record for each choice
-            for vote in voteRecords:
+            for vote in voteRecordsAll:
                 voteCountDict[str(vote['vote_selected_choice'])] = voteCountDict[str(vote['vote_selected_choice'])]+1
 
             percent_result = []
@@ -1730,7 +1774,7 @@ class VoteTopicViewSet(viewsets.ModelViewSet):
             result.append(percent_result)
 
             
-            
+            ### -----------------------------
         
             ##-------------------------------
             ##---old method------------------
