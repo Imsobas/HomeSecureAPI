@@ -120,6 +120,7 @@ class Home(models.Model):
     home_zone = models.ForeignKey(Zone, null=True, blank=True, on_delete=models.DO_NOTHING) 
     home_lat = models.DecimalField(max_digits=11, decimal_places=8, null=True, blank=True)
     home_lon = models.DecimalField(max_digits=11, decimal_places=8, null=True, blank=True)
+    house_space = models.FloatField(null=True, blank=True)
     is_active = models.BooleanField(default=True)
 
     class Meta:

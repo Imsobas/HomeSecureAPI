@@ -1741,7 +1741,7 @@ class VoteTopicViewSet(viewsets.ModelViewSet):
 
             ### find vote record in percent
             
-            voteChoices = models.VoteChoice.objects.filter(vote_topic_pk= voteTopic).values('pk','vote_thai_choice')
+            voteChoices = models.VoteChoice.objects.filter(vote_topic_pk= voteTopic).values('pk','vote_thai_choice','vote_is_result')
             ### dict for keep pk string map to name
             voteChoiceNameDict = dict()
             ### dict for keep pk string map to count number
@@ -1763,6 +1763,7 @@ class VoteTopicViewSet(viewsets.ModelViewSet):
                 
                 resultDict['voteChoicePk'] = choice['pk']
                 resultDict['voteChoiceTitle'] = choice['vote_thai_choice']
+                resultDict['voteChoiceIsResult'] = choice['vote_is_result']
                 resultDict['count'] = voteCountDict[str(choice['pk'])]
                 if(voteRecordsCountAll==0):
                     resultDict['percent'] = 0
