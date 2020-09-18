@@ -121,6 +121,7 @@ class Home(models.Model):
     home_lat = models.DecimalField(max_digits=11, decimal_places=8, null=True, blank=True)
     home_lon = models.DecimalField(max_digits=11, decimal_places=8, null=True, blank=True)
     house_space = models.FloatField(null=True, blank=True)
+    home_vote_couta = models.IntegerField(default=1)
     is_active = models.BooleanField(default=True)
 
     class Meta:
