@@ -70,7 +70,8 @@ create_village_with_setting = views.VillageViewSet.as_view({
 ## setting 
 
 get_village_pk_setting = views.SettingViewSet.as_view({
-    'get': 'get_village_pk_setting'
+    'get': 'get_village_pk_setting',
+    'patch': 'patch_village_pk_setting'
 })
 
 ## zone
@@ -566,6 +567,7 @@ urlpatterns = [
     
     ## setting
     path('villages/<int:village_pk>/setting/',  get_village_pk_setting,name='get_village_pk_setting'),
+   
    
     
     ##fcm 
