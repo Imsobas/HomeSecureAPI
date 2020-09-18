@@ -1951,6 +1951,41 @@ class VoteTopicViewSet(viewsets.ModelViewSet):
 
             return notFoundHandling(result)
 
+    @action(detail=True, methods = 'GET')
+    def checkvoteable_village_pk_home_pk(self, request, village_pk, home_pk):
+        """ Return all votetopics which the user not vote yet according to specific village """
+        ### check village exists
+        isVilExist = models.Village.objects.filter(pk=village_pk,is_active=True).exists()
+        if(isVilExist==False):
+            return Response({ "detail": "Not have this village"},status=status.HTTP_404_NOT_FOUND)
+        else:
+            villageObject = models.Village.objects.only('pk').get(pk=village_pk,is_active=True)
+            feePeriodObject = models.MaintenanceFeePeriod.objects.only('pk').filter(fee_village= villageObject,fee_deadline__lt=datetime.date.today(),is_active=True)
+
+            isHomeExist = models.Home.objects.filter(pk=home_pk,is_active=True).exists()
+            if(isHomeExist==False):
+                return Response({ "detail": "Not have this home"},status=status.HTTP_404_NOT_FOUND)
+            else:
+                ## check home exists 
+                homeObject = models.Home.objects.only('pk').get(pk=home_pk,is_active=True)
+                
+
+                isVoteAble = True
+
+                ### loop for each period that is this village 
+                for feePeriod in feePeriodObject:
+                    feeRecordObject  = models.MaintenanceFeeRecord.objects.filter(fee_period=feePeriod,fee_home=homeObject, is_active=True).all()
+                    serializer = serializers.MaintenanceFeeRecordSerializer(feeRecordObject,many=True)
+                    feeRecordData = serializer.data
+                    ### loop for each record that is this home 
+                    for feeRec in feeRecordData:
+                        print(feeRec)
+                        if(feeRec['fee_paid_status']==False):
+                            isVoteAble= False
+                            break
+                         
+                return notFoundHandling([{'voteAble':isVoteAble}])
+
 
 
             # home = models.Home.objects.only('pk').get(pk=home_pk)

@@ -324,6 +324,10 @@ patch_votetopics_result = views.VoteTopicViewSet.as_view({
     'patch': 'patch_votetopics_result'
 })
 
+checkvoteable_village_pk_home_pk = views.VoteTopicViewSet.as_view({
+    'get': 'checkvoteable_village_pk_home_pk'
+})
+
 
 ## VoteChoice
 get_votetopics_pk_votechoices = views.VoteChoiceViewSet.as_view({
@@ -511,7 +515,9 @@ urlpatterns = [
     path('votetopics/<int:votetopic_pk>/result/homes/<int:home_pk>/', get_votetopics_pk_result_user_home_pk,name='get_votetopics_pk_result_user_home_pk'),
     path('votetopics/<int:votetopic_pk>/result/admin/', get_votetopics_pk_result_admin,name='get_votetopics_pk_result_admin'),
     path('votetopics/<int:pk>/confirmresult/', patch_votetopics_result,name='patch_votetopics_result'),
+    path('villages/<int:village_pk>/homes/<int:home_pk>/checkvoteable/', checkvoteable_village_pk_home_pk,name='checkvoteable_village_pk_home_pk'),
     
+
     ## votechoice
     path('votetopics/<int:votetopic_pk>/votechoices/', get_votetopics_pk_votechoices,name='get_votetopics_pk_votechoices'),
     
