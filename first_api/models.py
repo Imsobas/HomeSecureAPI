@@ -121,7 +121,7 @@ class Home(models.Model):
     home_lat = models.DecimalField(max_digits=11, decimal_places=8, null=True, blank=True)
     home_lon = models.DecimalField(max_digits=11, decimal_places=8, null=True, blank=True)
     house_space = models.FloatField(null=True, blank=True)
-    home_vote_couta = models.IntegerField(default=1)
+    home_vote_qouta = models.IntegerField(default=1)
     is_active = models.BooleanField(default=True)
 
     class Meta:
@@ -394,8 +394,8 @@ class VoteRecord(models.Model):
         """Return the model as a string"""
         return str(self.pk)
 
-    class Meta:
-        unique_together = ('vote_home', 'vote_topic_pk')
+    # class Meta:
+    #     unique_together = ('vote_home', 'vote_topic_pk')
     
 class Problem(models.Model):
     problem_village = models.ForeignKey(Village,null=True, blank=True, on_delete=models.DO_NOTHING)

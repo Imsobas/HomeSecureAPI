@@ -1930,19 +1930,42 @@ class VoteTopicViewSet(viewsets.ModelViewSet):
         if(isHomeExist==False):
             return Response({ "detail": "Not have this home"},status=status.HTTP_404_NOT_FOUND)
         else:
-            home = models.Home.objects.only('pk').get(pk=home_pk)
+            # home = models.Home.objects.only('pk').get(pk=home_pk)
 
-            
+            home = models.Home.objects.get(pk=home_pk,is_active=True)
+            serializer = serializers.HomeSerializer(home)
+            print()
+            voteQuota = serializer.data['home_vote_qouta']
+
             result = []
             for voteTopic in querySet:
-             
-                isVoted = models.VoteRecord.objects.filter(vote_topic_pk=voteTopic, vote_home = home).exists()
-                if(isVoted==False):
+                ### filter vote whether already vote or not 
+                voteCount = models.VoteRecord.objects.filter(vote_topic_pk=voteTopic, vote_home = home).count()
+                if(voteCount < voteQuota):
                     serializer = serializers.VoteTopicSerializer(voteTopic)
-                    result.append(serializer.data)
+                    voteTopicData = serializer.data
+                    voteTopicData['num_vote_left']= voteQuota - voteCount
+                    result.append(voteTopicData)
 
+                    
 
             return notFoundHandling(result)
+
+
+
+            # home = models.Home.objects.only('pk').get(pk=home_pk)
+
+            
+            # result = []
+            # for voteTopic in querySet:
+            #     ### filter vote whether already vote or not 
+            #     isVoted = models.VoteRecord.objects.filter(vote_topic_pk=voteTopic, vote_home = home).exists()
+            #     if(isVoted==False):
+            #         serializer = serializers.VoteTopicSerializer(voteTopic)
+            #         result.append(serializer.data)
+
+
+            # return notFoundHandling(result)
 
    
         

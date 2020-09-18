@@ -29,7 +29,7 @@ class HomeSerializer(serializers.ModelSerializer):
     """Serializes home items"""
     class Meta:
         model = models.Home
-        fields = ('pk','home_number','home_address', 'home_company','home_village','home_zone','home_lat','home_lon', 'house_space','home_vote_couta','is_active')
+        fields = ('pk','home_number','home_address', 'home_company','home_village','home_zone','home_lat','home_lon', 'house_space','home_vote_qouta','is_active')
 
 class GeneralUserSerializer(serializers.ModelSerializer):
     """Serializes GeneralUser items"""
