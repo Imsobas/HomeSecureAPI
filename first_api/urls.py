@@ -67,6 +67,12 @@ create_village_with_setting = views.VillageViewSet.as_view({
     'post': 'create_village_with_setting'
 })
 
+## setting 
+
+get_village_pk_setting = views.SettingViewSet.as_view({
+    'get': 'get_village_pk_setting'
+})
+
 ## zone
 get_villages_pk_zones = views.ZoneViewSet.as_view({
     'get': 'get_villages_pk_zones'
@@ -558,6 +564,9 @@ urlpatterns = [
     path('general_users/<int:user_pk>/notification/',  get_notification_generaluser_pk,name='get_notification_generaluser_pk'),
     path('general_users/<int:user_pk>/unread_notification/count/',  get_unread_notification_count,name='get_unread_notification_count'),
     
+    ## setting
+    path('villages/<int:village_pk>/setting/',  get_village_pk_setting,name='get_village_pk_setting'),
+   
     
     ##fcm 
     # url(r'fcm/', include('fcm.urls')),

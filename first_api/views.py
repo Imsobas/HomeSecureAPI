@@ -1093,6 +1093,23 @@ class SettingViewSet(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
 
+    @action(detail=True, methods='GET')
+    def get_village_pk_setting(self, request, village_pk):
+
+        isExist = models.Village.objects.filter(pk=village_pk).exists()
+        if(isExist==False):
+           return Response({ "detail": "Not found village"},status=status.HTTP_404_NOT_FOUND)
+        else:
+            village=  models.Village.objects.only('pk').get(pk=village_pk)
+
+            querySet = models.Setting.objects.get(setting_village=village)
+            serializer = serializers.SettingSerializer(querySet)
+            result = serializer.data
+           
+            return notFoundHandling(result)
+
+
+
 class PointObservationViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.PointObservationSerializer
     queryset = models.PointObservation.objects.all()
