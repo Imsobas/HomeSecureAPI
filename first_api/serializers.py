@@ -83,7 +83,7 @@ class QrCodeSerializer(serializers.ModelSerializer):
 class SettingSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Setting
-        fields = ('pk', 'scan_waiting_duration', 'qr_scaninTime_duration','pointobservation_scan_distance','checkin_scan_distance','qr_scan_distance')
+        fields = ('pk', 'setting_village','scan_waiting_duration', 'qr_scaninTime_duration','pointobservation_scan_distance','checkin_scan_distance','qr_scan_distance')
 
     
 

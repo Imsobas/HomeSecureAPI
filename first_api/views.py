@@ -1102,11 +1102,22 @@ class SettingViewSet(viewsets.ModelViewSet):
         else:
             village=  models.Village.objects.only('pk').get(pk=village_pk)
 
-            querySet = models.Setting.objects.get(setting_village=village)
-            serializer = serializers.SettingSerializer(querySet)
-            result = serializer.data
-           
-            return notFoundHandling(result)
+
+            isSettingExist = models.Setting.objects.filter(setting_village=village).exists()
+            if(isSettingExist==False):
+                ### create new setting 
+                setting = models.Setting.objects.create(setting_village=village)
+                setting.save
+                serializer = serializers.SettingSerializer(setting)
+
+                return Response(serializer.data,status.HTTP_201_CREATED)
+
+            else:
+                querySet = models.Setting.objects.get(setting_village=village)
+                serializer = serializers.SettingSerializer(querySet)
+                result = serializer.data
+
+                return notFoundHandling(result)
 
 
 
