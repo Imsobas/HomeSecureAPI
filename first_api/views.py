@@ -131,6 +131,27 @@ class VillageViewSet(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
 
+    @action(detail=True, methods=['post'])
+    def create_village_with_setting(self, request):
+        """ Create qr code from user incase report the vehicle which not have enter history"""
+        data = request.data
+        isExist = models.Company.objects.filter(pk=data['village_company']).exists()
+        if(isExist==False):
+            return Response({ "detail": "Not found company."},status=status.HTTP_404_NOT_FOUND)
+        else:
+            company = models.Company.objects.only('pk').get(pk=data['village_company'])
+
+       
+        village = models.Village.objects.create(village_name=data['village_name'], village_address=data['village_address'],village_company=company,village_lat=data['village_lat'],village_lon=data['village_lon'])
+        village.save
+        serializer = serializers.VillageSerializer(village)
+
+        setting = models.Setting.objects.create(setting_village=village)
+        setting.save
+
+
+        return Response(serializer.data,status.HTTP_201_CREATED)
+
     @action(detail=True, methods = 'GET')
     def get_villages_active(self, request):
         """ Return all active village"""

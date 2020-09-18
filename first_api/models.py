@@ -298,9 +298,15 @@ class CheckinCheckpoint(models.Model):
 
 
 class Setting(models.Model):
-    setting_village = models.ForeignKey(Village,null=True, blank=True, on_delete=models.DO_NOTHING)
-    inside_scan_duration = models.DurationField(default=timedelta(minutes=6))
-    point_scan_distance = models.IntegerField(default=25)
+    setting_village = models.ForeignKey(Village,null=True, blank=True, on_delete=models.DO_NOTHING) 
+    ### waiting time before can scan qrcode (seconds)
+    # qr_scaninTime_duration = models.DurationField(default=timedelta(minutes=6))
+    scan_waiting_duration = models.IntegerField(default=10)
+    qr_scaninTime_duration = models.IntegerField(default=6)
+    pointobservation_scan_distance = models.IntegerField(default=25)
+    checkin_scan_distance = models.IntegerField(default=25)
+    qr_scan_distance = models.IntegerField(default=25)
+    
 
     def __str__(self):
         """Return the model as a string"""

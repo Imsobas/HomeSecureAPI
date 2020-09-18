@@ -63,6 +63,10 @@ get_companys_pk_villages = views.VillageViewSet.as_view({
     'get': 'get_companys_pk_villages'
 })
 
+create_village_with_setting = views.VillageViewSet.as_view({
+    'post': 'create_village_with_setting'
+})
+
 ## zone
 get_villages_pk_zones = views.ZoneViewSet.as_view({
     'get': 'get_villages_pk_zones'
@@ -102,6 +106,7 @@ get_homespk_number = views.HomeViewSet.as_view({
 get_homes_pk_homenumber = views.HomeViewSet.as_view({
     'get': 'get_homes_pk_homenumber'
 })
+
 
 
 
@@ -424,6 +429,8 @@ urlpatterns = [
     path('villages_active/',get_villages_active,name='get_villages_active'),
     path('companys/<int:pk>/villages/',  get_companys_pk_villages, name='  get_companys_pk_villages'), ## conpany adapted
     path('villages/location/<int:villagePk>', get_villages_location_pk, name='get_villages_location_pk'),
+    path('create_villages_with_setting/', create_village_with_setting, name='create_village_with_setting'),
+
 
     ##zone end point
     path('companys/<int:company_pk>/villages/zones/', get_companys_pk_villages_zones ,name='get_companys_pk_villages_zones'),
