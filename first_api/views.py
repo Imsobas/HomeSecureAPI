@@ -741,6 +741,66 @@ class QrCodeViewSet(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
 
+    @action(detail=True, methods = 'GET')
+    def get_qrcodes_history_additionaldetail(self, request, qrcode_pk):
+
+        isExistQrcode = models.Qrcode.objects.filter(pk=qrcode_pk, is_active=True).exists()
+        if(isExistQrcode==False):
+            return Response({ "detail": "not have this qrcode "},status=status.HTTP_404_NOT_FOUND)
+        else:
+            queryset = models.Qrcode.objects.get(pk=qrcode_pk, is_active=True)
+            serializer = serializers.QrCodeSerializer(queryset)
+            qrCode = serializer.data
+            
+            result = dict()
+            result['enter_secure_name'] = None
+            result['inside_secure_name'] = None
+            result['scanned_user_name'] = None
+            result['exit_secure_name'] = None
+
+            if(qrCode['qr_enter_secure']!=None):
+                pk = qrCode['qr_enter_secure']
+                isExist = models.SecureGuard.objects.filter(pk = pk, is_active = True).exists()
+                if(isExist==True):
+                    querySet = models.SecureGuard.objects.get(pk = pk, is_active = True)
+                    serializer = serializers.SecureGuardSerializer(querySet)
+                    data = serializer.data
+                    secureName = data['secure_firstname'] + " "+ data['secure_lastname']
+                    result['enter_secure_name'] = secureName
+
+            if(qrCode['qr_inside_secure']!=None):
+                pk = qrCode['qr_inside_secure']
+                isExist = models.SecureGuard.objects.filter(pk = pk, is_active = True).exists()
+                if(isExist==True):
+                    querySet = models.SecureGuard.objects.get(pk = pk, is_active = True)
+                    serializer = serializers.SecureGuardSerializer(querySet)
+                    data = serializer.data
+                    secureName = data['secure_firstname'] + " "+ data['secure_lastname']
+                    result['inside_secure_name'] = secureName
+
+            if(qrCode['qr_user']!=None):
+                pk = qrCode['qr_user']
+                isExist = models.GeneralUser.objects.filter(pk = pk, is_active = True).exists()
+                if(isExist==True):
+                    querySet = models.GeneralUser.objects.get(pk = pk, is_active = True)
+                    serializer = serializers.GeneralUserSerializer(querySet)
+                    data = serializer.data
+                    scannedUserName = data['gen_user_firstname'] + " "+ data['gen_user_lastname']
+                    result['scanned_user_name'] = scannedUserName
+
+            if(qrCode['qr_exit_secure']!=None):
+                pk = qrCode['qr_exit_secure']
+                isExist = models.SecureGuard.objects.filter(pk = pk, is_active = True).exists()
+                if(isExist==True):
+                    querySet = models.SecureGuard.objects.get(pk = pk, is_active = True)
+                    serializer = serializers.SecureGuardSerializer(querySet)
+                    data = serializer.data
+                    secureName = data['secure_firstname'] + " "+ data['secure_lastname']
+                    result['exit_secure_name'] = secureName
+                
+        return notFoundHandling(result)
+            
+
     @action(detail=True, methods=['post'])
     def create_qrcodes_home_pk_nocopon(self, request):
         """ Create qr code from user incase report the vehicle which not have enter history"""

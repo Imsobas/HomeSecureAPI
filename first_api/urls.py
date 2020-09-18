@@ -183,6 +183,10 @@ get_villages_pk_works = views.WorkViewSet.as_view({
 
 ## qrcodes 
 
+get_qrcodes_history_additionaldetail = views.QrCodeViewSet.as_view({
+    'get': 'get_qrcodes_history_additionaldetail'
+})
+
 get_qrcodes_village_pk_home_number_homedetails = views.QrCodeViewSet.as_view({
     'get': 'get_qrcodes_village_pk_home_number_homedetails'
 })
@@ -329,6 +333,8 @@ checkvoteable_village_pk_home_pk = views.VoteTopicViewSet.as_view({
 })
 
 
+
+
 ## VoteChoice
 get_votetopics_pk_votechoices = views.VoteChoiceViewSet.as_view({
     'get': 'get_votetopics_pk_votechoices'
@@ -472,6 +478,7 @@ urlpatterns = [
     path('qrcodes/village/<int:village_pk>/home_number/<str:home_number>/homedetails/', get_qrcodes_village_pk_home_number_homedetails ,name='get_qrcodes_village_pk_home_number_homedetails'),
     path('villages/<int:village_pk>/qrcodes/', get_villages_pk_qrcodes, name = 'get_villages_pk_qrcodes'),
     path('villages/<int:village_pk>/zones/<int:zone_pk>/qrcodes/', get_villages_pk_zone_pk_qrcodes, name = 'get_villages_pk_zone_pk_qrcodes'),
+    path('historyservice/qrcodes/<int:qrcode_pk>/additional_detail/', get_qrcodes_history_additionaldetail, name = 'get_qrcodes_history_additionaldetail'),
 
 
 
