@@ -259,6 +259,9 @@ testObservation = views.PointObservationViewSet.as_view({
     'post': 'testObservation' 
 })
 
+pointobservation_fetch_record_with_checkpoint =  views.PointObservationViewSet.as_view({
+    'get': 'pointobservation_fetch_record_with_checkpoint'
+})
 ## use for retrieve checked status in point observation screen
 pointobservation_fetch_record_checked_pk = views.PointObservationViewSet.as_view({
     'get': 'pointobservation_fetch_record_checked_pk'
@@ -487,6 +490,7 @@ urlpatterns = [
     path('villages/<int:village_pk>/checkpoints/', get_villages_pk_checkpoints, name='get_villages_pk_checkpoints'),
     path('villages/<int:village_pk>/zones/<int:zone_pk>/checkpoints/', get_villages_pk_zones_pk_checkpoints, name='get_villages_pk_zones_pk_checkpoints'),
     
+    
     ##checkincheckpoint 
     path('villages/<int:village_pk>/checkin_checkpoints/', get_villages_pk_checkincheckpoints, name='get_villages_pk_checkincheckpoints'),
     
@@ -524,6 +528,9 @@ urlpatterns = [
     path('fetch_pointobservationrecord_pointlist/pointobservation/<int:pointobservation_pk>/timeslots/<int:timeslot>/checkpoint_status/', fetch_pointobservationrecord_pointlist,name='fetch_pointobservationrecord_pointlist'),
     path('fetch_pointobservationrecord_updatework/works/<int:work_pk>/', fetch_pointobservation_update_work,name='fetch_pointobservation_update_work'),
     path('fetch_pointobservationrecord_updatework/zones/<int:zone_pk>/', fetch_pointobservation_update_zone,name='fetch_pointobservation_update_zone'),
+    ##new endpoint for fetchnig pointobservation along with check point in point_observation_screen
+    path('fetch_pointobservationrecord/checkpoint_with_timesliot/villages/<int:village_pk>/zones/<int:zone_pk>/works/<int:work_pk>/secures/<int:secure_pk>/dates/<str:date>/timeslots/<int:timeslot>/', pointobservation_fetch_record_with_checkpoint ,name='pointobservation_fetch_record_with_checkpoint'),
+    
 
     ## maintenancefeeperiod
     path('villages/<int:village_pk>/maintenance_fee_period/', get_villages_pk_maintenance_fee_period,name='get_villages_pk_maintenance_fee_period'),
