@@ -1522,12 +1522,12 @@ class PointObservationViewSet(viewsets.ModelViewSet):
             village = models.Village.objects.only('pk').get(pk = village_pk)
             zone = models.Zone.objects.only('pk').get(pk = zone_pk)
 
-            isCheckPointExist = models.Checkpoint.objects.filter(point_village=village, point_zone=zone).exists()
+            isCheckPointExist = models.Checkpoint.objects.filter(point_village=village, point_zone=zone, point_active = True, is_active=True).exists()
             if(isCheckPointExist == False):
                 return Response({ "detail": "Not found village or zone"},status=status.HTTP_404_NOT_FOUND)
             else:
                 
-                checkpoints = models.Checkpoint.objects.filter(point_village=village, point_zone=zone).all()
+                checkpoints = models.Checkpoint.objects.filter(point_village=village, point_zone=zone, point_active = True, is_active=True).all()
                 serializer = serializers.CheckpointSerializer(checkpoints,many=True)
                 checkpointsData = serializer.data
 
