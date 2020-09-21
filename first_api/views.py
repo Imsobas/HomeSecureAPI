@@ -271,6 +271,38 @@ class ZoneViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,)
 
     @action(detail=True, methods = 'GET')
+    def get_villages_pk_zone_pk_single_villages_single_zones(self, request, village_pk, zone_pk):
+        """ Return single village and single zone according to village, zone  """
+        
+        villageQuerySet = models.Village.objects.get(pk=village_pk,is_active=True)
+        villageSerializer = serializers.VillageSerializer(villageQuerySet)
+        villageData = villageSerializer.data
+        
+        village_dict = dict()
+        village_dict["pk"] = villageData["pk"]
+        village_dict["village_name"] = villageData["village_name"]
+
+        isZoneExist = models.Zone.objects.filter(zone_village=villageQuerySet, pk = zone_pk,is_active=True).exists()
+        if(isZoneExist == False):
+            return Response({ "detail": "Not found zone"},status=status.HTTP_404_NOT_FOUND)
+        else:
+
+            zoneQuerySet = models.Zone.objects.get(zone_village=villageQuerySet, pk = zone_pk,is_active=True)
+            zoneSerializer = serializers.ZoneSerializer(zoneQuerySet)
+            zoneData = zoneSerializer.data
+            
+        
+            zone_dict = dict()
+            zone_dict["pk"] = zoneData["pk"]
+            zone_dict["zone_name"] = zoneData["zone_name"]
+            zone_dict["zone_number"] = zoneData["zone_number"]
+
+            village_dict['zone'] = zone_dict
+            result = village_dict
+
+            return notFoundHandling(result)
+
+    @action(detail=True, methods = 'GET')
     def get_villages_pk_villages_zones(self, request, village_pk):
         """ Return all village and zone according to all village,  """
         
