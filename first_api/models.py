@@ -143,7 +143,7 @@ class GeneralUser(models.Model):
 
     gen_user_firstname = models.CharField(max_length=100)
     gen_user_lastname = models.CharField(max_length=100)
-    gen_user_username = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.DO_NOTHING) 
+    gen_user_username = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.DO_NOTHING,null=True) 
     gen_user_type = models.CharField(max_length=100,choices=GENERAL_USER_ROLE_CHOICE)
     gen_user_company = models.ForeignKey(Company,null=True, blank=True, on_delete=models.DO_NOTHING) 
     gen_user_village = models.ForeignKey(Village, null=True, blank=True, on_delete=models.DO_NOTHING)

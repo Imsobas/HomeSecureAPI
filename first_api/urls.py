@@ -140,6 +140,10 @@ get_villages_pk_general_users = views.GeneralUserViewSet.as_view({
     'get': 'get_villages_pk_general_users'
 })
 
+patch_temporary_delete_generaluser_with_delete_username = views.GeneralUserViewSet.as_view({
+    'patch': 'patch_temporary_delete_generaluser_with_delete_username'
+})
+
 ##secure guard 
 
 get_villages_pk_secureguards = views.SecureGuardViewSet.as_view({
@@ -181,6 +185,7 @@ get_secureguards_pk_securelocation = views.SecureLocationViewSet.as_view({
 get_profiles_check  = views.UserProfileViewSet.as_view({
     'get': 'get_profiles_check'
 })
+
 
 ## checkpoint 
 
@@ -476,6 +481,8 @@ urlpatterns = [
     path('general_users_active/', get_general_users_active, name='get_general_users_active'),
     path('villages/<int:village_pk>/general_users/', get_villages_pk_general_users, name='get_villages_pk_general_users'),
     path('villages/<int:village_pk>/zones/<int:zone_pk>/general_users/', get_villages_pk_zones_pk_general_users, name='get_villages_pk_zones_pk_general_users'),
+    path('general_users/<int:genuser_pk>/temporary_delete/username_delete/',  patch_temporary_delete_generaluser_with_delete_username, name='patch_temporary_delete_generaluser_with_delete_username'),
+    
     
     ##user
     path('profiles_check/<str:new_username>/', get_profiles_check, name='get_profiles_check'),

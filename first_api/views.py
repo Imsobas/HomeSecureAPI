@@ -566,6 +566,40 @@ class GeneralUserViewSet(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
 
+    @action(detail=True, methods = ['patch'])
+    def patch_temporary_delete_generaluser_with_delete_username(self, request, genuser_pk):
+        
+        isExist = models.GeneralUser.objects.filter(pk=genuser_pk).exists()
+        if(isExist==False):
+           return Response({ "detail": "Not found general user"},status=status.HTTP_404_NOT_FOUND)
+        else:
+            ### update value of left date  = datetime.now and username == null
+            genuser = models.GeneralUser.objects.get(pk=genuser_pk)
+            
+            
+            ### update is_active == false
+            updateData = {'is_active':False}
+            serializer = serializers.GeneralUserSerializer(genuser, updateData, partial=True)   
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            ## get usernamePk
+            genuserData = serializer.data
+            usernamePk = genuserData['gen_user_username']
+            genuser.gen_user_username = None
+            genuser.save()
+            
+
+            result = serializer.data
+            
+            print("usernamePk")
+            print(usernamePk)
+
+            username = models.UserProfile.objects.only('pk').get(pk =usernamePk)
+            username.delete()
+            # username.save()
+
+            return Response(serializer.data)
+
     @action(detail=True, methods = 'GET')
     def get_general_users_active(self, request):
         """ Return all active home"""
