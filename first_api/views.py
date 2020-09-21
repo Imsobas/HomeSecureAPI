@@ -670,29 +670,31 @@ class SecureGuardViewSet(viewsets.ModelViewSet):
         if(isExist==False):
            return Response({ "detail": "Not found secure guard"},status=status.HTTP_404_NOT_FOUND)
         else:
+            ### update value of left date  = datetime.now and username == null
             secure = models.SecureGuard.objects.get(pk=secure_pk)
             secure.secure_left_date = datetime.datetime.now()
-            secure.save()
-            # secure =  models.SecureGuard.objects.only('pk')
-            #  data = request.data
-        #    "is_active": false,
-        #   "secure_left_date": TimeHelper.getStringFromDateTime(DateTime.now())
             
+            
+            ### update is_active == false
             updateData = {'is_active':False}
             serializer = serializers.SecureGuardSerializer(secure, updateData, partial=True)   
             serializer.is_valid(raise_exception=True)
             serializer.save()
+            ## get usernamePk
             secureData = serializer.data
             usernamePk = secureData['secure_username']
-
-            
+            secure.secure_username = None
+            secure.save()
             
 
             result = serializer.data
+            
+            print("usernamePk")
+            print(usernamePk)
 
-            # username = models.UserProfile.objects.only('pk').get(pk =usernamePk)
-            # username.delete
-
+            username = models.UserProfile.objects.only('pk').get(pk =usernamePk)
+            username.delete()
+            # username.save()
 
             return Response(serializer.data)
         
