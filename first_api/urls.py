@@ -43,7 +43,10 @@ router.register(r'notification',views.NotificationViewSet)
 get_profiles_detail = views.UserProfileViewSet.as_view({
     'get': 'get_profiles_detail'
 })
-   
+
+create_username_with_usertype = views.UserProfileViewSet.as_view({
+    'post' : 'create_username_with_usertype'
+})
 
 
 ## village
@@ -161,6 +164,10 @@ get_villages_pk_secureguards_for_mainfetching = views.SecureGuardViewSet.as_view
 
 get_villages_pk_zones_pk_secureguards_for_mainfetching = views.SecureGuardViewSet.as_view({
     'get': 'get_villages_pk_zones_pk_secureguards_for_mainfetching'
+})
+
+patch_temporary_delete_secureguard_with_delete_username = views.SecureGuardViewSet.as_view({
+    'patch': 'patch_temporary_delete_secureguard_with_delete_username'
 })
 
 ##secure location 
@@ -437,7 +444,7 @@ urlpatterns = [
 
     ## username 
     path('profiles/<str:username>/',get_profiles_detail,name='get_profiles_detail'),
-    
+    path('profiles/create_username/with_type/',create_username_with_usertype,name='create_username_with_usertype'),
 
     ## village end point 
     path('villages_active/',get_villages_active,name='get_villages_active'),
@@ -480,7 +487,9 @@ urlpatterns = [
     path('villages/<int:village_pk>/zones/<int:zone_pk>/secure_guards/for_location/', get_villages_pk_zones_pk_secureguards_for_location, name='get_villages_pk_zones_pk_secureguards_for_location'),
     path('villages/<int:village_pk>/secure_guards/for_mainfetching/',  get_villages_pk_secureguards_for_mainfetching, name='get_villages_pk_secureguards_for_mainfetching'),
     path('villages/<int:village_pk>/zones/<int:zone_pk>/secure_guards/for_mainfetching/',get_villages_pk_zones_pk_secureguards_for_mainfetching, name='get_villages_pk_zones_pk_secureguards_for_mainfetching'),
-    
+    path('secure_guards/<int:secure_pk>/temporary_delete/username_delete/',  patch_temporary_delete_secureguard_with_delete_username, name='patch_temporary_delete_secureguard_with_delete_username'),
+  
+
     ##secure location 
     path('secure_guards/<int:secure_guard_pk>/securelocations/', get_secureguards_pk_securelocation, name='get_secureguards_pk_securelocation'),
     

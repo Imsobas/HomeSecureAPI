@@ -51,6 +51,68 @@ class UserProfileViewSet(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,permission.UpdateOwnProfile,)
 
+    @action(detail=True, methods=['post'])
+    def create_username_with_usertype(self, request):
+        """ Create username along with generaluser, secureguard model"""
+        data = request.data
+
+        print(data)
+        
+        ### create username model 
+        isUsernameExist = models.UserProfile.objects.filter(username=data['username']).exists()
+        if(isUsernameExist==True):
+            return Response({ "detail": "Duplicate username."},status=status.HTTP_404_NOT_FOUND)
+        else: 
+            username = models.UserProfile.objects.create_user(username=data['username'], user_role=data['userRole'], password=data['password'])
+            username.save
+            userNameSerializer = serializers.UserProfileSerializer(username)
+            userNameData = userNameSerializer.data
+            usernamePk = userNameData['pk']
+
+            result = []
+            
+            company = models.Company.objects.only('pk').get(pk=data['company'])
+            village = models.Village.objects.only('pk').get(pk=data['village'])
+            zone = models.Zone.objects.only('pk').get(pk=data['zone'])
+            
+
+            ### create secureguard model
+            if(data['userRole']=='SecureBoss' or data['userRole']=='SecureGuard'):
+
+                secureGuard = models.SecureGuard.objects.create(secure_firstname=data['firstname'],secure_lastname=data['lastname'],secure_company=company,secure_village= village, secure_zone =zone,secure_username=username,secure_type=data['type'])
+                secureGuard.save
+                serializer = serializers.SecureGuardSerializer(secureGuard)
+                result = serializer.data
+                
+            ## create general user model
+            elif(data['userRole']=='GeneralUser'):
+                home = models.Home.objects.only('pk').get(pk=data['home'])
+
+                generalUser = models.GeneralUser.objects.create(gen_user_firstname=data['firstname'],gen_user_lastname=data['lastname'],gen_user_company=company,gen_user_village=village,gen_user_zone=zone,gen_user_home=home,gen_user_username=username,gen_user_type=data['type'])
+                generalUser.save
+                serializer = serializers.GeneralUserSerializer(generalUser)
+                result = serializer.data 
+            
+            return Response(result,status.HTTP_201_CREATED)
+
+
+        # isExist = models.Company.objects.filter(pk=data['village_company']).exists()
+        # if(isExist==False):
+        #     return Response({ "detail": "Not found company."},status=status.HTTP_404_NOT_FOUND)
+        # else:
+        #     company = models.Company.objects.only('pk').get(pk=data['village_company'])
+
+       
+        # village = models.Village.objects.create(village_name=data['village_name'], village_address=data['village_address'],village_company=company,village_lat=data['village_lat'],village_lon=data['village_lon'])
+        # village.save
+        # serializer = serializers.VillageSerializer(village)
+
+        # setting = models.Setting.objects.create(setting_village=village)
+        # setting.save
+
+
+        # return Response(serializer.data,status.HTTP_201_CREATED)
+
     @action(detail=True, methods = 'GET')
     def get_profiles_check(self, request, new_username):
         """ Return all active company"""
@@ -130,6 +192,8 @@ class VillageViewSet(viewsets.ModelViewSet):
     queryset = models.Village.objects.all()
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
+
+    
 
     @action(detail=True, methods=['post'])
     def create_village_with_setting(self, request):
@@ -598,6 +662,40 @@ class SecureGuardViewSet(viewsets.ModelViewSet):
     queryset = models.SecureGuard.objects.all()
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
+
+    @action(detail=True, methods = ['patch'])
+    def patch_temporary_delete_secureguard_with_delete_username(self, request, secure_pk):
+        
+        isExist = models.SecureGuard.objects.filter(pk=secure_pk).exists()
+        if(isExist==False):
+           return Response({ "detail": "Not found secure guard"},status=status.HTTP_404_NOT_FOUND)
+        else:
+            secure = models.SecureGuard.objects.get(pk=secure_pk)
+            secure.secure_left_date = datetime.datetime.now()
+            secure.save()
+            # secure =  models.SecureGuard.objects.only('pk')
+            #  data = request.data
+        #    "is_active": false,
+        #   "secure_left_date": TimeHelper.getStringFromDateTime(DateTime.now())
+            
+            updateData = {'is_active':False}
+            serializer = serializers.SecureGuardSerializer(secure, updateData, partial=True)   
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            secureData = serializer.data
+            usernamePk = secureData['secure_username']
+
+            
+            
+
+            result = serializer.data
+
+            # username = models.UserProfile.objects.only('pk').get(pk =usernamePk)
+            # username.delete
+
+
+            return Response(serializer.data)
+        
 
     @action(detail=True, methods = 'GET')
     def get_villages_pk_secureguards(self, request, village_pk):
@@ -1530,6 +1628,8 @@ class PointObservationViewSet(viewsets.ModelViewSet):
                 checkpoints = models.Checkpoint.objects.filter(point_village=village, point_zone=zone, point_active = True, is_active=True).all()
                 serializer = serializers.CheckpointSerializer(checkpoints,many=True)
                 checkpointsData = serializer.data
+
+                print(checkpointsData)
 
                 isExistPo = models.PointObservation.objects.filter(observation_village=village_pk, observation_zone=zone_pk, observation_work=work_pk, observation_secure=secure_pk, observation_date=date).exists()
                 
