@@ -206,6 +206,11 @@ class CustomFCMDeviceViewSet(viewsets.ModelViewSet):
         if(isDeviceExist==False):
             # return Response({ "detail": "not have this device "},status=status.HTTP_404_NOT_FOUND) 
             device = models.CustomFCMDevice.objects.create(active=True, user=username, device_id=data['device_id'], registration_id=data['registration_id'], type= data['type'] )
+            device.save
+            serializer = serializers.FCMDeviceSerializer(device)
+
+            return Response(serializer.data)
+
         else:
             device = models.CustomFCMDevice.objects.get(user=username)
             device.date_created = datetime.datetime.now()
