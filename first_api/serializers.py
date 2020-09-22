@@ -147,6 +147,11 @@ class WorkingRecordSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.WorkingRecord
         fields =('pk', 'working_village', 'working_zone','working_secure','working_work', 'working_date','work_checkin_checkpoint','working_in_out','working_device')
+
+class FCMDeviceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.CustomFCMDevice
+        fields = ('pk','name','active','user', 'registration_id','date_created','device_id','type', )
      
         
 ## User serializer

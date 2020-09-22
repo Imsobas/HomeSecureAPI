@@ -26,6 +26,7 @@ from django.db.models import Sum
 from django.conf import settings
 from django.utils.timezone import make_aware
 from django.utils.timezone import localtime, now
+from fcm_django.models import FCMDevice
 
 ## helper function
 
@@ -35,7 +36,6 @@ def notFoundHandling(result,error_message="Not found."):
     else: 
         return Response({ "detail": error_message},
         status=status.HTTP_404_NOT_FOUND)
-
 
 ## User views
 
@@ -172,6 +172,100 @@ class UserProfileViewSet(viewsets.ModelViewSet):
 
 # Home Secure main views 
 
+class CustomFCMDeviceViewSet(viewsets.ModelViewSet):
+    serializer_class = serializers.FCMDeviceSerializer
+    queryset = models.CustomFCMDevice.objects.all()
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+
+    @action(detail=True, methods='GET')
+    def test_fcm(self, request):
+        # (title="Title", body="Message", icon=..., data={"test": "test"})
+        device = models.CustomFCMDevice.objects.all().send_message(title="Hello From FCM Django",body= "มีรถเข้าไปบ้าน")
+        print(device)
+        # serializer = serializers.FCMDeviceSerializer(device)
+
+        
+
+        return Response(device)
+        
+
+    @action(detail=True, methods=['post','GET'])
+    def update_device(self, request):
+        """ Update device fcm token, create if non exist"""
+        # print(request.user)
+        username = request.user
+        # print(username.pk)
+
+        data = request.data
+
+        if(data['registration_id']==None):
+            return Response({ "detail": "Error can not get FCM token from device"},status=status.HTTP_404_NOT_FOUND)
+        
+        isDeviceExist = models.CustomFCMDevice.objects.filter(user=username).exists()
+        if(isDeviceExist==False):
+            # return Response({ "detail": "not have this device "},status=status.HTTP_404_NOT_FOUND) 
+            device = models.CustomFCMDevice.objects.create(active=True, user=username, device_id=data['device_id'], registration_id=data['registration_id'], type= data['type'] )
+        else:
+            device = models.CustomFCMDevice.objects.get(user=username)
+            device.date_created = datetime.datetime.now()
+            device.save()
+            # print(data)
+
+            ###TODO manipulate data to update
+            serializer = serializers.FCMDeviceSerializer(device, data, partial=True)   
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+
+            return Response(serializer.data)
+            
+        
+
+
+        # isDeviceExist = models.CustomFCMDevice.objects.filter().exists()
+        # if(isDeviceExist==False):
+        #     return Response({ "detail": "not have this home number "},status=status.HTTP_404_NOT_FOUND)
+        # else:
+        #     home = models.Home.objects.filter(pk=data['home_pk'], is_active=True).last()
+        #     serializer = serializers.HomeSerializer(home)
+        #     homeData = serializer.data
+
+
+        #     ### using in response data back 
+        #     homePk = homeData['pk']
+        #     homeZone = homeData['home_zone']
+        #     # homeLat = homeData['home_lat']
+        #     # homeLon = homeData['home_lon']
+        #     homeVillage = homeData['home_village']
+        #     homeCompany = homeData['home_company']
+        #     homeNumber = homeData['home_number']
+
+        
+
+        #     ### create qrcode 
+        #     ### example models.Village.objects.only('pk').get(pk=village_pk)
+        #     village = models.Village.objects.only('pk').get(pk=homeVillage)
+        #     zone = models.Zone.objects.only('pk').get(pk=homeZone)
+        #     company = models.Company.objects.only('pk').get(pk=homeCompany)
+        #     home = models.Home.objects.only('pk').get(pk=homePk)
+           
+
+        #     qrcode = models.Qrcode.objects.create(qr_enter_time=datetime.datetime.now(), qr_car_number=data['qr_car_number'],qr_home_number=homeNumber, qr_car_color = data['qr_car_color'], qr_car_brand=data['qr_car_brand'], qr_company = company, qr_village = village, qr_zone =zone, qr_home =home, qr_exit_without_enter=True)
+        #     qrcode.save
+        #     serializer = serializers.QrCodeSerializer(qrcode)
+
+        #     # ## create notification 
+        #     # genUserQuerySet = models.GeneralUser.objects.filter(gen_user_home= home, is_active=True).all()
+        #     # for user in genUserQuerySet:
+        #     #     print(user)
+        #     #     notification = models.Notification.objects.create(noti_home=home,noti_general_user=user, noti_qr = qrcode)
+        #     #     notification.save()
+
+        #     return Response(serializer.data,status.HTTP_201_CREATED)
+
+            
+    
+
 class CompanyViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.CompanySerializer
     queryset = models.Company.objects.all()
@@ -297,8 +391,8 @@ class ZoneViewSet(viewsets.ModelViewSet):
             zone_dict["zone_name"] = zoneData["zone_name"]
             zone_dict["zone_number"] = zoneData["zone_number"]
 
-            village_dict['zone'] = zone_dict
-            result = village_dict
+            village_dict['zone'] = [zone_dict]
+            result = [village_dict]
 
             return notFoundHandling(result)
 
@@ -2121,12 +2215,6 @@ class VoteTopicViewSet(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
 
-    #  @action(detail=True, methods=['post'])
-    # def create_enter_qrcode_and_notificaton(self, request):
-    #     """ Create qr code on enter screen along with generate notification for each user"""
-        
-    #     data = request.data 
-
     @action(detail=True, methods = ['patch'])
     def patch_votetopics_result(self, request, pk):
         votetopic = self.get_object()
@@ -2869,8 +2957,6 @@ class NotificationViewSet(viewsets.ModelViewSet):
             serializer = serializers.HomeSerializer(home)
             homeData = serializer.data
 
-            # print(homeData)
-
 
             ### using in qr code enter 
             homePk = homeData['pk']
@@ -2896,12 +2982,24 @@ class NotificationViewSet(viewsets.ModelViewSet):
 
 
 
-            ## create notification 
+            ## create notification  && fcm message
             genUserQuerySet = models.GeneralUser.objects.filter(gen_user_home= home, is_active=True).all()
             for user in genUserQuerySet:
                 print(user)
+                ### create notification
                 notification = models.Notification.objects.create(noti_home=home,noti_general_user=user, noti_qr = qrcode)
                 notification.save()
+
+                ### create fcm message 
+                isUserNameExist = models.UserProfile.objects.filter(username=user).exists()
+                if(isUserNameExist==True):
+                    username = models.UserProfile.objects.get(username=user)
+                    
+                    isDeviceExist = models.CustomFCMDevice.objects.filter(user=username).exists()
+                    if(isDeviceExist==True):
+                        device = models.CustomFCMDevice.objects.get(user=username)
+                        device.send_message(title="มีรถเข้าไปบ้าน "+homeNumber,body= "กรุณาแสกนโค้ดเมื่อแขกของท่านถึงบ้าน")
+
 
             ### for future, incase want to add secure warning
             # secureGuardQuerySet = models.SecureGuard.objects.filter(secure_zone= zone, is_active=True).all()

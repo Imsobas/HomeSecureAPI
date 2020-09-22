@@ -5,8 +5,13 @@ from django.contrib.auth.models import BaseUserManager
 from django.conf import settings
 from first_api.user_role import user_role_list
 from datetime import timedelta
+from fcm_django.models import AbstractFCMDevice
 
 ## User model
+
+
+   
+    
 
 class UserProfileManager(BaseUserManager):
     """Manager for user profiles"""
@@ -70,6 +75,10 @@ class UserProfile(AbstractBaseUser, PermissionsMixin):
         return self.username
 
 # Home Secure main models 
+
+class CustomFCMDevice(AbstractFCMDevice):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.DO_NOTHING,null=True) 
+    
 
 class Company(models.Model):
     company_name = models.CharField(max_length=100)

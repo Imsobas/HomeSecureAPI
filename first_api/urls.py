@@ -3,6 +3,7 @@ from rest_framework.routers import DefaultRouter
 from rest_framework import renderers
 from first_api import views
 from django.conf.urls import include, url
+from fcm_django.api.rest_framework import FCMDeviceAuthorizedViewSet, FCMDeviceViewSet
 
 router = DefaultRouter() ## router use with viewset 
 # router.register('hello-viewset', views.HelloViewSet, basename='hello-viewset')
@@ -36,6 +37,7 @@ router.register(r'secure_work',views.SecureWorkViewSet)
 router.register(r'checkin_checkpoints',views.CheckinCheckpointViewSet)
 router.register(r'working_records',views.WorkingRecordViewSet)
 router.register(r'notification',views.NotificationViewSet)
+router.register(r'devices', views.CustomFCMDeviceViewSet)
 
 ## Binding URL
 
@@ -46,6 +48,17 @@ get_profiles_detail = views.UserProfileViewSet.as_view({
 
 create_username_with_usertype = views.UserProfileViewSet.as_view({
     'post' : 'create_username_with_usertype'
+})
+
+##fcm 
+
+test_fcm = views.CustomFCMDeviceViewSet.as_view({
+    'get': 'test_fcm'
+})
+
+update_device = views.CustomFCMDeviceViewSet.as_view({
+    'post': 'update_device',
+    'get': 'update_device'
 })
 
 
@@ -455,6 +468,10 @@ urlpatterns = [
     ## username 
     path('profiles/<str:username>/',get_profiles_detail,name='get_profiles_detail'),
     path('profiles/create_username/with_type/',create_username_with_usertype,name='create_username_with_usertype'),
+
+    ## fcm 
+    path('test_fcm/',test_fcm,name='test_fcm'),
+    path('device/update_device/', update_device,name='update_device'),
 
     ## village end point 
     path('villages_active/',get_villages_active,name='get_villages_active'),
