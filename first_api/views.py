@@ -181,6 +181,8 @@ class CustomFCMDeviceViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods='GET')
     def test_fcm(self, request):
         # (title="Title", body="Message", icon=..., data={"test": "test"})
+        # device = models.CustomFCMDevice.objects.all()
+        # serializer  = serializers.SecureGuardSerializer
         device = models.CustomFCMDevice.objects.all().send_message(title="Hello From FCM Django",body= "มีรถเข้าไปบ้าน")
         print(device)
         # serializer = serializers.FCMDeviceSerializer(device)

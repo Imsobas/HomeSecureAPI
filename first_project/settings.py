@@ -107,8 +107,7 @@ AUTH_PASSWORD_VALIDATORS = [
 FCM_DJANGO_SETTINGS = {
         "APP_VERBOSE_NAME": "[string for AppConfig's verbose_name]",
          # default: _('FCM Django')
-        # "FCM_SERVER_KEY": "AAAAeiAAs5g:APA91bEhmNN_LndCp982owIqU7ADL3s1JGOSAAm8AEWt08XfCREf4bcWUn6417ceWpCI_0zYgrswgYmHpm6tn20S-oanSTUy2GEy3YvoUU4MEibHtU3DSXQK8Uk_eAkg1SZXjQQwxOLH",
-        "FCM_SERVER_KEY":"AAAAGRrPLNo:APA91bHkqQgUJuFE12vioHDwBe4IrYZlH14MAjGCWjLC-kDVxNm5noGUP7Oo-X3WXZ1N-dAxozMwx-oFyWz39oNxcHmNd4rLD88SXr80EWyCrL9b0iPzlC7D44EXwSS5Nww_-Y6RdWoJ",
+        "FCM_SERVER_KEY":"AAAAGRrPLNo:APA91bHLWQR6kZZiG_zG_3-OqlNuMJPy8hiibxsVrFk5jH9G5DJVXMVkS1QvwUDRtAulkb5WDVDLMqmZCdlcGF0EzTNL90QMjrdNrecX8izRVkVLYMmmAQvP5LIKKhaB13vs6AjhZXLK",
          # true if you want to have only one active device per registered user at a time
          # default: False
         "ONE_DEVICE_PER_USER": True,
