@@ -732,24 +732,33 @@ class ManagerViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,)
 
     @action(detail=True, methods = 'GET')
-    def get_managers_active(self, request):
+    def get_companies_manager(self, request,company_pk):
         """ Return all active manger with name of username"""
-        querySet = models.Manager.objects.filter(is_active=True)
-        serializer = serializers.ManagerSerializer(querySet,many=True)
-        managerData = serializer.data
 
-        for mana in managerData:
-            usernamePk = m['manager_username']
-            isExist = models.UserProfile.objects.filter(pk=usernamePk).exists()
-            if(isExist==False):
-                mana['username_name'] = None
-            else:
-                user = models.UserProfile.objects.get(pk=usernamePk)
-                serializer = serializers.UserProfileSerializer(user)
-                userData = serializer.data
-                mana['username_name'] = userData
 
-        return notFoundHandling(managerData)
+        isCompanyExist = models.Company.objects.filter(pk=company_pk).exists()
+        if(isCompanyExist==False):
+            return Response({ "detail": "Not found company"},status=status.HTTP_404_NOT_FOUND)
+        else:
+
+            company = models.Company.objects.get(pk=company_pk)
+
+            querySet = models.Manager.objects.filter(manager_company=company)
+            serializer = serializers.ManagerSerializer(querySet,many=True)
+            managerData = serializer.data
+
+            for mana in managerData:
+                usernamePk = mana['manager_username']
+                isExist = models.UserProfile.objects.filter(pk=usernamePk).exists()
+                if(isExist==False):
+                    mana['username_name'] = None
+                else:
+                    user = models.UserProfile.objects.get(pk=usernamePk)
+                    serializer = serializers.UserProfileSerializer(user)
+                    userData = serializer.data
+                    mana['username_name'] = userData['username']
+
+            return notFoundHandling(managerData)
 
 
 ## use only post from home 

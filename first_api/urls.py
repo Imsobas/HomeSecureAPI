@@ -152,8 +152,8 @@ get_homes_pk_homenumber = views.HomeViewSet.as_view({
 
 ## manager
 
-get_managers_active = views.ManagerViewSet.as_view({
-    'get': 'get_managers_active'
+get_companies_manager = views.ManagerViewSet.as_view({
+    'get': 'get_companies_manager'
 })
 
 
@@ -522,7 +522,7 @@ urlpatterns = [
     
 
     ## manager 
-    path('managers_active/',get_managers_active, name='get_managers_active'),
+    path('companies/<int:company_pk>/manager/',get_companies_manager, name='get_companies_manager'),
     
 
     ##general user end point 

@@ -188,8 +188,8 @@ class NotificationSerializer(serializers.ModelSerializer):
 class ManagerSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Manager
-        fields = ('pk','manager_username','manager_company','manger_level','is_active')
-        
+        fields = ('pk','manager_username','manager_company','manger_level')
+
 
 # class ProfileFeedItemSerializer(serializers.ModelSerializer):
 #     """Serializes profile feed items"""
