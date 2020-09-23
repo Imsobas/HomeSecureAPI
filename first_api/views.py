@@ -183,7 +183,7 @@ class CustomFCMDeviceViewSet(viewsets.ModelViewSet):
         # (title="Title", body="Message", icon=..., data={"test": "test"})
         # device = models.CustomFCMDevice.objects.all()
         # serializer  = serializers.SecureGuardSerializer
-        device = models.CustomFCMDevice.objects.all().send_message(title="Hello From FCM Django",body= "มีรถเข้าไปบ้าน")
+        device = models.CustomFCMDevice.objects.all().send_message(title="Hello From FCM Django",body= "มีรถเข้าไปบ้าน",sound="default")
         print(device)
         # serializer = serializers.FCMDeviceSerializer(device)
 
