@@ -183,7 +183,10 @@ class CustomFCMDeviceViewSet(viewsets.ModelViewSet):
         # (title="Title", body="Message", icon=..., data={"test": "test"})
         # device = models.CustomFCMDevice.objects.all()
         # serializer  = serializers.SecureGuardSerializer
-
+        device = models.CustomFCMDevice.objects.all()
+        for d in device:
+            d.active = True
+            d.save()
         device = models.CustomFCMDevice.objects.all().send_message(title="Hello From FCM Django",body= "มีรถเข้าไปบ้าน",sound="default")
         print(device)
         # serializer = serializers.FCMDeviceSerializer(device)
@@ -3000,10 +3003,14 @@ class NotificationViewSet(viewsets.ModelViewSet):
                     ### fcm for user
                     isDeviceExist = models.CustomFCMDevice.objects.filter(user=username).exists()
                     if(isDeviceExist==True):
+                        
                         device = models.CustomFCMDevice.objects.filter(user=username).all()
+                         for d in device:
+                            d.active = True
+                            d.save()
                         device.send_message(title="มีรถเข้าไปบ้าน "+homeNumber,body= "กรุณาแสกนโค้ดเมื่อแขกของท่านถึงบ้าน",sound='default')
 
-            
+            ## fcm for secure
             zoneName = serializers.ZoneSerializer(zone).data['zone_name']
             print(zoneName)
             secureQuerySet = models.SecureGuard.objects.filter(secure_zone=zone).all()
@@ -3017,6 +3024,9 @@ class NotificationViewSet(viewsets.ModelViewSet):
                     isDeviceExist = models.CustomFCMDevice.objects.filter(user=username).exists()
                     if(isDeviceExist==True):
                         device = models.CustomFCMDevice.objects.filter(user=username).all()
+                        for d in device:
+                            d.active = True
+                            d.save()
                         device.send_message(title="มีรถเข้าไปในบ้าน "+homeNumber+"เขตพื้นที่ "+zoneName,body= "กรุณาแสกนโค้ดเมื่อแขกถึงบ้านในเขตของท่าน",sound='default')
                     
 
