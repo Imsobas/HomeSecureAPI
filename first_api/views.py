@@ -3005,7 +3005,7 @@ class NotificationViewSet(viewsets.ModelViewSet):
                     if(isDeviceExist==True):
                         
                         device = models.CustomFCMDevice.objects.filter(user=username).all()
-                         for d in device:
+                        for d in device:
                             d.active = True
                             d.save()
                         device.send_message(title="มีรถเข้าไปบ้าน "+homeNumber,body= "กรุณาแสกนโค้ดเมื่อแขกของท่านถึงบ้าน",sound='default')
@@ -3029,9 +3029,6 @@ class NotificationViewSet(viewsets.ModelViewSet):
                             d.save()
                         device.send_message(title="มีรถเข้าไปในบ้าน "+homeNumber+"เขตพื้นที่ "+zoneName,body= "กรุณาแสกนโค้ดเมื่อแขกถึงบ้านในเขตของท่าน",sound='default')
                     
-
-
-
 
             ### for future, incase want to add secure warning
             # secureGuardQuerySet = models.SecureGuard.objects.filter(secure_zone= zone, is_active=True).all()
