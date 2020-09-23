@@ -2980,7 +2980,7 @@ class NotificationViewSet(viewsets.ModelViewSet):
             ### create enter qrcode 
             ### example models.Village.objects.only('pk').get(pk=village_pk)
             village = models.Village.objects.only('pk').get(pk=homeVillage)
-            zone = models.Zone.objects.only('pk').get(pk=homeZone)
+            zone = models.Zone.objects.get(pk=homeZone)
             company = models.Company.objects.only('pk').get(pk=homeCompany)
             home = models.Home.objects.only('pk').get(pk=homePk)
             secure = models.SecureGuard.objects.only('pk').get(pk=data['qr_enter_secure'])
@@ -2991,7 +2991,7 @@ class NotificationViewSet(viewsets.ModelViewSet):
 
 
 
-            ## create notification  && fcm message
+            ## create notification  && fcm message for user
             genUserQuerySet = models.GeneralUser.objects.filter(gen_user_home= home, is_active=True).all()
             
             for genuser in genUserQuerySet:
@@ -3002,23 +3002,41 @@ class NotificationViewSet(viewsets.ModelViewSet):
                 genuserSerializer = serializers.GeneralUserSerializer(genuser)
                 genUserData = genuserSerializer.data
 
-                print(genUserData)
+                # print(genUserData)
 
-                print("visit here after create notification")
+                # print("visit here after create notification")
                 ### create fcm message 
                 isUserNameExist = models.UserProfile.objects.filter(pk=genUserData['gen_user_username']).exists()
                 if(isUserNameExist==True):
                     username = models.UserProfile.objects.get(pk=genUserData['gen_user_username'])
                     
-                    print("username")
-                    print(username)
+                    # print("username")
+                    # print(username)
                     
-                    
+                    ### fcm for user
                     isDeviceExist = models.CustomFCMDevice.objects.filter(user=username).exists()
                     if(isDeviceExist==True):
                         device = models.CustomFCMDevice.objects.filter(user=username).all()
-                        # print(device)
                         device.send_message(title="มีรถเข้าไปบ้าน "+homeNumber,body= "กรุณาแสกนโค้ดเมื่อแขกของท่านถึงบ้าน",sound='default')
+
+            
+            zoneName = serializers.ZoneSerializer(zone).data['zone_name']
+            print(zoneName)
+            secureQuerySet = models.SecureGuard.objects.filter(secure_zone=zone).all()
+            secureSerializer = serializers.SecureGuardSerializer(secureQuerySet,many=True)
+            secureData = secureSerializer.data
+            for secureD in secureData:
+                isUserNameExist = models.UserProfile.objects.filter(pk=secureD['secure_username']).exists()
+                if(isUserNameExist==True):
+                    username = models.UserProfile.objects.get(pk=secureD['secure_username'])
+
+                    isDeviceExist = models.CustomFCMDevice.objects.filter(user=username).exists()
+                    if(isDeviceExist==True):
+                        device = models.CustomFCMDevice.objects.filter(user=username).all()
+                        device.send_message(title="มีรถเข้าไปในบ้าน "+homeNumber+"เขตพื้นที่ "+zoneName,body= "กรุณาแสกนโค้ดเมื่อแขกถึงบ้านในเขตของท่าน",sound='default')
+                    
+
+
 
 
             ### for future, incase want to add secure warning
