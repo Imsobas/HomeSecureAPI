@@ -191,8 +191,8 @@ class CustomFCMDeviceViewSet(viewsets.ModelViewSet):
         
 
         return Response(device)
-        
 
+        
     @action(detail=True, methods=['post','GET'])
     def update_device(self, request):
         """ Update device fcm token, create if non exist"""
@@ -201,31 +201,38 @@ class CustomFCMDeviceViewSet(viewsets.ModelViewSet):
         # print(username.pk)
 
         data = request.data
-
+        
+        ### check is this fcm token already exist 
         if(data['registration_id']==None):
             return Response({ "detail": "Error can not get FCM token from device"},status=status.HTTP_404_NOT_FOUND)
-        
-        isDeviceExist = models.CustomFCMDevice.objects.filter(user=username).exists()
-        if(isDeviceExist==False):
-            # return Response({ "detail": "not have this device "},status=status.HTTP_404_NOT_FOUND) 
-            device = models.CustomFCMDevice.objects.create(active=True, user=username, device_id=data['device_id'], registration_id=data['registration_id'], type= data['type'] )
-            device.save
-            serializer = serializers.FCMDeviceSerializer(device)
 
-            return Response(serializer.data)
+        isFCMExist = models.CustomFCMDevice.objects.filter(registration_id=data['registration_id']).exists()
 
-        else:
-            device = models.CustomFCMDevice.objects.get(user=username)
-            device.date_created = datetime.datetime.now()
-            device.save()
-            # print(data)
 
-            ###TODO manipulate data to update
-            serializer = serializers.FCMDeviceSerializer(device, data, partial=True)   
-            serializer.is_valid(raise_exception=True)
-            serializer.save()
+        ### if already exist, delete the old fcm record where it contains this fcm key
+        if(isFCMExist==True):
+            
+            deleteFCM = models.CustomFCMDevice.objects.filter(registration_id=data['registration_id']).all().delete()
 
-            return Response(serializer.data)
+        ### create new fcm token record along with username
+        createFCM = models.CustomFCMDevice.objects.create(active=True, user=username, device_id=data['device_id'], registration_id=data['registration_id'], type= data['type'] )
+        createFCM.save
+        serializer = serializers.FCMDeviceSerializer(createFCM)
+
+        return Response(serializer.data)
+
+        # else:
+        #     device = models.CustomFCMDevice.objects.get(user=username)
+        #     device.date_created = datetime.datetime.now()
+        #     device.save()
+        #     # print(data)
+
+        #     ###TODO manipulate data to update
+        #     serializer = serializers.FCMDeviceSerializer(device, data, partial=True)   
+        #     serializer.is_valid(raise_exception=True)
+        #     serializer.save()
+
+            # return Response(serializer.data)
             
         
 
