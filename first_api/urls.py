@@ -61,6 +61,9 @@ update_device = views.CustomFCMDeviceViewSet.as_view({
     'get': 'update_device'
 })
 
+delete_device = views.CustomFCMDeviceViewSet.as_view({
+    'post': 'delete_device'
+})
 
 ## village
 get_villages_active = views.VillageViewSet.as_view({
@@ -472,6 +475,9 @@ urlpatterns = [
     ## fcm 
     path('test_fcm/',test_fcm,name='test_fcm'),
     path('device/update_device/', update_device,name='update_device'),
+    path('device/delete_device/', delete_device,name='delete_device'),
+
+    
 
     ## village end point 
     path('villages_active/',get_villages_active,name='get_villages_active'),

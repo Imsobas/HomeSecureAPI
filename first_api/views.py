@@ -192,25 +192,36 @@ class CustomFCMDeviceViewSet(viewsets.ModelViewSet):
 
         return Response(device)
 
-    @action(detail=True, methods=['post','GET'])
+    @action(detail=True, methods=['post'])
     def delete_device(self, request):
-         """Delete this username, token pair """
+        """Delete this username, token pair """
          
         username = request.user
         data = request.data
+
+        print(data['registration_id'])
 
         if(data['registration_id']==None):
             return Response({ "detail": "Incomplete Sign-out"},status=status.HTTP_404_NOT_FOUND)
         
         isFCMExist = models.CustomFCMDevice.objects.filter(registration_id=data['registration_id']).exists()
         if(isFCMExist==False):
-            return Response({ "detail": "Error you already sign-out from this device"},status=status.HTTP_404_NOT_FOUND)
-        
-        ### delete every record, logout from this device
-        deleteFCM = models.CustomFCMDevice.objects.filter(registration_id=data['registration_id']).all().delete()
-        serializer = serializers.FCMDeviceSerializer(deleteFCM)
-        
-        return Response(serializer.data)
+            ### in case not log-out with same fcmToken eg. token is changeed
+            # print("enter isFCMExist==False")
+            if(data['device_id']!=None):
+                ### if fcmToken is changed, delete from FCM device instead
+                deleteFCM = models.CustomFCMDevice.objects.filter(device_id=data['device_id']).all().delete()
+                return Response(status=status.HTTP_204_NO_CONTENT)
+            else:
+                ### sign out with out non delete any fcm record 
+                return Response(status=status.HTTP_204_NO_CONTENT)
+
+        else:
+            # print("Enter isFCMExist==True")
+            ### incase exit with same registration_id as normally 
+            deleteFCM = models.CustomFCMDevice.objects.filter(registration_id=data['registration_id']).all().delete()
+       
+            return Response(status=status.HTTP_204_NO_CONTENT)
         
     @action(detail=True, methods=['post','GET'])
     def update_device(self, request):
@@ -234,72 +245,19 @@ class CustomFCMDeviceViewSet(viewsets.ModelViewSet):
             deleteFCM = models.CustomFCMDevice.objects.filter(registration_id=data['registration_id']).all().delete()
 
         ### create new fcm token record along with username
-        createFCM = models.CustomFCMDevice.objects.create(active=True, user=username, device_id=data['device_id'], registration_id=data['registration_id'], type= data['type'] )
+        createFCM = None
+        
+        if(data['device_id']!=None):
+            ### case device_idis None
+            createFCM = models.CustomFCMDevice.objects.create(active=True, user=username, device_id=data['device_id'], registration_id=data['registration_id'], type= data['type'] )
+        else:
+            ### case device_id == None
+            createFCM = models.CustomFCMDevice.objects.create(active=True, user=username, registration_id=data['registration_id'], type= data['type'] )
+     
         createFCM.save
         serializer = serializers.FCMDeviceSerializer(createFCM)
 
         return Response(serializer.data)
-
-        # else:
-        #     device = models.CustomFCMDevice.objects.get(user=username)
-        #     device.date_created = datetime.datetime.now()
-        #     device.save()
-        #     # print(data)
-
-        #     ###TODO manipulate data to update
-        #     serializer = serializers.FCMDeviceSerializer(device, data, partial=True)   
-        #     serializer.is_valid(raise_exception=True)
-        #     serializer.save()
-
-            # return Response(serializer.data)
-            
-        
-
-
-        # isDeviceExist = models.CustomFCMDevice.objects.filter().exists()
-        # if(isDeviceExist==False):
-        #     return Response({ "detail": "not have this home number "},status=status.HTTP_404_NOT_FOUND)
-        # else:
-        #     home = models.Home.objects.filter(pk=data['home_pk'], is_active=True).last()
-        #     serializer = serializers.HomeSerializer(home)
-        #     homeData = serializer.data
-
-
-        #     ### using in response data back 
-        #     homePk = homeData['pk']
-        #     homeZone = homeData['home_zone']
-        #     # homeLat = homeData['home_lat']
-        #     # homeLon = homeData['home_lon']
-        #     homeVillage = homeData['home_village']
-        #     home
-        # pany = homeData['home_company']
-        #     homeNumber = homeData['home_number']
-
-        
-
-        #     ### create qrcode 
-        #     ### example models.Village.objects.only('pk').get(pk=village_pk)
-        #     village = models.Village.objects.only('pk').get(pk=homeVillage)
-        #     zone = models.Zone.objects.only('pk').get(pk=homeZone)
-        #     company = models.Company.objects.only('pk').get(pk=homeCompany)
-        #     home = models.Home.objects.only('pk').get(pk=homePk)
-           
-
-        #     qrcode = models.Qrcode.objects.create(qr_enter_time=datetime.datetime.now(), qr_car_number=data['qr_car_number'],qr_home_number=homeNumber, qr_car_color = data['qr_car_color'], qr_car_brand=data['qr_car_brand'], qr_company = company, qr_village = village, qr_zone =zone, qr_home =home, qr_exit_without_enter=True)
-        #     qrcode.save
-        #     serializer = serializers.QrCodeSerializer(qrcode)
-
-        #     # ## create notification 
-        #     # genUserQuerySet = models.GeneralUser.objects.filter(gen_user_home= home, is_active=True).all()
-        #     # for user in genUserQuerySet:
-        #     #     print(user)
-        #     #     notification = models.Notification.objects.create(noti_home=home,noti_general_user=user, noti_qr = qrcode)
-        #     #     notification.save()
-
-        #     return Response(serializer.data,status.HTTP_201_CREATED)
-
-            
-    
 
 class CompanyViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.CompanySerializer
