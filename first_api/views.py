@@ -183,6 +183,7 @@ class CustomFCMDeviceViewSet(viewsets.ModelViewSet):
         # (title="Title", body="Message", icon=..., data={"test": "test"})
         # device = models.CustomFCMDevice.objects.all()
         # serializer  = serializers.SecureGuardSerializer
+
         device = models.CustomFCMDevice.objects.all().send_message(title="Hello From FCM Django",body= "มีรถเข้าไปบ้าน",sound="default")
         print(device)
         # serializer = serializers.FCMDeviceSerializer(device)
@@ -244,7 +245,8 @@ class CustomFCMDeviceViewSet(viewsets.ModelViewSet):
         #     # homeLat = homeData['home_lat']
         #     # homeLon = homeData['home_lon']
         #     homeVillage = homeData['home_village']
-        #     homeCompany = homeData['home_company']
+        #     home
+        # pany = homeData['home_company']
         #     homeNumber = homeData['home_number']
 
         
@@ -2985,27 +2987,38 @@ class NotificationViewSet(viewsets.ModelViewSet):
 
             qrcode = models.Qrcode.objects.create(qr_enter_time=datetime.datetime.now(),qr_content=data['qr_content'], qr_type=data['qr_type'], qr_car_number=data['qr_car_number'],qr_home_number=homeNumber, qr_car_color = data['qr_car_color'], qr_car_brand=data['qr_car_brand'], qr_company = company, qr_village = village, qr_zone =zone, qr_home =home, qr_enter_secure=secure, qr_enter_status=True, qr_home_lat=homeLat,qr_home_lon= homeLon)
             qrcode.save
-            serializer = serializers.QrCodeSerializer(qrcode)
+            qrSerializer = serializers.QrCodeSerializer(qrcode)
 
 
 
             ## create notification  && fcm message
             genUserQuerySet = models.GeneralUser.objects.filter(gen_user_home= home, is_active=True).all()
-            for user in genUserQuerySet:
-                print(user)
+            
+            for genuser in genUserQuerySet:
                 ### create notification
-                notification = models.Notification.objects.create(noti_home=home,noti_general_user=user, noti_qr = qrcode)
+                notification = models.Notification.objects.create(noti_home=home,noti_general_user=genuser, noti_qr = qrcode)
                 notification.save()
 
+                genuserSerializer = serializers.GeneralUserSerializer(genuser)
+                genUserData = genuserSerializer.data
+
+                print(genUserData)
+
+                print("visit here after create notification")
                 ### create fcm message 
-                isUserNameExist = models.UserProfile.objects.filter(username=user).exists()
+                isUserNameExist = models.UserProfile.objects.filter(pk=genUserData['gen_user_username']).exists()
                 if(isUserNameExist==True):
-                    username = models.UserProfile.objects.get(username=user)
+                    username = models.UserProfile.objects.get(pk=genUserData['gen_user_username'])
+                    
+                    print("username")
+                    print(username)
+                    
                     
                     isDeviceExist = models.CustomFCMDevice.objects.filter(user=username).exists()
                     if(isDeviceExist==True):
-                        device = models.CustomFCMDevice.objects.get(user=username)
-                        device.send_message(title="มีรถเข้าไปบ้าน "+homeNumber,body= "กรุณาแสกนโค้ดเมื่อแขกของท่านถึงบ้าน")
+                        device = models.CustomFCMDevice.objects.filter(user=username).all()
+                        # print(device)
+                        device.send_message(title="มีรถเข้าไปบ้าน "+homeNumber,body= "กรุณาแสกนโค้ดเมื่อแขกของท่านถึงบ้าน",sound='default')
 
 
             ### for future, incase want to add secure warning
@@ -3019,7 +3032,7 @@ class NotificationViewSet(viewsets.ModelViewSet):
 
             # print(secure_list)
 
-            return Response(serializer.data,status.HTTP_201_CREATED)
+            return Response(qrSerializer.data,status.HTTP_201_CREATED)
         
        
 
