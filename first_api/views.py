@@ -192,10 +192,29 @@ class CustomFCMDeviceViewSet(viewsets.ModelViewSet):
 
         return Response(device)
 
+    @action(detail=True, methods=['post','GET'])
+    def delete_device(self, request):
+         """Delete this username, token pair """
+         
+        username = request.user
+        data = request.data
+
+        if(data['registration_id']==None):
+            return Response({ "detail": "Incomplete Sign-out"},status=status.HTTP_404_NOT_FOUND)
+        
+        isFCMExist = models.CustomFCMDevice.objects.filter(registration_id=data['registration_id']).exists()
+        if(isFCMExist==False):
+            return Response({ "detail": "Error you already sign-out from this device"},status=status.HTTP_404_NOT_FOUND)
+        
+        ### delete every record, logout from this device
+        deleteFCM = models.CustomFCMDevice.objects.filter(registration_id=data['registration_id']).all().delete()
+        serializer = serializers.FCMDeviceSerializer(deleteFCM)
+        
+        return Response(serializer.data)
         
     @action(detail=True, methods=['post','GET'])
     def update_device(self, request):
-        """ Update device fcm token, create if non exist"""
+        """Delete old token, create new record of username, fcmtoken pair"""
         # print(request.user)
         username = request.user
         # print(username.pk)
