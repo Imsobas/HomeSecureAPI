@@ -51,6 +51,34 @@ class UserProfileViewSet(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,permission.UpdateOwnProfile,)
 
+
+
+#     >>> from django.contrib.auth.models import User
+# >>> u = User.objects.get(username='john')
+# >>> u.set_password('new password')
+# >>> u.save()
+
+
+    @action(detail=True, methods="post")
+    def change_p(self, request):
+        """Update password of this user"""
+        username = request.user
+        data = request.data
+        print(username)
+        if(data['old_password']==None or data['new_password']==None):
+            return Response({ "detail": "old password or new password should not blank"},status=status.HTTP_404_NOT_FOUND)
+
+        oldPassCheck = username.check_password(data['old_password'])
+        if(oldPassCheck==False):
+            return Response({ "detail": "Wrong Password"},status=status.HTTP_404_NOT_FOUND)
+        else:
+            username.set_password(data['new_password'])
+            username.save()
+            
+        
+        return Response({ "detail": "Password is changed"})
+        
+
     @action(detail=True, methods=['post'])
     def create_username_with_usertype(self, request):
         """ Create username along with generaluser, secureguard model"""

@@ -50,6 +50,11 @@ create_username_with_usertype = views.UserProfileViewSet.as_view({
     'post' : 'create_username_with_usertype'
 })
 
+change_p = views.UserProfileViewSet.as_view({
+    'post' : 'change_p'
+})
+
+
 ##fcm 
 
 test_fcm = views.CustomFCMDeviceViewSet.as_view({
@@ -64,6 +69,8 @@ update_device = views.CustomFCMDeviceViewSet.as_view({
 delete_device = views.CustomFCMDeviceViewSet.as_view({
     'post': 'delete_device'
 })
+
+
 
 ## village
 get_villages_active = views.VillageViewSet.as_view({
@@ -469,8 +476,10 @@ urlpatterns = [
     ##Note: if most end point unless viewset default especially list function will return if is_active = true, 
 
     ## username 
+    path('profiles/change_p/',change_p,name='change_p'),
     path('profiles/<str:username>/',get_profiles_detail,name='get_profiles_detail'),
     path('profiles/create_username/with_type/',create_username_with_usertype,name='create_username_with_usertype'),
+    
 
     ## fcm 
     path('test_fcm/',test_fcm,name='test_fcm'),
