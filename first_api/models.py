@@ -150,7 +150,8 @@ class Manager(models.Model):
 
     manager_username = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.DO_NOTHING,null=True) 
     manager_company = models.ForeignKey(Company,null=True, blank=True, on_delete=models.DO_NOTHING) 
-    manger_level = models.CharField(max_length=100,choices= LEVEL_CHOICE)
+    manager_village = models.ForeignKey(Village,null=True, blank=True, on_delete=models.DO_NOTHING)
+    manager_level = models.CharField(max_length=100,choices= LEVEL_CHOICE)
     # is_active = models.BooleanField(default=True)
 
     def __str__(self):

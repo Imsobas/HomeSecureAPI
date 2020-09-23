@@ -743,7 +743,47 @@ class ManagerViewSet(viewsets.ModelViewSet):
 
             company = models.Company.objects.get(pk=company_pk)
 
-            querySet = models.Manager.objects.filter(manager_company=company)
+            querySet = models.Manager.objects.filter(manager_company=company, manager_level='COMPANYLEVEL')
+            serializer = serializers.ManagerSerializer(querySet,many=True)
+            managerData = serializer.data
+
+            result = []
+            for mana in managerData:
+                managerDict = dict()
+                managerDict['pk'] = mana['pk']
+                usernamePk = mana['manager_username']
+                isExist = models.UserProfile.objects.filter(pk=usernamePk).exists()
+                if(isExist==False):
+                    managerDict['username_name'] = None
+                else:
+                    user = models.UserProfile.objects.get(pk=usernamePk)
+                    serializer = serializers.UserProfileSerializer(user)
+                    userData = serializer.data
+                    managerDict['username_name'] = userData['username']
+            
+                
+                result.append(managerDict)
+                
+            # managerData.pop('manager_username')
+            # managerData.pop('manager_company')
+            # managerData.pop('manger_level')
+            
+
+            return notFoundHandling(result)
+
+    @action(detail=True, methods = 'GET')
+    def get_villages_manager(self, request,village_pk):
+        """ Return all active manger with name of username"""
+
+
+        isVillageExist = models.Village.objects.filter(pk=village_pk).exists()
+        if(isVillageExist==False):
+            return Response({ "detail": "Not found village"},status=status.HTTP_404_NOT_FOUND)
+        else:
+
+            village = models.Village.objects.get(pk=village_pk)
+
+            querySet = models.Manager.objects.filter(manager_village=village, manager_level='VILLAGELEVEL')
             serializer = serializers.ManagerSerializer(querySet,many=True)
             managerData = serializer.data
 
@@ -759,6 +799,8 @@ class ManagerViewSet(viewsets.ModelViewSet):
                     mana['username_name'] = userData['username']
 
             return notFoundHandling(managerData)
+
+        
 
 
 ## use only post from home 
