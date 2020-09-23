@@ -185,12 +185,12 @@ class CustomFCMDeviceViewSet(viewsets.ModelViewSet):
         # serializer  = serializers.SecureGuardSerializer
         device = models.CustomFCMDevice.objects.all()
         for d in device:
-            delta = d.date_created - datetime.datetime.now(datetime.timezone.utc)
-            if(delta.days > 30):
-                d.delete()
-            else:
-                d.active = True
-                d.save()
+            # delta = d.date_created - datetime.datetime.now(datetime.timezone.utc)
+            # if(delta.days > 30):
+            #     d.delete()
+            # else:
+            d.active = True
+            d.save()
         device = models.CustomFCMDevice.objects.all()
         device = models.CustomFCMDevice.objects.all().send_message(title="Hello From FCM Django",body= "มีรถเข้าไปบ้าน",sound="default")
         print(device)
@@ -246,10 +246,8 @@ class CustomFCMDeviceViewSet(viewsets.ModelViewSet):
 
         isFCMExist = models.CustomFCMDevice.objects.filter(registration_id=data['registration_id']).exists()
 
-
         ### if already exist, delete the old fcm record where it contains this fcm key
         if(isFCMExist==True):
-            
             deleteFCM = models.CustomFCMDevice.objects.filter(registration_id=data['registration_id']).all().delete()
 
         ### create new fcm token record along with username
@@ -3011,13 +3009,13 @@ class NotificationViewSet(viewsets.ModelViewSet):
                         
                         device = models.CustomFCMDevice.objects.filter(user=username).all()
                         for d in device:
-                            delta = d.date_created - datetime.datetime.now(datetime.timezone.utc)
-                            if(delta.days > 30):
-                                d.delete()
-                            else:
-                                d.active = True
-                                d.save()
-                        device = models.CustomFCMDevice.objects.filter(user=username).all()
+                            # delta = d.date_created - datetime.datetime.now(datetime.timezone.utc)
+                            # if(delta.days > 30):
+                            #     d.delete()
+                            # else:
+                            d.active = True
+                            d.save()
+                        # device = models.CustomFCMDevice.objects.filter(user=username).all()
                         device.send_message(title="มีรถเข้าไปบ้าน "+homeNumber,body= "กรุณาแสกนโค้ดเมื่อแขกของท่านถึงบ้าน",sound='default')
 
             ## fcm for secure
@@ -3035,13 +3033,13 @@ class NotificationViewSet(viewsets.ModelViewSet):
                     if(isDeviceExist==True):
                         device = models.CustomFCMDevice.objects.filter(user=username).all()
                         for d in device:
-                            delta = d.date_created - datetime.datetime.now(datetime.timezone.utc)
-                            if(delta.days > 30):
-                                d.delete()
-                            else:
-                                d.active = True
-                                d.save()
-                        device = models.CustomFCMDevice.objects.filter(user=username).all()
+                            # delta = d.date_created - datetime.datetime.now(datetime.timezone.utc)
+                            # if(delta.days > 30):
+                            #     d.delete()
+                            # else:
+                            d.active = True
+                            d.save()
+                        # device = models.CustomFCMDevice.objects.filter(user=username).all()
                         device.send_message(title="มีรถเข้าไปในบ้าน "+homeNumber+"เขตพื้นที่ "+zoneName,body= "กรุณาแสกนโค้ดเมื่อแขกถึงบ้านในเขตของท่าน",sound='default')
                     
 
