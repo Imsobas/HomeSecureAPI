@@ -202,6 +202,7 @@ class CustomFCMDeviceViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, methods=['post'])
     def delete_device(self, request):
+         ### note delete from registration_id first, otherwise delete from  device_id
         """Delete this username, token pair """
          
         username = request.user
@@ -234,9 +235,9 @@ class CustomFCMDeviceViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=['post','GET'])
     def update_device(self, request):
         """Delete old token, create new record of username, fcmtoken pair"""
-        # print(request.user)
+        ### note delete from registration_id first, otherwise delete from  device_id
         username = request.user
-        # print(username.pk)
+       
 
         data = request.data
         
@@ -249,6 +250,10 @@ class CustomFCMDeviceViewSet(viewsets.ModelViewSet):
         ### if already exist, delete the old fcm record where it contains this fcm key
         if(isFCMExist==True):
             deleteFCM = models.CustomFCMDevice.objects.filter(registration_id=data['registration_id']).all().delete()
+        
+        elif(data['device_id']!=None): 
+            isFCMExist = models.CustomFCMDevice.objects.filter(device_id=data['device_id']).exists()
+            deleteFCM = models.CustomFCMDevice.objects.filter(device_id=data['device_id']).all().delete()
 
         ### create new fcm token record along with username
         createFCM = None
