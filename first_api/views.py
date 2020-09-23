@@ -731,6 +731,26 @@ class ManagerViewSet(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
 
+    @action(detail=True, methods = 'GET')
+    def get_managers_active(self, request):
+        """ Return all active manger with name of username"""
+        querySet = models.Manager.objects.filter(is_active=True)
+        serializer = serializers.ManagerSerializer(querySet,many=True)
+        managerData = serializer.data
+
+        for mana in managerData:
+            usernamePk = m['manager_username']
+            isExist = models.UserProfile.objects.filter(pk=usernamePk).exists()
+            if(isExist==False):
+                mana['username_name'] = None
+            else:
+                user = models.UserProfile.objects.get(pk=usernamePk)
+                serializer = serializers.UserProfileSerializer(user)
+                userData = serializer.data
+                mana['username_name'] = userData
+
+        return notFoundHandling(managerData)
+
 
 ## use only post from home 
 class GeneralUserViewSet(viewsets.ModelViewSet):

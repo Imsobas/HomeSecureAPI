@@ -145,7 +145,7 @@ class Manager(models.Model):
 
     LEVEL_CHOICE = (
         ('VILLAGELEVEL','VILLAGELEVEL'),
-        ('ZONELEVEL','ZONELEVEL'),
+        ('COMPANYLEVEL','COMPANYLEVEL'),
     )
 
     manager_username = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.DO_NOTHING,null=True) 

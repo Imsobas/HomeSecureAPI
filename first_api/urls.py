@@ -150,7 +150,11 @@ get_homes_pk_homenumber = views.HomeViewSet.as_view({
     'get': 'get_homes_pk_homenumber'
 })
 
+## manager
 
+get_managers_active = views.ManagerViewSet.as_view({
+    'get': 'get_managers_active'
+})
 
 
 
@@ -515,6 +519,10 @@ urlpatterns = [
     path('villages/<int:village_pk>/zones/null/homes/', get_villages_pk_zones_null_homes, name='get_villages_pk_zones_null_homes'),
     path('homes/<str:home_number>/check_home_exist/', get_homespk_number, name='get_homespk_number'),
     path('homes/<int:home_pk>/home_number/', get_homes_pk_homenumber, name='get_homes_pk_homenumber'),
+    
+
+    ## manager 
+    path('managers_active/',get_managers_active, name='get_managers_active'),
     
 
     ##general user end point 
