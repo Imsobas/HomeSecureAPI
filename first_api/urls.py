@@ -38,6 +38,7 @@ router.register(r'checkin_checkpoints',views.CheckinCheckpointViewSet)
 router.register(r'working_records',views.WorkingRecordViewSet)
 router.register(r'notification',views.NotificationViewSet)
 router.register(r'devices', views.CustomFCMDeviceViewSet)
+router.register(r'managers', views.ManagerViewSet)
 
 ## Binding URL
 

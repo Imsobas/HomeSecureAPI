@@ -185,8 +185,11 @@ class NotificationSerializer(serializers.ModelSerializer):
         model = models.Notification
         fields =('pk', 'noti_home', 'noti_general_user','noti_qr','noti_read_status')
 
-
-
+class ManagerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Manager
+        fields = ('pk','manager_username','manager_company','manger_level','is_active')
+        
 
 # class ProfileFeedItemSerializer(serializers.ModelSerializer):
 #     """Serializes profile feed items"""

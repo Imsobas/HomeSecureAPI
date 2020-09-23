@@ -38,6 +38,7 @@ class UserProfileManager(BaseUserManager):
 
         return user
 
+
 class UserProfile(AbstractBaseUser, PermissionsMixin):
     """Database model for users in the system"""
 
@@ -139,6 +140,23 @@ class Home(models.Model):
     def __str__(self):
         """Return the model as a string"""
         return str(self.home_number)
+
+class Manager(models.Model):
+
+    LEVEL_CHOICE = (
+        ('VILLAGELEVEL','VILLAGELEVEL'),
+        ('ZONELEVEL','ZONELEVEL'),
+    )
+
+    manager_username = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.DO_NOTHING,null=True) 
+    manager_company = models.ForeignKey(Company,null=True, blank=True, on_delete=models.DO_NOTHING) 
+    manger_level = models.CharField(max_length=100,choices= LEVEL_CHOICE)
+    is_active = models.BooleanField(default=True)
+
+    def __str__(self):
+        """Return the model as a string"""
+        return str(self.pk)
+    
 
 class GeneralUser(models.Model):
     ## keep firs, last name in this cause 1.easier when list all user 

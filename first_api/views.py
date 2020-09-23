@@ -312,6 +312,15 @@ class CompanyViewSet(viewsets.ModelViewSet):
         result = serializer.data
 
         return notFoundHandling(result)
+
+    # @action(detail=True, methods = 'GET')
+    # def get_companys_pk_manager_users(self, request, village_pk):
+    #     """ Return all manager user to specific company """
+    #     querySet = models.UserProfile.objects.filter(user_role=, is_active=True).all()
+    #     serializer = serializers.GeneralUserSerializer(querySet,many=True)
+    #     result = serializer.data
+            
+    #     return notFoundHandling(result)
     
 class VillageViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.VillageSerializer
@@ -715,6 +724,12 @@ class HomeViewSet(viewsets.ModelViewSet):
         # return Response(temp_list)
         return notFoundHandling(result_list)
 
+
+class ManagerViewSet(viewsets.ModelViewSet):
+    serializer_class = serializers.ManagerSerializer
+    queryset = models.Manager.objects.all()
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
 
 
 ## use only post from home 
