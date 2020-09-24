@@ -156,7 +156,9 @@ get_companies_manager = views.ManagerViewSet.as_view({
     'get': 'get_companies_manager'
 })
 
-
+permanent_delete_manager_with_delete_username = views.ManagerViewSet.as_view({
+    'delete': 'permanent_delete_manager_with_delete_username'
+})
 
 
 ##general users
@@ -482,7 +484,7 @@ urlpatterns = [
 
     ## username 
     path('profiles/change_p/',change_p,name='change_p'),
-    path('profiles/<str:username>/',get_profiles_detail,name='get_profiles_detail'),
+    path('profiles/<str:username>/detail/',get_profiles_detail,name='get_profiles_detail'),
     path('profiles/create_username/with_type/',create_username_with_usertype,name='create_username_with_usertype'),
     
 
@@ -523,8 +525,9 @@ urlpatterns = [
 
     ## manager 
     path('companies/<int:company_pk>/manager/',get_companies_manager, name='get_companies_manager'),
+    path('manager/<int:user_pk>/delete_with_username/',permanent_delete_manager_with_delete_username, name='permanent_delete_manager_with_delete_username'),
     
-
+    
     ##general user end point 
     path('general_users_active/', get_general_users_active, name='get_general_users_active'),
     path('villages/<int:village_pk>/general_users/', get_villages_pk_general_users, name='get_villages_pk_general_users'),

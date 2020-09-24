@@ -52,13 +52,6 @@ class UserProfileViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,permission.UpdateOwnProfile,)
 
 
-
-#     >>> from django.contrib.auth.models import User
-# >>> u = User.objects.get(username='john')
-# >>> u.set_password('new password')
-# >>> u.save()
-
-
     @action(detail=True, methods="post")
     def change_p(self, request):
         """Update password of this user"""
@@ -99,13 +92,15 @@ class UserProfileViewSet(viewsets.ModelViewSet):
 
             result = []
             
-            company = models.Company.objects.only('pk').get(pk=data['company'])
-            village = models.Village.objects.only('pk').get(pk=data['village'])
-            zone = models.Zone.objects.only('pk').get(pk=data['zone'])
+            
             
 
             ### create secureguard model
             if(data['userRole']=='SecureBoss' or data['userRole']=='SecureGuard'):
+
+                company = models.Company.objects.only('pk').get(pk=data['company'])
+                village = models.Village.objects.only('pk').get(pk=data['village'])
+                zone = models.Zone.objects.only('pk').get(pk=data['zone'])
 
                 secureGuard = models.SecureGuard.objects.create(secure_firstname=data['firstname'],secure_lastname=data['lastname'],secure_company=company,secure_village= village, secure_zone =zone,secure_username=username,secure_type=data['type'])
                 secureGuard.save
@@ -115,11 +110,24 @@ class UserProfileViewSet(viewsets.ModelViewSet):
             ## create general user model
             elif(data['userRole']=='GeneralUser'):
                 home = models.Home.objects.only('pk').get(pk=data['home'])
+                company = models.Company.objects.only('pk').get(pk=data['company'])
+                village = models.Village.objects.only('pk').get(pk=data['village'])
+                zone = models.Zone.objects.only('pk').get(pk=data['zone'])
 
                 generalUser = models.GeneralUser.objects.create(gen_user_firstname=data['firstname'],gen_user_lastname=data['lastname'],gen_user_company=company,gen_user_village=village,gen_user_zone=zone,gen_user_home=home,gen_user_username=username,gen_user_type=data['type'])
                 generalUser.save
                 serializer = serializers.GeneralUserSerializer(generalUser)
                 result = serializer.data 
+            
+
+            ## create company manager user model 
+            elif(data['userRole']=='Manager' and data['managerLevel'] =='COMPANYLEVEL'):
+                company = models.Company.objects.only('pk').get(pk=data['company'])
+                manager = models.Manager.objects.create(manager_username=username, manager_company = company, manager_level='COMPANYLEVEL')
+                manager.save
+                serializer = serializers.ManagerSerializer(manager)
+                result = dict()
+                result['pk'] = usernamePk
             
             return Response(result,status.HTTP_201_CREATED)
 
@@ -165,12 +173,26 @@ class UserProfileViewSet(viewsets.ModelViewSet):
         result.pop('groups', None)
 
         if(result['user_role']=='SecureBoss' or result['user_role']=='SecureGuard'):
+
+            ### get username data 
             usernamePk = result['pk']
             username = models.UserProfile.objects.only('pk').get(pk=usernamePk)
+
+            ### get secure data
             secure = models.SecureGuard.objects.filter(secure_username=username).last()
             serializer = serializers.SecureGuardSerializer(secure)
             secureData = serializer.data
-        
+
+            ### get village data 
+            village = models.Village.objects.get(pk=secureData["secure_village"])
+            serializer = serializers.VillageSerializer(village)
+            villageData = serializer.data
+            ### get zone data 
+            zone = models.Zone.objects.get(pk=secureData["secure_zone"])
+            serializer = serializers.ZoneSerializer(zone)
+            zoneData = serializer.data
+
+
             secureDict = dict()
             secureDict["pk"] = secureData["pk"]
             secureDict["secure_firstname"] = secureData["secure_firstname"]
@@ -180,19 +202,65 @@ class UserProfileViewSet(viewsets.ModelViewSet):
             secureDict["secure_zone"]= secureData["secure_zone"]
             secureDict["secure_village"]= secureData["secure_village"]
             secureDict["secure_company"]= secureData["secure_company"]
+            secureDict['village_name'] = villageData['village_name']
+            secureDict['zone_name'] = zoneData['zone_name']
 
             result['secure_guard'] = secureDict
 
         elif(result['user_role']=='GeneralUser'):
+
+            ### get username data 
             usernamePk = result['pk']
             username = models.UserProfile.objects.only('pk').get(pk=usernamePk)
+
+            ### get genuser data
             genuser = models.GeneralUser.objects.filter(gen_user_username=username).last()
             serializer = serializers.GeneralUserSerializer(genuser)
             genUserData = serializer.data
             genUserData.pop('is_active', None)
 
+             ### get village data 
+            village = models.Village.objects.get(pk=genUserData["gen_user_village"])
+            serializer = serializers.VillageSerializer(village)
+            villageData = serializer.data
+            ### get zone data 
+            zone = models.Zone.objects.get(pk=genUserData["gen_user_zone"])
+            serializer = serializers.ZoneSerializer(zone)
+            zoneData = serializer.data
+
+
+            genUserData['village_name'] = villageData['village_name']
+            genUserData['zone_name'] = zoneData['zone_name']
+
+
             result['general_user'] = genUserData
 
+
+        elif(result['user_role']=='Manager'):
+            ### get username data
+            usernamePk = result['pk']
+            username = models.UserProfile.objects.only('pk').get(pk=usernamePk)
+
+            ## get manager data
+            manager = models.Manager.objects.get(manager_username=username)
+            serializer = serializers.ManagerSerializer(manager)
+            managerData = serializer.data
+            managerData['pk'] = usernamePk
+            managerData.pop('manager_username',None)
+            
+            if(managerData['manager_company']!=None):
+                company = models.Company.objects.get(pk=managerData['manager_company'])
+                serializer = serializers.CompanySerializer(company)
+                companyData = serializer.data
+                managerData['company_name'] = companyData['company_name']
+            
+            if(managerData['manager_village']!=None):
+                village = models.Village.objects.get(pk=managerData['manager_village'])
+                serializer = serializers.VillageSerializer(village)
+                villageData = serializer.data
+                managerData['village_name'] = villageData['village_name']
+
+            result['manager'] = managerData
 
 
         return notFoundHandling(result)
@@ -750,7 +818,7 @@ class ManagerViewSet(viewsets.ModelViewSet):
             result = []
             for mana in managerData:
                 managerDict = dict()
-                managerDict['pk'] = mana['pk']
+                managerDict['pk'] = mana['manager_username']
                 usernamePk = mana['manager_username']
                 isExist = models.UserProfile.objects.filter(pk=usernamePk).exists()
                 if(isExist==False):
@@ -770,6 +838,29 @@ class ManagerViewSet(viewsets.ModelViewSet):
             
 
             return notFoundHandling(result)
+
+    @action(detail=True, methods = ['delete'])
+    def permanent_delete_manager_with_delete_username(self, request, user_pk):
+        
+        isExist = models.UserProfile.objects.filter(pk=user_pk).exists()
+        if(isExist==False):
+           return Response({ "detail": "Not found user"},status=status.HTTP_404_NOT_FOUND)
+        else:
+
+            username = models.UserProfile.objects.get(pk=user_pk)
+            
+            isManagerExist = models.Manager.objects.filter(manager_username=username).exists()
+            if(isManagerExist==False):
+                 return Response({ "detail": "Not found manager user"},status=status.HTTP_404_NOT_FOUND)
+            else:
+                manager = models.Manager.objects.get(manager_username=username)
+                manager.delete()
+                manager.save
+
+            username.delete()
+            username.save
+
+            return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(detail=True, methods = 'GET')
     def get_villages_manager(self, request,village_pk):
