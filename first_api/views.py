@@ -227,11 +227,15 @@ class UserProfileViewSet(viewsets.ModelViewSet):
             zone = models.Zone.objects.get(pk=genUserData["gen_user_zone"])
             serializer = serializers.ZoneSerializer(zone)
             zoneData = serializer.data
+            ## get home data 
+            home = models.Home.objects.get(pk=genUserData["gen_user_home"])
+            serializer = serializers.HomeSerializer(home)
+            homeData = serializer.data
 
 
             genUserData['village_name'] = villageData['village_name']
             genUserData['zone_name'] = zoneData['zone_name']
-
+            genUserData['home_number'] = homeData['home_number']
 
             result['general_user'] = genUserData
 
