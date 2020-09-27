@@ -1461,7 +1461,7 @@ class QrCodeViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods = 'GET')
     def get_villages_pk_qrcodes(self, request, village_pk):
         """ Return all information specific to qr_inside_screen services """
-        querySet = models.Qrcode.objects.filter(qr_village=village_pk, is_active=True, qr_inside_status=False, qr_complete_status=False, qr_exit_without_enter=False).all()
+        querySet = models.Qrcode.objects.filter(qr_village=village_pk, is_active=True, qr_inside_status=False, qr_complete_status=False, qr_exit_without_enter=False).all()[::-1]
         serializer = serializers.QrCodeSerializer(querySet,many=True)
         qrData = serializer.data
         ### note: if error in this method please delete below and use common way of return result from serializer.data directly
@@ -1493,7 +1493,7 @@ class QrCodeViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods = 'GET')
     def get_villages_pk_zone_pk_qrcodes(self, request, village_pk, zone_pk):
         """ Return all information specific to qr_inside_screen services """
-        querySet = models.Qrcode.objects.filter(qr_village=village_pk, qr_zone=zone_pk, is_active=True, qr_inside_status=False, qr_complete_status=False, qr_exit_without_enter=False).all()
+        querySet = models.Qrcode.objects.filter(qr_village=village_pk, qr_zone=zone_pk, is_active=True, qr_inside_status=False, qr_complete_status=False, qr_exit_without_enter=False).all()[::-1]
         serializer = serializers.QrCodeSerializer(querySet,many=True)
         qrData = serializer.data
         ### note: if error in this method please delete below and use common way of return result from serializer.data directly
@@ -1532,7 +1532,7 @@ class QrCodeViewSet(viewsets.ModelViewSet):
             
         # return notFoundHandling(result)
         
-        querySet = models.Qrcode.objects.filter(qr_village=village_pk, qr_home=home_pk, is_active=True, qr_inside_status=False , qr_home_status=False,qr_complete_status=False, qr_exit_without_enter=False).all()
+        querySet = models.Qrcode.objects.filter(qr_village=village_pk, qr_home=home_pk, is_active=True, qr_inside_status=False , qr_home_status=False,qr_complete_status=False, qr_exit_without_enter=False).all()[::-1]
         serializer = serializers.QrCodeSerializer(querySet,many=True)
         qrData = serializer.data
         ### note: if error in this method please delete below and use common way of return result from serializer.data directly
