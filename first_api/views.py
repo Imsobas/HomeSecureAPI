@@ -128,6 +128,16 @@ class UserProfileViewSet(viewsets.ModelViewSet):
                 serializer = serializers.ManagerSerializer(manager)
                 result = dict()
                 result['pk'] = usernamePk
+
+             ## create company manager user model 
+            elif(data['userRole']=='Manager' and data['managerLevel'] =='VILLAGELEVEL'):
+                print("visithere")
+                village = models.Village.objects.only('pk').get(pk=data['village'])
+                manager = models.Manager.objects.create(manager_username=username, manager_village=  village, manager_level='VILLAGELEVEL')
+                manager.save
+                serializer = serializers.ManagerSerializer(manager)
+                result = dict()
+                result['pk'] = usernamePk
             
             return Response(result,status.HTTP_201_CREATED)
 
@@ -164,11 +174,14 @@ class UserProfileViewSet(viewsets.ModelViewSet):
 
     
     @action(detail=True, methods = 'GET')
-    def get_profiles_detail(self, request, username):
+    def get_profiles_detail(self, request):
         """ Return their own profile according to username"""
-        querySet = models.UserProfile.objects.filter(username=username).last()
-        serializer = serializers.UserProfileSerializer(querySet)
+
+
+        username = request.user
+        serializer = serializers.UserProfileSerializer(username)
         result = serializer.data
+
         
         result.pop('groups', None)
 
@@ -882,18 +895,29 @@ class ManagerViewSet(viewsets.ModelViewSet):
             serializer = serializers.ManagerSerializer(querySet,many=True)
             managerData = serializer.data
 
+            result = []
             for mana in managerData:
+                managerDict = dict()
+                managerDict['pk'] = mana['manager_username']
                 usernamePk = mana['manager_username']
                 isExist = models.UserProfile.objects.filter(pk=usernamePk).exists()
                 if(isExist==False):
-                    mana['username_name'] = None
+                    managerDict['username_name'] = None
                 else:
                     user = models.UserProfile.objects.get(pk=usernamePk)
                     serializer = serializers.UserProfileSerializer(user)
                     userData = serializer.data
-                    mana['username_name'] = userData['username']
+                    managerDict['username_name'] = userData['username']
+            
+                
+                result.append(managerDict)
+                
+            # managerData.pop('manager_username')
+            # managerData.pop('manager_company')
+            # managerData.pop('manger_level')
+            
 
-            return notFoundHandling(managerData)
+            return notFoundHandling(result)
 
         
 
