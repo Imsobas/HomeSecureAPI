@@ -57,7 +57,7 @@ class UserProfileViewSet(viewsets.ModelViewSet):
         """Update password of this user"""
         username = request.user
         data = request.data
-        print(username)
+        # print(username)
         if(data['old_password']==None or data['new_password']==None):
             return Response({ "detail": "old password or new password should not blank"},status=status.HTTP_404_NOT_FOUND)
 
@@ -77,7 +77,7 @@ class UserProfileViewSet(viewsets.ModelViewSet):
         """ Create username along with generaluser, secureguard model"""
         data = request.data
 
-        print(data)
+        # print(data)
         
         ### create username model 
         isUsernameExist = models.UserProfile.objects.filter(username=data['username']).exists()
@@ -131,7 +131,7 @@ class UserProfileViewSet(viewsets.ModelViewSet):
 
              ## create company manager user model 
             elif(data['userRole']=='Manager' and data['managerLevel'] =='VILLAGELEVEL'):
-                print("visithere")
+                # print("visithere")
                 village = models.Village.objects.only('pk').get(pk=data['village'])
                 manager = models.Manager.objects.create(manager_username=username, manager_village=  village, manager_level='VILLAGELEVEL')
                 manager.save
@@ -306,7 +306,7 @@ class CustomFCMDeviceViewSet(viewsets.ModelViewSet):
             d.save()
         device = models.CustomFCMDevice.objects.all()
         device = models.CustomFCMDevice.objects.all().send_message(title="Hello From FCM Django",body= "มีรถเข้าไปบ้าน",sound="default")
-        print(device)
+        # print(device)
         # serializer = serializers.FCMDeviceSerializer(device)
 
         
@@ -321,7 +321,7 @@ class CustomFCMDeviceViewSet(viewsets.ModelViewSet):
         username = request.user
         data = request.data
 
-        print(data['registration_id'])
+        # print(data['registration_id'])
 
         if(data['registration_id']==None):
             return Response({ "detail": "Incomplete Sign-out"},status=status.HTTP_404_NOT_FOUND)
@@ -954,8 +954,8 @@ class GeneralUserViewSet(viewsets.ModelViewSet):
 
             result = serializer.data
             
-            print("usernamePk")
-            print(usernamePk)
+            # print("usernamePk")
+            # print(usernamePk)
 
             username = models.UserProfile.objects.only('pk').get(pk =usernamePk)
             username.delete()
@@ -1029,7 +1029,7 @@ class CheckinCheckpointViewSet(viewsets.ModelViewSet):
         village = models.Village.objects.only('pk').get(pk=village_pk)
         
         querySet = models.CheckinCheckpoint.objects.filter(point_village=village, is_active=True).all()
-        print(querySet)
+        # print(querySet)
         # for q in querySet:
         #     print(q)
         serializer = serializers.CheckinCheckpointSerializer(querySet,many=True)
@@ -1086,8 +1086,8 @@ class SecureGuardViewSet(viewsets.ModelViewSet):
 
             result = serializer.data
             
-            print("usernamePk")
-            print(usernamePk)
+            # print("usernamePk")
+            # print(usernamePk)
 
             username = models.UserProfile.objects.only('pk').get(pk =usernamePk)
             username.delete()
@@ -1774,7 +1774,7 @@ class PointObservationViewSet(viewsets.ModelViewSet):
         else:
             pointObservation = models.PointObservation.objects.filter(observation_village=village_pk, observation_date=date).values_list('pk','observation_work','observation_secure')
             
-            print(pointObservation)
+            # print(pointObservation)
 
             
             result = []
@@ -1833,7 +1833,7 @@ class PointObservationViewSet(viewsets.ModelViewSet):
         else:
             pointObservation = models.PointObservation.objects.filter(observation_village=village_pk, observation_work=work_pk, observation_date=date).values_list('pk','observation_work','observation_secure')
             
-            print(pointObservation)
+            # print(pointObservation)
 
             
             result = []
@@ -1892,7 +1892,7 @@ class PointObservationViewSet(viewsets.ModelViewSet):
             return Response({ "detail": "Not found."},status=status.HTTP_404_NOT_FOUND)
         else:
             pointObservation = models.PointObservation.objects.filter(observation_village=village_pk, observation_zone=zone_pk, observation_date=date).values_list('pk','observation_work','observation_secure')
-            print(pointObservation)
+            # print(pointObservation)
 
             result = []
 
@@ -1952,7 +1952,7 @@ class PointObservationViewSet(viewsets.ModelViewSet):
         else:
             pointObservation = models.PointObservation.objects.filter(observation_village=village_pk, observation_zone=zone_pk, observation_work=work_pk, observation_date=date).values_list('pk','observation_work','observation_secure')
             
-            print(pointObservation)
+            # print(pointObservation)
 
             
             result = []
@@ -2028,7 +2028,7 @@ class PointObservationViewSet(viewsets.ModelViewSet):
                 serializer = serializers.CheckpointSerializer(checkpoints,many=True)
                 checkpointsData = serializer.data
 
-                print(checkpointsData)
+                # print(checkpointsData)
 
                 isExistPo = models.PointObservation.objects.filter(observation_village=village_pk, observation_zone=zone_pk, observation_work=work_pk, observation_secure=secure_pk, observation_date=date).exists()
                 
@@ -2291,8 +2291,8 @@ class MaintenanceFeePeriodViewSet(viewsets.ModelViewSet):
             paidHomeNum = models.MaintenanceFeeRecord.objects.filter(fee_period=maintenancefeeperiod,fee_paid_status=True,is_active=True).count()
             totalAmount = models.MaintenanceFeeRecord.objects.filter(fee_period=maintenancefeeperiod,fee_paid_status=True,is_active=True).aggregate(Sum('fee_amount'))['fee_amount__sum']
             
-            print(paidHomeNum)
-            print(totalAmount)
+            # print(paidHomeNum)
+            # print(totalAmount)
             result = {"total_amount": totalAmount, "paid_home_number":paidHomeNum}
     
             return notFoundHandling(result)
@@ -2369,8 +2369,8 @@ class MaintenanceFeePeriodViewSet(viewsets.ModelViewSet):
             ## create maintenance fee record for all home in this village 
             homes = models.Home.objects.filter(home_village=village)
             for home in homes:
-                print(home)
-                print(type(home))
+                # print(home)
+                # print(type(home))
                 
                 maintenanceFeeRecord = models.MaintenanceFeeRecord.objects.create(fee_period=maintenanceFeePeriod, fee_home=home,fee_paid_date=None, fee_house_space=None, fee_amount=None, fee_paid_status=False, is_active=True)
                 maintenanceFeeRecord.save()
@@ -2612,7 +2612,7 @@ class VoteTopicViewSet(viewsets.ModelViewSet):
             ### find vote topic
             voteTopic = models.VoteTopic.objects.filter(pk=votetopic_pk,is_active=True).last()
             voteTopicTitle = models.VoteTopic.objects.filter(pk=votetopic_pk,is_active=True).values('vote_thai_topic').last()
-            print(voteTopicTitle)
+            # print(voteTopicTitle)
             result.append({"voteTopicTitle":voteTopicTitle['vote_thai_topic']})
 
             ### find vote record in percent
@@ -2701,7 +2701,7 @@ class VoteTopicViewSet(viewsets.ModelViewSet):
 
             home = models.Home.objects.get(pk=home_pk,is_active=True)
             serializer = serializers.HomeSerializer(home)
-            print()
+            # print()
             voteQuota = serializer.data['home_vote_qouta']
 
             result = []
@@ -2746,7 +2746,7 @@ class VoteTopicViewSet(viewsets.ModelViewSet):
                     feeRecordData = serializer.data
                     ### loop for each record that is this home 
                     for feeRec in feeRecordData:
-                        print(feeRec)
+                        # print(feeRec)
                         if(feeRec['fee_paid_status']==False):
                             isVoteAble= False
                             break
@@ -2871,9 +2871,9 @@ class WorkingRecordViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods = 'GET')
     def fetch_workingrecord(self, request, village_pk, zone_pk, work_pk, date_str):
         """ Return all votetopics according to specific village """
-        print(date_str)
+        # print(date_str)
         newdate = date_str.split("-")
-        print(newdate[0])
+        # print(newdate[0])
         isExistWR = models.WorkingRecord.objects.filter(working_village=village_pk, working_zone=zone_pk, working_work=work_pk,working_date__date=datetime.date(int(newdate[0]),int(newdate[1]),int(newdate[2]))).exists()
         if(isExistWR==False):
             return Response({ "detail": "Not found."},status=status.HTTP_404_NOT_FOUND)
@@ -2927,9 +2927,9 @@ class WorkingRecordViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods = 'GET')
     def fetch_workingrecord_null_work(self, request, village_pk, zone_pk, date_str):
         """ Return all votetopics according to specific village """
-        print(date_str)
+        # print(date_str)
         newdate = date_str.split("-")
-        print(newdate[0])
+        # print(newdate[0])
         isExistWR = models.WorkingRecord.objects.filter(working_village=village_pk, working_zone=zone_pk, working_date__date=datetime.date(int(newdate[0]),int(newdate[1]),int(newdate[2]))).exists()
         if(isExistWR==False):
             return Response({ "detail": "Not found."},status=status.HTTP_404_NOT_FOUND)
@@ -2984,9 +2984,9 @@ class WorkingRecordViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods = 'GET')
     def fetch_workingrecord_null_zone(self, request, village_pk, work_pk, date_str):
         """ Return all votetopics according to specific village """
-        print(date_str)
+        # print(date_str)
         newdate = date_str.split("-")
-        print(newdate[0])
+        # print(newdate[0])
         isExistWR = models.WorkingRecord.objects.filter(working_village=village_pk, working_work=work_pk,working_date__date=datetime.date(int(newdate[0]),int(newdate[1]),int(newdate[2]))).exists()
         if(isExistWR==False):
             return Response({ "detail": "Not found."},status=status.HTTP_404_NOT_FOUND)
@@ -3041,9 +3041,9 @@ class WorkingRecordViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods = 'GET')
     def fetch_workingrecord_null_zone_null_work(self, request, village_pk, date_str):
         """ Return all votetopics according to specific village """
-        print(date_str)
+        # print(date_str)
         newdate = date_str.split("-")
-        print(newdate[0])
+        # print(newdate[0])
         isExistWR = models.WorkingRecord.objects.filter(working_village=village_pk,working_date__date=datetime.date(int(newdate[0]),int(newdate[1]),int(newdate[2]))).exists()
         if(isExistWR==False):
             return Response({ "detail": "Not found."},status=status.HTTP_404_NOT_FOUND)
@@ -3099,9 +3099,9 @@ class WorkingRecordViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods = 'GET')
     def fetch_detailed_workingrecord(self, request, village_pk, zone_pk, work_pk, date_str, secure_pk):
         """ Return all votetopics according to specific village """
-        print(date_str)
+        # print(date_str)
         newdate = date_str.split("-")
-        print(newdate[0])
+        # print(newdate[0])
         isExistWR = models.WorkingRecord.objects.filter(working_village=village_pk, working_zone=zone_pk, working_work=work_pk,working_date__date=datetime.date(int(newdate[0]),int(newdate[1]),int(newdate[2])),working_secure=secure_pk).exists()
         if(isExistWR==False):
             return Response({ "detail": "Not found."},status=status.HTTP_404_NOT_FOUND)
@@ -3160,7 +3160,7 @@ class NotificationViewSet(viewsets.ModelViewSet):
         for noti in notiData:
             
             qrPk = noti['noti_qr']
-            print(qrPk)
+            # print(qrPk)
 
             qrcode = models.Qrcode.objects.filter(pk=qrPk).last()
             serializer = serializers.QrCodeSerializer(qrcode)
@@ -3258,7 +3258,7 @@ class NotificationViewSet(viewsets.ModelViewSet):
 
             ## fcm for secure
             zoneName = serializers.ZoneSerializer(zone).data['zone_name']
-            print(zoneName)
+            # print(zoneName)
             secureQuerySet = models.SecureGuard.objects.filter(secure_zone=zone).all()
             secureSerializer = serializers.SecureGuardSerializer(secureQuerySet,many=True)
             secureData = secureSerializer.data
