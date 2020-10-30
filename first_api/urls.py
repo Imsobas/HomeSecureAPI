@@ -39,6 +39,7 @@ router.register(r'working_records',views.WorkingRecordViewSet)
 router.register(r'notification',views.NotificationViewSet)
 router.register(r'devices', views.CustomFCMDeviceViewSet)
 router.register(r'managers', views.ManagerViewSet)
+router.register(r'votecount', views.VoteCountViewSet)
 
 ## Binding URL
 

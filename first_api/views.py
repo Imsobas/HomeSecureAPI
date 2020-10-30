@@ -2706,8 +2706,20 @@ class VoteTopicViewSet(viewsets.ModelViewSet):
 
             result = []
             for voteTopic in querySet:
-                ### filter vote whether already vote or not 
-                voteCount = models.VoteRecord.objects.filter(vote_topic_pk=voteTopic, vote_home = home).count()
+                # get vote count of this home from vote count table 
+                voteCount = 0
+                isVoteCountExist = models.VoteCount.objects.filter(vote_topic_pk=voteTopic, vote_home = home).exists()
+                if(isVoteCountExist==False):
+                    voteCountObject = models.VoteCount.objects.create(vote_topic_pk=voteTopic, vote_home = home)
+                    voteCountObject.save
+                
+                voteCountObject = models.VoteCount.objects.get(vote_topic_pk=voteTopic, vote_home = home)
+                voteCountSerializer = serializers.VoteCountSerializer(voteCountObject)
+                voteCountData = voteCountSerializer.data
+                voteCount = voteCountData['vote_count']
+
+                ### filter vote whether already vote or not  (old vote count algo)
+                # voteCount = models.VoteRecord.objects.filter(vote_topic_pk=voteTopic, vote_home = home).count()
                 if(voteCount < voteQuota):
                     serializer = serializers.VoteTopicSerializer(voteTopic)
                     voteTopicData = serializer.data
@@ -2796,6 +2808,12 @@ class VoteChoiceViewSet(viewsets.ModelViewSet):
 class VoteRecordViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.VoteRecordSerializer
     queryset = models.VoteRecord.objects.all()
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+
+class VoteCountViewSet(viewsets.ModelViewSet):
+    serializer_class = serializers.VoteCountSerializer
+    queryset = models.VoteCount.objects.all()
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
 

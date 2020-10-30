@@ -137,6 +137,11 @@ class VoteRecordSerializer(serializers.ModelSerializer):
         model = models.VoteRecord
         fields = ('pk', 'vote_topic_pk','vote_home', 'vote_user', 'vote_selected_choice','vote_hiden')
 
+class VoteCountSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.VoteCount
+        fields = ('pk', 'vote_topic_pk','vote_home', 'vote_count')
+
 
 class ProblemSerializer(serializers.ModelSerializer):
     class Meta:

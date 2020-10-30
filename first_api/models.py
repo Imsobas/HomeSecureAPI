@@ -424,12 +424,25 @@ class VoteRecord(models.Model):
     vote_selected_choice = models.ForeignKey(VoteChoice,null=True, blank=True, on_delete=models.DO_NOTHING)
     vote_hiden = models.BooleanField(default=False)
 
+
+    # class Meta:
+    #     unique_together = ('vote_home', 'vote_topic_pk')
+
     def __str__(self):
         """Return the model as a string"""
         return str(self.pk)
 
-    # class Meta:
-    #     unique_together = ('vote_home', 'vote_topic_pk')
+class VoteCount(models.Model):
+    vote_topic_pk = models.ForeignKey(VoteTopic,null=True, blank=True, on_delete=models.DO_NOTHING)
+    vote_home = models.ForeignKey(Home,null=True, blank=True, on_delete=models.DO_NOTHING)
+    vote_count = models.IntegerField(default=0)
+
+    class Meta:
+        unique_together = ('vote_home', 'vote_topic_pk')
+
+    def __str__(self):
+        """Return the model as a string"""
+        return str(self.pk)
     
 class Problem(models.Model):
     problem_village = models.ForeignKey(Village,null=True, blank=True, on_delete=models.DO_NOTHING)
