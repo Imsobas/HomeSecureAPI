@@ -2868,6 +2868,19 @@ class VoteRecordViewSet(viewsets.ModelViewSet):
             
             voteRecord = models.VoteRecord.objects.create(vote_topic_pk = voteTopic, vote_home = home,  vote_user = user,  vote_hiden = data["vote_hiden"],vote_selected_choice=voteChoice)
             voteRecord.save
+
+        isExistVoteCount = models.VoteCount.objects.filter(vote_topic_pk=voteTopic, vote_home = home).exists()
+        if(isExistVoteCount == False):
+            return Response({ "detail": "not found vote count object "},status=status.HTTP_404_NOT_FOUND)
+
+        voteCountObject = models.VoteCount.objects.get(vote_topic_pk=voteTopic, vote_home = home)
+        voteCountObject.vote_count = voteCountObject.vote_count+1
+        voteCountObject.save()
+        #  data = request.data
+        #         setting = models.Setting.objects.get(setting_village=village)
+        #         serializer = serializers.SettingSerializer(setting, data, partial=True)
+        #         serializer.is_valid(raise_exception=True)
+        #         serializer.save()
         
         return Response(data,status=status.HTTP_201_CREATED)
 
