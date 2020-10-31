@@ -1,4 +1,4 @@
-from django.urls import path, include
+from django.urls import path,re_path,include
 from rest_framework.routers import DefaultRouter
 from rest_framework import renderers
 from first_api import views
@@ -258,7 +258,7 @@ get_qrcodes_history_additionaldetail = views.QrCodeViewSet.as_view({
 })
 
 get_qrcodes_village_pk_home_number_homedetails = views.QrCodeViewSet.as_view({
-    'get': 'get_qrcodes_village_pk_home_number_homedetails'
+    'post': 'get_qrcodes_village_pk_home_number_homedetails'
 })
 
 get_villages_location_pk = views.VillageViewSet.as_view({
@@ -490,6 +490,10 @@ get_unread_notification_count = views.NotificationViewSet.as_view({
     'get': 'get_unread_notification_count'
 })
 
+test_path = views.VoteCountViewSet.as_view({
+    'get': 'test_path'
+})
+
 # Home Secure main routers
 urlpatterns = [
 
@@ -580,11 +584,11 @@ urlpatterns = [
     path('villages/<int:pk>/works/', get_villages_pk_works ,name='get_villages_pk_works'),
 
     ##qr
-    path('qrcodes/village/<int:village_pk>/home_number/<str:home_number>/homedetails/', get_qrcodes_village_pk_home_number_homedetails ,name='get_qrcodes_village_pk_home_number_homedetails'),
+    path('qrcodes/village/<int:village_pk>/homedetail/', get_qrcodes_village_pk_home_number_homedetails ,name='get_qrcodes_village_pk_home_number_homedetails'),
     path('villages/<int:village_pk>/qrcodes/', get_villages_pk_qrcodes, name = 'get_villages_pk_qrcodes'),
     path('villages/<int:village_pk>/zones/<int:zone_pk>/qrcodes/', get_villages_pk_zone_pk_qrcodes, name = 'get_villages_pk_zone_pk_qrcodes'),
     path('historyservice/qrcodes/<int:qrcode_pk>/additional_detail/', get_qrcodes_history_additionaldetail, name = 'get_qrcodes_history_additionaldetail'),
-
+    
 
 
     path('villages/<int:village_pk>/homes/<int:home_pk>/qrcodes/', get_villages_pk_homes_pk_qrcodes, name = 'get_villages_pk_homes_pk_qrcodes'),
@@ -665,7 +669,13 @@ urlpatterns = [
     ## setting
     path('villages/<int:village_pk>/setting/',  get_village_pk_setting,name='get_village_pk_setting'),
    
-   
+    ## test path
+    
+
+    # re_path(r'^stores/\w+/',test_path,name='test_path'),
+    # re_path(r'homes/check_home_exist/<str:home_number>/', get_homespk_number, name='get_homespk_number'),
+    
+    
     
     ##fcm 
     # url(r'fcm/', include('fcm.urls')),

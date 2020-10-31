@@ -683,6 +683,10 @@ class HomeViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods = 'GET')
     def get_homespk_number(self, request, home_number):
         """ Return pk and home_number of homes according to request homeNumber"""
+        
+        print("dubugging check exist home number")
+        print(request.data)
+        # print(home_number)
         isExist = models.Home.objects.filter(home_number=home_number, is_active=True).exists()
         if(isExist==False):
             return Response({ "detail": "Not have this home number"},status=status.HTTP_404_NOT_FOUND)
@@ -1400,10 +1404,14 @@ class QrCodeViewSet(viewsets.ModelViewSet):
             return Response(serializer.data,status.HTTP_201_CREATED)
         
 
-    @action(detail=True, methods = 'GET')
-    def get_qrcodes_village_pk_home_number_homedetails(self, request, home_number, village_pk):
+    @action(detail=True, methods = 'POST')
+    def get_qrcodes_village_pk_home_number_homedetails(self, request, village_pk):
 
         # models.PointObservation.objects.only('pk').get(observation_village=village_pk, observation_zone=zone_pk, observation_work=work_pk, observation_secure=secure_pk, observation_date=date)
+        print("debugging homedetail")
+        print(request.data)
+
+        home_number = request.data['homedetail']
 
         isExistVillage= models.Village.objects.filter(pk=village_pk, is_active=True).exists()
         if(isExistVillage==False):
@@ -2891,6 +2899,14 @@ class VoteCountViewSet(viewsets.ModelViewSet):
     queryset = models.VoteCount.objects.all()
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
+
+    @action(detail=True, methods = 'GET')
+    def test_path(self, request):
+        """ Return all votetopics according to specific village """
+
+        
+        return Response({ "detail": "testing"},status=status.HTTP_404_NOT_FOUND)
+      
 
 class ProblemViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.ProblemSerializer
