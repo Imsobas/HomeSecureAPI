@@ -2811,6 +2811,68 @@ class VoteRecordViewSet(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
 
+    # @action(detail=True, methods=['post'])
+    # def create_enter_qrcode_and_notificaton(self, request):
+    #     """ Create qr code on enter screen along with generate notification for each user"""
+        
+    #     data = request.data 
+
+    #     isExistHome = models.Home.objects.filter(pk=data['qr_home'], is_active=True).exists()
+    #     if(isExistHome==False):
+    #         return Response({ "detail": "not have this home number "},status=status.HTTP_404_NOT_FOUND)
+    #     else:
+    #         home = models.Home.objects.filter(pk=data['qr_home'], is_active=True).last()
+    #         serializer = serializers.HomeSerializer(home)
+    #         homeData = serializer.data
+
+
+    @action(detail=True, methods = 'POST')
+    def post_add_multiple_voterecord(self, request):
+        """ add multiple set of record  """
+
+        data = request.data
+
+        
+        print("debuging post multiple voterecord")
+        print(data["vote_selected_choice"])
+
+        ## check and get existing model of vote topic, home, user
+
+        isExistTopic = models.VoteTopic.objects.filter(pk=data["vote_topic_pk"]).exists()
+        if(isExistTopic == False):
+            return Response({ "detail": "not have ths vote topic"},status=status.HTTP_404_NOT_FOUND)
+
+        voteTopic = models.VoteTopic.objects.get(pk=data["vote_topic_pk"])
+
+        isExistHome = models.Home.objects.filter(pk=data["vote_home"]).exists()
+        if(isExistHome == False):
+            return Response({ "detail": "not have ths home"},status=status.HTTP_404_NOT_FOUND)
+
+        home =  models.Home.objects.get(pk=data["vote_home"])
+
+        isExistUser = models.GeneralUser.objects.filter(pk=data["vote_user"]).exists()
+        if(isExistUser == False):
+            return Response({ "detail": "not have this user "},status=status.HTTP_404_NOT_FOUND)
+
+        user = models.GeneralUser.objects.get(pk=data["vote_user"])
+
+        
+
+        for choicePk in data["vote_selected_choice"]:
+            
+            isExistChoice = models.VoteChoice.objects.filter(pk=choicePk).exists()
+            if(isExistChoice == False):
+                return Response({ "detail": "not have some choices in selected choice"},status=status.HTTP_404_NOT_FOUND)
+            
+            voteChoice  = models.VoteChoice.objects.get(pk=choicePk)
+            
+            voteRecord = models.VoteRecord.objects.create(vote_topic_pk = voteTopic, vote_home = home,  vote_user = user,  vote_hiden = data["vote_hiden"],vote_selected_choice=voteChoice)
+            voteRecord.save
+        
+        return Response(data,status=status.HTTP_201_CREATED)
+
+
+
 class VoteCountViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.VoteCountSerializer
     queryset = models.VoteCount.objects.all()

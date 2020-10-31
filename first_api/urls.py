@@ -413,6 +413,12 @@ get_votetopics_pk_votechoices = views.VoteChoiceViewSet.as_view({
     'get': 'get_votetopics_pk_votechoices'
 })
 
+## VoteRecord 
+
+post_add_multiple_voterecord  = views.VoteRecordViewSet.as_view({
+    'post': 'post_add_multiple_voterecord'
+})
+
 
 ## MaintenanceFeeRecord
 
@@ -630,6 +636,9 @@ urlpatterns = [
     ## votechoice
     path('votetopics/<int:votetopic_pk>/votechoices/', get_votetopics_pk_votechoices,name='get_votetopics_pk_votechoices'),
     
+    ## voterecord
+    path('voterecord/add_multiple/', post_add_multiple_voterecord, name='post_add_multiple_voterecord'),
+
     ## problem 
     path('homes/<int:home_pk>/problems/',  get_homes_pk_problems,name='get_homes_pk_problems'),
     path('problems_with_home_number/<int:village_pk>/',  get_problems_with_home_number,name='get_problems_with_home_number'),
