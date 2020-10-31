@@ -427,7 +427,7 @@ get_maintenance_fee_period_pk_maintenance_fee_record = views.MaintenanceFeeRecor
 })
 
 mtr_check_isexist_and_isduplicate_home = views.MaintenanceFeeRecordViewSet.as_view({
-    'get': 'mtr_check_isexist_and_isduplicate_home'
+    'post': 'mtr_check_isexist_and_isduplicate_home'
 })
 
 ## Problem 
@@ -626,7 +626,7 @@ urlpatterns = [
 
     ## maintenancefeerecord
     path('maintenance_fee_period/<int:pk>/maintenance_fee_record/', get_maintenance_fee_period_pk_maintenance_fee_record, name='get_maintenance_fee_period_pk_maintenance_fee_record'),
-    path('maintenance_fee_record/checkisexist/homes/<str:home_number>/checkduplicate/maintenance_fee_period/<int:mfp_pk>/', mtr_check_isexist_and_isduplicate_home, name='mtr_check_isexist_and_isduplicate_home'),
+    path('maintenance_fee_record/checkisexist/checkduplicate/maintenance_fee_period/<int:mfp_pk>/', mtr_check_isexist_and_isduplicate_home, name='mtr_check_isexist_and_isduplicate_home'),
     
     ## votetopic
     path('villages/<int:village_pk>/votetopics/', get_villages_pk_votetopics,name='get_villages_pk_votetopics'),

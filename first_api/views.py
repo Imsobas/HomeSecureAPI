@@ -2397,9 +2397,12 @@ class MaintenanceFeeRecordViewSet(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
 
-    @action(detail=True, methods = 'GET')
-    def mtr_check_isexist_and_isduplicate_home(self, request, home_number, mfp_pk):
+    @action(detail=True, methods = 'POST')
+    def mtr_check_isexist_and_isduplicate_home(self, request, mfp_pk):
         """ Check is home exist and is this home already exist in this mfp"""
+
+        home_number = request.data['home_number']
+
         isExist = models.Home.objects.filter(home_number=home_number, is_active=True).exists()
         if(isExist==False):
             return Response({ "detail": "Not have this home number"},status=status.HTTP_404_NOT_FOUND)
