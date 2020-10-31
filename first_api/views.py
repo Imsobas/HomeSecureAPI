@@ -2948,7 +2948,7 @@ class ProblemViewSet(viewsets.ModelViewSet):
         # print(problemData)
         for problem in problemData:
             newDict = dict()
-            print(problem)
+            # print(problem)
             homePk = problem['problem_home']
             home = models.Home.objects.filter(pk = homePk).last()
             serializer = serializers.HomeSerializer(home,)
