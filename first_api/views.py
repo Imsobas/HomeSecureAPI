@@ -701,7 +701,13 @@ class HomeViewSet(viewsets.ModelViewSet):
 
             village = models.Village.objects.get(pk=data["home_village"])
 
-            home = models.Home.objects.create(home_number=data["home_number"],home_address=data['home_address'],home_company=company,home_village=village,home_zone=data["home_zone"],home_lat= data["home_lat"],home_lon= data["home_lon"],house_space= data["house_space"],home_vote_qouta =  data["home_vote_qouta"])
+            isExistZone = models.Zone.objects.filter(pk=data['home_zone']).exists()
+            if(isExistZone==False):
+                return Response({ "detail": "Not found zone"},status=status.HTTP_404_NOT_FOUND)
+
+            zone = models.Zone.objects.get(pk=data['home_zone'])
+
+            home = models.Home.objects.create(home_number=data["home_number"],home_address=data['home_address'],home_company=company,home_village=village,home_zone=zone,home_lat= data["home_lat"],home_lon= data["home_lon"],house_space= data["house_space"],home_vote_qouta =  data["home_vote_qouta"])
             home.save
             serializer = serializers.QrCodeSerializer(home)
 
