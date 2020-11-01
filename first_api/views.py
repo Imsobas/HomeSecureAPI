@@ -682,11 +682,26 @@ class HomeViewSet(viewsets.ModelViewSet):
         #   "house_space": home.space,
         #   "home_vote_qouta": home.voteQuota,
 
+        
+
         isExistHome = models.Home.objects.filter(home_number=data["home_number"],home_village=data["home_village"], is_active=True).exists()
         if(isExistHome==True):
             return Response({"detail": "duplicate home_number in this village"},status=status.HTTP_400_BAD_REQUEST)
         else:
-            home = models.Home.objects.create(home_number=data["home_number"],home_address=data['home_address'],home_company=data["home_company"],home_village=data["home_village"],home_zone=data["home_zone"],home_lat= data["home_lat"],home_lon= data["home_lon"],house_space= data["house_space"],home_vote_qouta =  data["home_vote_qouta"])
+
+            isCompanyExist = models.Company.objects.filter(pk=company_pk).exists()
+            if(isCompanyExist==False):
+                return Response({ "detail": "Not found company"},status=status.HTTP_404_NOT_FOUND)
+
+            company = models.Company.objects.get(pk=data["home_company"])
+
+            isVillageExist = models.Village.objects.filter(pk=village_pk).exists()
+            if(isVillageExist==False):
+                return Response({ "detail": "Not found village"},status=status.HTTP_404_NOT_FOUND)
+
+            village = models.Village.objects.get(pk=data["home_village"])
+
+            home = models.Home.objects.create(home_number=data["home_number"],home_address=data['home_address'],home_company=company,home_village=village,home_zone=data["home_zone"],home_lat= data["home_lat"],home_lon= data["home_lon"],house_space= data["house_space"],home_vote_qouta =  data["home_vote_qouta"])
             home.save
             serializer = serializers.QrCodeSerializer(home)
 
