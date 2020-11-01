@@ -732,7 +732,7 @@ class HomeViewSet(viewsets.ModelViewSet):
         if(isExistHome==True):
             return Response({ "detail": "not have this home number "},status=status.HTTP_400_BAD_REQUEST)
         else:
-            home = models.Home.objects.create(home_number=data["home_number"],home_address=data['home_address'],home_company=data["home_company"],home_village=data["home_village"],data["home_zone"],data["home_lat"],data["home_lon"],data["house_space"],data["home_vote_qouta"])
+            home = models.Home.objects.create(home_number=data["home_number"],home_address=data['home_address'],home_company=data["home_company"],home_village=data["home_village"],home_zone=data["home_zone"],home_lat= data["home_lat"],home_lon= data["home_lon"],house_space= data["house_space"],home_vote_qouta =  data["home_vote_qouta"])
             home.save
             serializer = serializers.QrCodeSerializer(home)
 
