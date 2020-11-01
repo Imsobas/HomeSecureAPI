@@ -689,13 +689,13 @@ class HomeViewSet(viewsets.ModelViewSet):
             return Response({"detail": "duplicate home_number in this village"},status=status.HTTP_400_BAD_REQUEST)
         else:
 
-            isCompanyExist = models.Company.objects.filter(pk=company_pk).exists()
+            isCompanyExist = models.Company.objects.filter(pk=data['home_company']).exists()
             if(isCompanyExist==False):
                 return Response({ "detail": "Not found company"},status=status.HTTP_404_NOT_FOUND)
 
             company = models.Company.objects.get(pk=data["home_company"])
 
-            isVillageExist = models.Village.objects.filter(pk=village_pk).exists()
+            isVillageExist = models.Village.objects.filter(pk=data['home_village']).exists()
             if(isVillageExist==False):
                 return Response({ "detail": "Not found village"},status=status.HTTP_404_NOT_FOUND)
 
