@@ -132,8 +132,9 @@ class UserProfileViewSet(viewsets.ModelViewSet):
              ## create company manager user model 
             elif(data['userRole']=='Manager' and data['managerLevel'] =='VILLAGELEVEL'):
                 # print("visithere")
+                company = models.Company.objects.only('pk').get(pk=data['company'])
                 village = models.Village.objects.only('pk').get(pk=data['village'])
-                manager = models.Manager.objects.create(manager_username=username, manager_village=  village, manager_level='VILLAGELEVEL')
+                manager = models.Manager.objects.create(manager_username=username, manager_company = company, manager_village=  village, manager_level='VILLAGELEVEL')
                 manager.save
                 serializer = serializers.ManagerSerializer(manager)
                 result = dict()

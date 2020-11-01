@@ -1,0 +1,8 @@
+cd HomeSecure2/HomeSecureAPI
+mv db.sqlite3 ~/HomeSecure2/db.sqlite3
+git pull
+rm db.sqlite3
+mv ~/HomeSecure2/db.sqlite3 ~/HomeSecure2/HomeSecureAPI/db.sqlite3
+source ~/venv/bin/activate
+python manage.py makemigrations
+python manage.py migrate
