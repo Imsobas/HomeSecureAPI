@@ -134,8 +134,8 @@ class Home(models.Model):
     home_vote_qouta = models.IntegerField(default=1)
     is_active = models.BooleanField(default=True)
 
-    class Meta:
-        unique_together = ('home_number', 'home_village')
+    # class Meta:
+    #     unique_together = ('home_number', 'home_village')
 
     def __str__(self):
         """Return the model as a string"""
