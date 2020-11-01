@@ -2894,8 +2894,8 @@ class VoteRecordViewSet(viewsets.ModelViewSet):
         data = request.data
 
         
-        print("debuging post multiple voterecord")
-        print(data["vote_selected_choice"])
+        # print("debuging post multiple voterecord")
+        # print(data["vote_selected_choice"])
 
         ## check and get existing model of vote topic, home, user
 
