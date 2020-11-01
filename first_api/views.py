@@ -1408,8 +1408,8 @@ class QrCodeViewSet(viewsets.ModelViewSet):
     def get_qrcodes_village_pk_home_number_homedetails(self, request, village_pk):
 
         # models.PointObservation.objects.only('pk').get(observation_village=village_pk, observation_zone=zone_pk, observation_work=work_pk, observation_secure=secure_pk, observation_date=date)
-        print("debugging homedetail")
-        print(request.data)
+        # print("debugging homedetail")
+        # print(request.data)
 
         home_number = request.data['homedetail']
 
