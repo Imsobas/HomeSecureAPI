@@ -123,6 +123,10 @@ get_villages_pk_zone_pk_single_villages_single_zones = views.ZoneViewSet.as_view
 
 
 ## home
+create_home_and_check_duplicate = views.HomeViewSet.as_view({
+    'post': 'create_home_and_check_duplicate'
+})
+
 get_villages_zones_homes = views.HomeViewSet.as_view({
     'get': 'get_villages_zones_homes'
 })
@@ -531,6 +535,7 @@ urlpatterns = [
     
     
     ##home end point
+    path('homes/create_home_and_check_duplicate', create_home_and_check_duplicate, name='create_home_and_check_duplicate'),
     path('homes_active/', get_homes_active, name='get_homes_active'),
     path('villages/<int:village_pk>/homes/',get_villages_pk_homes, name='get_villages_pk_homes'),
     path('villages/zones/homes/', get_villages_zones_homes, name='get_villages_zones_homes'),

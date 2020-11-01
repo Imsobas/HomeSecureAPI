@@ -667,52 +667,6 @@ class HomeViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,)
 
     @action(detail=True, methods=['post'])
-    def create_qrcodes_home_pk_nocopon(self, request):
-        """ Create qr code from user incase report the vehicle which not have enter history"""
-        
-        data = request.data 
-
-        isExistHome = models.Home.objects.filter(pk=data['home_pk'], is_active=True).exists()
-        if(isExistHome==False):
-            return Response({ "detail": "not have this home number "},status=status.HTTP_404_NOT_FOUND)
-        else:
-            home = models.Home.objects.filter(pk=data['home_pk'], is_active=True).last()
-            serializer = serializers.HomeSerializer(home)
-            homeData = serializer.data
-
-
-            ### using in response data back 
-            homePk = homeData['pk']
-            homeZone = homeData['home_zone']
-            # homeLat = homeData['home_lat']
-            # homeLon = homeData['home_lon']
-            homeVillage = homeData['home_village']
-            homeCompany = homeData['home_company']
-            homeNumber = homeData['home_number']
-
-            ### create qrcode 
-            ### example models.Village.objects.only('pk').get(pk=village_pk)
-            village = models.Village.objects.only('pk').get(pk=homeVillage)
-            zone = models.Zone.objects.only('pk').get(pk=homeZone)
-            company = models.Company.objects.only('pk').get(pk=homeCompany)
-            home = models.Home.objects.only('pk').get(pk=homePk)
-           
-
-            qrcode = models.Qrcode.objects.create(qr_enter_time=datetime.datetime.now(), qr_car_number=data['qr_car_number'],qr_home_number=homeNumber, qr_car_color = data['qr_car_color'], qr_car_brand=data['qr_car_brand'], qr_company = company, qr_village = village, qr_zone =zone, qr_home =home, qr_exit_without_enter=True)
-            qrcode.save
-            serializer = serializers.QrCodeSerializer(qrcode)
-
-            # ## create notification 
-            # genUserQuerySet = models.GeneralUser.objects.filter(gen_user_home= home, is_active=True).all()
-            # for user in genUserQuerySet:
-            #     print(user)
-            #     notification = models.Notification.objects.create(noti_home=home,noti_general_user=user, noti_qr = qrcode)
-            #     notification.save()
-
-            return Response(serializer.data,status.HTTP_201_CREATED)
-
-
-    @action(detail=True, methods=['post'])
     def create_home_and_check_duplicate(self, request):
         "create home and check is it have duplicate home"
 
@@ -730,7 +684,7 @@ class HomeViewSet(viewsets.ModelViewSet):
 
         isExistHome = models.Home.objects.filter(home_number=data["home_number"],home_village=data["home_village"], is_active=True).exists()
         if(isExistHome==True):
-            return Response({ "detail": "not have this home number "},status=status.HTTP_400_BAD_REQUEST)
+            return Response({"detail": "duplicate home_number in this village"},status=status.HTTP_400_BAD_REQUEST)
         else:
             home = models.Home.objects.create(home_number=data["home_number"],home_address=data['home_address'],home_company=data["home_company"],home_village=data["home_village"],home_zone=data["home_zone"],home_lat= data["home_lat"],home_lon= data["home_lon"],house_space= data["house_space"],home_vote_qouta =  data["home_vote_qouta"])
             home.save
