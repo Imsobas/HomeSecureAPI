@@ -397,6 +397,7 @@ class VoteTopic(models.Model):
     vote_start_date = models.DateField(null=True, blank=True)
     vote_end_date = models.DateField(null=True, blank=True)
     vote_confirm_status = models.BooleanField(default=False)
+    vote_max_choice = models.IntegerField(default=1)
     is_active = models.BooleanField(default=True)
 
     def __str__(self):
