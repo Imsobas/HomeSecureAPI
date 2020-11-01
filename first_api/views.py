@@ -709,7 +709,7 @@ class HomeViewSet(viewsets.ModelViewSet):
 
             home = models.Home.objects.create(home_number=data["home_number"],home_address=data['home_address'],home_company=company,home_village=village,home_zone=zone,home_lat= data["home_lat"],home_lon= data["home_lon"],house_space= data["house_space"],home_vote_qouta =  data["home_vote_qouta"])
             home.save
-            serializer = serializers.QrCodeSerializer(home)
+            serializer = serializers.HomeSerializer(home)
 
             return Response(serializer.data,status.HTTP_201_CREATED)
 
