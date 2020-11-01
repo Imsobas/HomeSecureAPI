@@ -1050,7 +1050,7 @@ class WorkViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods = 'GET')
     def get_villages_pk_works(self, request, pk):
         """ Return all work to specific village"""
-        querySet = models.Work.objects.filter(work_village=pk).all()
+        querySet = models.Work.objects.filter(work_village=pk,is_active=True).all()
         serializer = serializers.WorkSerializer(querySet,many=True)
         result = serializer.data
         
@@ -1575,7 +1575,7 @@ class QrCodeViewSet(viewsets.ModelViewSet):
         """ Return lasted qr code that match with qr code content """
 
         content = request.data['qrContent']
-        querySet = models.Qrcode.objects.filter(qr_village=village_pk, qr_content = content,is_active=True).order_by('qr_enter_time').all()[::-1][:1]
+        querySet = models.Qrcode.objects.filter(qr_village=village_pk, qr_content = content,qr_complete_status=False,is_active=True).order_by('qr_enter_time').all()[::-1][:1]
         serializer = serializers.QrCodeSerializer(querySet,many=True)
         result = serializer.data
 
