@@ -190,12 +190,15 @@ class GeneralUser(models.Model):
 
 
 class Work(models.Model):
-    work_name = models.CharField(max_length=100, unique=True)
+    work_name = models.CharField(max_length=100)
     work_start_time = models.TimeField(null=True, blank=True)
     work_end_time = models.TimeField(null=True, blank=True)
     work_hour_split = models.IntegerField(default=0)
     work_village = models.ForeignKey(Village, null=True, blank=True, on_delete=models.DO_NOTHING)
     is_active = models.BooleanField(default=True)
+
+    class Meta:
+        unique_together = ('work_name', 'work_village')
 
     def __str__(self):
         """Return the model as a string"""
