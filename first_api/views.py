@@ -2425,7 +2425,7 @@ class MaintenanceFeePeriodViewSet(viewsets.ModelViewSet):
             serializer = serializers.MaintenanceFeePeriodSerializer(maintenanceFeePeriod)
 
             ## create maintenance fee record for all home in this village 
-            homes = models.Home.objects.filter(home_village=village)
+            homes = models.Home.objects.filter(home_village=village,is_active=True)
             for home in homes:
                 # print(home)
                 # print(type(home))
