@@ -1650,18 +1650,23 @@ class QrCodeViewSet(viewsets.ModelViewSet):
             village = models.Village.objects.only('pk').get(pk = village_pk)
             zone = models.Zone.objects.only('pk').get(pk=zone_pk)
 
-            
-        
             querySet = models.Qrcode.objects.filter(qr_village=village, qr_zone = zone, qr_enter_time__date= datetime.date(year,month,day) ,is_active=True).order_by('qr_enter_time').all()[::-1]
             serializer = serializers.QrCodeSerializer(querySet,many=True)
             result = serializer.data
 
-            ## add zone name in response data
-            zoneSerializer = serializers.ZoneSerializer(zone)
-            zoneResult = zoneSerializer.data
+           ## add zone name in response data
 
             for re in result:
-                re['qr_zone_name'] = zoneResult['zone_name']
+                zonePk = re['qr_zone']
+                isExistZone = models.Zone.objects.filter(pk=zonePk).exists()
+                if(isExistZone==False):
+                    return Response({ "detail": "not have zone to for creating maintenance_fee_period "},status=status.HTTP_404_NOT_FOUND)
+                else:
+                    zone = models.Zone.objects.only('pk').get(pk=zonePk)
+                    zoneSerializer = serializers.ZoneSerializer(zone)
+                    zoneResult = zoneSerializer.data
+                    re['qr_zone_name'] = zoneResult['zone_name']
+
 
 
             ### add additional data of setting 
