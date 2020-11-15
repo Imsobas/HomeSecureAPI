@@ -1726,7 +1726,7 @@ class QrCodeViewSet(viewsets.ModelViewSet):
                 else:
                     zone = models.Zone.objects.only('pk').get(pk=zonePk)
                     zoneSerializer = serializers.ZoneSerializer(zone)
-                    zoneResult = zoneSerializer.data['zone_name']
+                    zoneResult = zoneSerializer.data
                     re['qr_zone_name'] = zoneResult['zone_name']
 
 
