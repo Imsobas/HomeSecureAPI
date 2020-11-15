@@ -1645,7 +1645,7 @@ class QrCodeViewSet(viewsets.ModelViewSet):
         isExistZone = models.Zone.objects.filter(pk=zone_pk).exists()
 
         if(isExistVillage==False or isExistZone==False):
-            return Response({ "detail": "not have this village to for creating maintenance_fee_period "},status=status.HTTP_404_NOT_FOUND)
+            return Response({ "detail": "not have this village or zone to for creating maintenance_fee_period "},status=status.HTTP_404_NOT_FOUND)
         else:
             village = models.Village.objects.only('pk').get(pk = village_pk)
             zone = models.Zone.objects.only('pk').get(pk=zone_pk)
@@ -1717,12 +1717,17 @@ class QrCodeViewSet(viewsets.ModelViewSet):
 
 
             ## add zone name in response data
-            zonePk = result['qr_zone']
-            zoneSerializer = serializers.ZoneSerializer(zone)
-            zoneResult = zoneSerializer.data['zone_name']
 
             for re in result:
-                re['qr_zone_name'] = zoneResult['zone_name']
+                zonePk = re['qr_zone']
+                isExistZone = models.Zone.objects.filter(pk=zonePk).exists()
+                if(isExistZone==False):
+                    return Response({ "detail": "not have zone to for creating maintenance_fee_period "},status=status.HTTP_404_NOT_FOUND)
+                else:
+                    zone = models.Zone.objects.only('pk').get(pk=zonePk)
+                    zoneSerializer = serializers.ZoneSerializer(zone)
+                    zoneResult = zoneSerializer.data['zone_name']
+                    re['qr_zone_name'] = zoneResult['zone_name']
 
 
             
