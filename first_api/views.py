@@ -1650,14 +1650,16 @@ class QrCodeViewSet(viewsets.ModelViewSet):
             village = models.Village.objects.only('pk').get(pk = village_pk)
             zone = models.Zone.objects.only('pk').get(pk=zone_pk)
 
-            zoneSerializer = serializers.ZoneSerializer(zone)
-            zoneResult = zoneSerializer.data['zone_name']
+            
         
             querySet = models.Qrcode.objects.filter(qr_village=village, qr_zone = zone, qr_enter_time__date= datetime.date(year,month,day) ,is_active=True).order_by('qr_enter_time').all()[::-1]
             serializer = serializers.QrCodeSerializer(querySet,many=True)
             result = serializer.data
 
             ## add zone name in response data
+            zoneSerializer = serializers.ZoneSerializer(zone)
+            zoneResult = zoneSerializer.data
+
             for re in result:
                 re['qr_zone_name'] = zoneResult['zone_name']
 
@@ -1712,6 +1714,17 @@ class QrCodeViewSet(viewsets.ModelViewSet):
             querySet = models.Qrcode.objects.filter(qr_village=village, qr_enter_time__date= datetime.date(year,month,day) ,is_active=True).order_by('qr_enter_time').all()[::-1]
             serializer = serializers.QrCodeSerializer(querySet,many=True)
             result = serializer.data
+
+
+            ## add zone name in response data
+            zonePk = result['qr_zone']
+            zoneSerializer = serializers.ZoneSerializer(zone)
+            zoneResult = zoneSerializer.data['zone_name']
+
+            for re in result:
+                re['qr_zone_name'] = zoneResult['zone_name']
+
+
             
             ### create new setting 
             isSettingExist = models.Setting.objects.filter(setting_village=village).exists()
