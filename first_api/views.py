@@ -1031,6 +1031,19 @@ class GeneralUserViewSet(viewsets.ModelViewSet):
         querySet = models.GeneralUser.objects.filter(gen_user_village=village_pk, is_active=True).all()
         serializer = serializers.GeneralUserSerializer(querySet,many=True)
         result = serializer.data
+
+        ### add username (string) in response data 
+
+        for re in result:
+            usernamePk = re['gen_user_username']
+            isUserExist = models.UserProfile.objects.filter(pk=usernamePk).exists()
+            if(isUserExist==False):
+                return Response({ "detail": "Not found username"},status=status.HTTP_404_NOT_FOUND)
+            else:
+                username = models.UserProfile.objects.get(pk=usernamePk)
+                userSerializer = serializers.UserProfileSerializer(username)
+                re['gen_user_username_string'] = userSerializer.data['username']
+                
             
         return notFoundHandling(result)
 
@@ -1040,6 +1053,18 @@ class GeneralUserViewSet(viewsets.ModelViewSet):
         querySet = models.GeneralUser.objects.filter(gen_user_village=village_pk, gen_user_zone=zone_pk, is_active=True).all()
         serializer = serializers.GeneralUserSerializer(querySet,many=True)
         result = serializer.data
+
+        ### add username (string) in response data 
+
+        for re in result:
+            usernamePk = re['gen_user_username']
+            isUserExist = models.UserProfile.objects.filter(pk=usernamePk).exists()
+            if(isUserExist==False):
+                return Response({ "detail": "Not found username"},status=status.HTTP_404_NOT_FOUND)
+            else:
+                username = models.UserProfile.objects.get(pk=usernamePk)
+                userSerializer = serializers.UserProfileSerializer(username)
+                re['gen_user_username_string'] = userSerializer.data['username']
             
         return notFoundHandling(result)
 
