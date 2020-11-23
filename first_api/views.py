@@ -1267,12 +1267,28 @@ class SecureGuardViewSet(viewsets.ModelViewSet):
         result = []
         for secure in secureGuardData:
             secureDict = dict()
+
+            isUserExist = models.UserProfile.objects.filter(pk=secure['secure_username']).exists()
+            if(isUserExist==False):
+                secureDict['secure_username_string'] = ""
+            else:
+                username = models.UserProfile.objects.get(pk=secure['secure_username'])
+                userSerializer = serializers.UserProfileSerializer(username)
+                secureDict['secure_username_string'] = userSerializer.data['username']
+
             secureDict['pk'] = secure['pk']
             secureDict['secure_firstname'] = secure['secure_firstname']
             secureDict['secure_lastname'] = secure['secure_lastname']
             secureDict['secure_type'] = secure['secure_type']
             secureDict['secure_village'] = secure['secure_village']
             secureDict['secure_zone'] = secure['secure_zone']
+            secureDict['pk'] = secure['pk']
+            secureDict['secure_firstname'] = secure['secure_firstname']
+            secureDict['secure_lastname'] = secure['secure_lastname']
+            secureDict['secure_type'] = secure['secure_type']
+            secureDict['secure_village'] = secure['secure_village']
+            secureDict['secure_zone'] = secure['secure_zone']
+            
             result.append(secureDict)
 
         return notFoundHandling(result)
@@ -1287,6 +1303,21 @@ class SecureGuardViewSet(viewsets.ModelViewSet):
         result = []
         for secure in secureGuardData:
             secureDict = dict()
+
+            isUserExist = models.UserProfile.objects.filter(pk=secure['secure_username']).exists()
+            if(isUserExist==False):
+                secureDict['secure_username_string'] = ""
+            else:
+                username = models.UserProfile.objects.get(pk=secure['secure_username'])
+                userSerializer = serializers.UserProfileSerializer(username)
+                secureDict['secure_username_string'] = userSerializer.data['username']
+
+            secureDict['pk'] = secure['pk']
+            secureDict['secure_firstname'] = secure['secure_firstname']
+            secureDict['secure_lastname'] = secure['secure_lastname']
+            secureDict['secure_type'] = secure['secure_type']
+            secureDict['secure_village'] = secure['secure_village']
+            secureDict['secure_zone'] = secure['secure_zone']
             secureDict['pk'] = secure['pk']
             secureDict['secure_firstname'] = secure['secure_firstname']
             secureDict['secure_lastname'] = secure['secure_lastname']
