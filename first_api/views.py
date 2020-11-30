@@ -179,7 +179,6 @@ class UserProfileViewSet(viewsets.ModelViewSet):
     def get_profiles_detail(self, request):
         """ Return their own profile according to username"""
 
-
         username = request.user
         serializer = serializers.UserProfileSerializer(username)
         result = serializer.data
@@ -991,8 +990,6 @@ class GeneralUserViewSet(viewsets.ModelViewSet):
         else:
             ### update value of left date  = datetime.now and username == null
             genuser = models.GeneralUser.objects.get(pk=genuser_pk)
-            
-            
             ### update is_active == false
             updateData = {'is_active':False}
             serializer = serializers.GeneralUserSerializer(genuser, updateData, partial=True)   
@@ -1010,9 +1007,9 @@ class GeneralUserViewSet(viewsets.ModelViewSet):
             # print("usernamePk")
             # print(usernamePk)
 
-            username = models.UserProfile.objects.only('pk').get(pk =usernamePk)
+            username = models.UserProfile.objects.get(pk =usernamePk)
             username.delete()
-            # username.save()
+            username.save()
 
             return Response(serializer.data)
 
@@ -1167,9 +1164,9 @@ class SecureGuardViewSet(viewsets.ModelViewSet):
             # print("usernamePk")
             # print(usernamePk)
 
-            username = models.UserProfile.objects.only('pk').get(pk =usernamePk)
+            username = models.UserProfile.objects.get(pk =usernamePk)
             username.delete()
-            # username.save()
+            username.save()
 
             return Response(serializer.data)
         
