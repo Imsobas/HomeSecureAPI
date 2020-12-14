@@ -1,3 +1,4 @@
+from django.db.models.fields import DateField
 from first_api.serializers import ZoneSerializer
 from django.shortcuts import render
 from rest_framework.views import APIView
@@ -28,6 +29,7 @@ from django.conf import settings
 from django.utils.timezone import make_aware
 from django.utils.timezone import localtime, now
 from fcm_django.models import FCMDevice
+from first_api import timeUtility
 
 ## helper function
 
@@ -1887,6 +1889,14 @@ class PointObservationViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,)
 
     @action(detail=True, methods='GET')
+    def get_current_time(self,request):
+
+        result = dict()
+        result['current_time'] = datetime.datetime.now()
+        
+        return notFoundHandling(result)
+
+    @action(detail=True, methods='GET')
     def fetch_pointobservation_update_work(self, request, work_pk):
         workQuerySet = models.Work.objects.filter(pk=work_pk).last()
         serializer = serializers.WorkSerializer(workQuerySet)
@@ -2230,12 +2240,110 @@ class PointObservationViewSet(viewsets.ModelViewSet):
             querySet = models.PointObservationRecord.objects.filter(observation_pk=pointObservation, observation_timeslot=timeslot).values_list('checkpoint_pk', flat=True)
         
             return notFoundHandling(querySet)
-    
+
+    @action(detail=True, methods=['post'])
+    def testDateCreation(self, request):
+
+        ### test getting date char from dateTime
+
+        # dateTime = datetime.datetime.now()
+        # dateTimeStr = str(dateTime)
+
+        # print("debuging testDateCreation")
+        # print(dateTimeStr)
+
+        # splits = dateTimeStr.split(" ") 
+        # print(splits[0])
+        # print(splits[1])
+
+        print(timeUtility.getDateStringFromDateTime(datetime.datetime.now()))
+
+        ### test increasing date of dateTime
+
+        # dateTime = datetime.datetime(2020, 10, 31)
+        # print(dateTime)
+        # dateTime = dateTime + datetime.timedelta(days=1)
+        # print(dateTime)
+
+        ### test getting work to observe working time 
+
+        work = models.Work.objects.get(pk=26)
+        serializer = serializers.WorkSerializer(work)
+        result = serializer.data
+        print(result)
+
+        return notFoundHandling(result)
+
+
+
+
+
+        return Response({ "detail": "Testing"},status=status.HTTP_404_NOT_FOUND)
+
+
+    @action(detail=True, methods=['post'])
+    def createObservation(self, request):
+        data = request.data
+
+        isExistPO = models.PointObservation.objects.filter(observation_village=data['observation_village'], observation_zone=data['observation_zone'], observation_work=data['observation_work'], observation_secure=data['observation_secure'], observation_date=data['observation_date']).exists()
+
+        #### TODO: check and adjust increase, decrease date 
+        adjustedDate = timeUtility.getDateStringFromDateTime(datetime.datetime.now())
+
+        if(isExistPO==False):
+             ## create new  pointObservation
+            village = models.Village.objects.only('pk').get(pk=data['observation_village'])
+            zone = models.Zone.objects.only('pk').get(pk=data['observation_zone'])
+            work = models.Work.objects.only('pk').get(pk=data['observation_work'])
+            secure = models.SecureGuard.objects.only('pk').get(pk=data['observation_secure'])
+            pointObservation = models.PointObservation.objects.create(observation_village=village, observation_zone=zone, observation_work=work, observation_secure=secure, observation_date = adjustedDate )
+            pointObservation.save()
+            
+
+            ## create new PointObservationRecord
+            pointPkList = models.Checkpoint.objects.filter(point_zone=data['observation_zone'],is_active=True,point_active=True).values_list('pk', flat=True)
+            for pointPk in pointPkList: ## all point 
+                checkpoint = models.Checkpoint.objects.only('pk').get(pk=pointPk)
+                pointObservationPointList = models.PointObservationPointList.objects.create(observation_pk=pointObservation, checkpoint_pk = checkpoint)
+                pointObservationPointList.save()
+
+            isExistPOR = models.PointObservationRecord.objects.filter(observation_pk=pointObservation, observation_timeslot=data['observation_timeslot'],checkpoint_pk = data['checkpoint_pk']).exists()
+            if(isExistPOR==True):
+                ## already have pointObservationRecord
+                pointObservationRecord = models.PointObservationRecord.objects.only('pk').get(observation_pk=pointObservation, observation_timeslot=data['observation_timeslot'],checkpoint_pk = data['checkpoint_pk'])
+                return Response({ "detail": 'already have this pointObservationRecord'},status=status.HTTP_200_OK)
+            else:
+                ## create new  pointObservationRecord
+                checkpoint = models.Checkpoint.objects.only('pk').get(pk=data['checkpoint_pk'])
+                pointObservationRecord = models.PointObservationRecord.objects.create(observation_checkin_time=data['observation_checkin_time'], observation_checkout_time=data['observation_checkout_time'],observation_timeslot=data['observation_timeslot'],checkpoint_pk = checkpoint, observation_pk= pointObservation )
+                pointObservationRecord.save()
+
+                serializer = serializers.PointObservationRecordSerializer(pointObservationRecord)
+
+            
+
+
+        return None
     
     @action(detail=True, methods=['post'])
     def testObservation(self, request):
         """ Test def"""
         data = request.data
+        
+
+        # isWorkExist = models.Work.objects.filter(pk=data['observation_work']).exclude()
+
+        # if(isWorkExist!=True):
+        #     return Response({ "detail": 'already have this pointObservation and pointObservationRecord'},status=status.HTTP_502_BAD_GATEWAY)
+
+        # else:
+
+        #     work = models.Work.objects.only('pk').get(pk=data['observation_work'])
+
+            
+        # data['']   = datetime.datetime.now()
+        ## TODO: add function to check whether currete date time should be long to this date or date before
+        ## TODO: should change checking observation date from check in time to check out time instead 
         
         isExistPO = models.PointObservation.objects.filter(observation_village=data['observation_village'], observation_zone=data['observation_zone'], observation_work=data['observation_work'], observation_secure=data['observation_secure'], observation_date=data['observation_date']).exists()
         
@@ -2260,7 +2368,7 @@ class PointObservationViewSet(viewsets.ModelViewSet):
             else:
                 ## create new  pointObservationRecord
                 checkpoint = models.Checkpoint.objects.only('pk').get(pk=data['checkpoint_pk'])
-                pointObservationRecord = models.PointObservationRecord.objects.create(observation_checkin_time=data['observation_checkin_time'], observation_checkout_time=data['observation_checkout_time'],observation_timeslot=data['observation_timeslot'],checkpoint_pk = checkpoint, observation_pk= pointObservation )
+                pointObservationRecord = models.PointObservationRecord.objects.create(observation_checkin_time=data['observation_checkin_time'], observation_checkout_time=datetime.datetime.now(),observation_timeslot=data['observation_timeslot'],checkpoint_pk = checkpoint, observation_pk= pointObservation )
                 pointObservationRecord.save()
 
                 serializer = serializers.PointObservationRecordSerializer(pointObservationRecord)

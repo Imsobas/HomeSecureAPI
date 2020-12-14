@@ -312,7 +312,11 @@ create_qrcodes_home_pk_nocopon = views.QrCodeViewSet.as_view({
      'post': 'create_qrcodes_home_pk_nocopon'
 })
 
-## Test 
+## Test '
+testDateCreation = views.PointObservationViewSet.as_view({
+    'post': 'testDateCreation' 
+})
+
 testObservation = views.PointObservationViewSet.as_view({
     'post': 'testObservation' 
 })
@@ -321,6 +325,11 @@ pointobservation_fetch_record_with_checkpoint =  views.PointObservationViewSet.a
     'get': 'pointobservation_fetch_record_with_checkpoint'
 })
 ## use for retrieve checked status in point observation screen
+
+get_current_time = views.PointObservationViewSet.as_view({
+    'get': 'get_current_time'
+})
+
 pointobservation_fetch_record_checked_pk = views.PointObservationViewSet.as_view({
     'get': 'pointobservation_fetch_record_checked_pk'
 })
@@ -607,7 +616,9 @@ urlpatterns = [
     path('qrcodes/create_qrcodes_nocoupon/', create_qrcodes_home_pk_nocopon, name = 'create_qrcodes_home_pk_nocopon'),
 
 
-    #test 
+    #point observation
+    path('testDateCreation/',testDateCreation, name='testDateCreation'),
+    path('get_current_time/', get_current_time, name="get_current_time"),
     path('pointobservation_create_service/', testObservation ,name='testObservation'),
     path('pointobservation_fetch_record_checked_pk/villages/<int:village_pk>/zones/<int:zone_pk>/works/<int:work_pk>/secures/<int:secure_pk>/dates/<str:date>/timeslots/<int:timeslot>/', pointobservation_fetch_record_checked_pk ,name='pointobservation_fetch_record_checked_pk'),
     path('pointobservation_fetch_record/villages/<int:village_pk>/zones/<int:zone_pk>/works/<int:work_pk>/secures/<int:secure_pk>/dates/<str:date>/timeslots/<int:timeslot>/', pointobservation_fetch_record ,name='pointobservation_fetch_record'),
