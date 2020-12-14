@@ -318,7 +318,9 @@ testDateCreation = views.PointObservationViewSet.as_view({
 })
 
 testObservation = views.PointObservationViewSet.as_view({
-    'post': 'testObservation' 
+    # 'post': 'testObservation'  ## old method for createObservation
+    'post': 'createObservation'  ## new method for createObservation
+    
 })
 
 pointobservation_fetch_record_with_checkpoint =  views.PointObservationViewSet.as_view({
