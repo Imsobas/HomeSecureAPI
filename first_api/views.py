@@ -1011,7 +1011,7 @@ class GeneralUserViewSet(viewsets.ModelViewSet):
 
             username = models.UserProfile.objects.get(pk =usernamePk)
             username.delete()
-            username.save()
+            username.save
 
             return Response(serializer.data)
 
@@ -1168,7 +1168,7 @@ class SecureGuardViewSet(viewsets.ModelViewSet):
 
             username = models.UserProfile.objects.get(pk =usernamePk)
             username.delete()
-            username.save()
+            username.save
 
             return Response(serializer.data)
         
