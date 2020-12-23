@@ -1,4 +1,6 @@
 from django.db.models.fields import DateField
+from django.http.response import HttpResponseServerError
+from django.utils import dateparse
 from first_api.serializers import ZoneSerializer
 from django.shortcuts import render
 from rest_framework.views import APIView
@@ -30,6 +32,7 @@ from django.utils.timezone import make_aware
 from django.utils.timezone import localtime, now
 from fcm_django.models import FCMDevice
 from first_api import timeUtility
+import django.utils.dateparse
 
 ## helper function
 
@@ -2160,7 +2163,7 @@ class PointObservationViewSet(viewsets.ModelViewSet):
             return notFoundHandling(result)
     
 
-    ## a new method for fetching all data in front of point_observation_screen 
+    ## a method for fetching all data in front of point_observation_screen 
     @action(detail=True, methods='GET')
     def pointobservation_fetch_record_with_checkpoint(self, request, village_pk, zone_pk, work_pk, secure_pk, date, timeslot):
         """ Get all Point Observation Record specific to this Point Observation parameter """
@@ -2198,6 +2201,91 @@ class PointObservationViewSet(viewsets.ModelViewSet):
                         tempCheckPoint = models.Checkpoint.objects.only('pk').get(pk = cp['pk'])
 
                         isPorExist = models.PointObservationRecord.objects.filter(observation_pk=pointObservation, observation_timeslot=timeslot, checkpoint_pk=tempCheckPoint).exists()
+                        if(isPorExist==True):
+                            cp['isCheckInTimeSlot'] = True
+                        else:
+                            cp['isCheckInTimeSlot'] = False
+                else:
+                    for cp in checkpointsData:
+                        cp['isCheckInTimeSlot'] = False
+                        
+                result = checkpointsData
+                    
+                return notFoundHandling(result)
+
+    ## a new method on 22 Dec 2020 *(change time slot to start,end of timeslot) for fetching all data in front of point_observation_screen 
+    @action(detail=True, methods='GET')
+    def pointobservation_fetch_record_with_checkpoint_by_start_end_time(self, request, village_pk, zone_pk, work_pk, secure_pk, date, start_time,end_time):
+        """ Get all Point Observation Record specific to this Point Observation parameter """
+
+        start_time = dateparse.parse_datetime(start_time)
+        end_time = dateparse.parse_datetime(end_time)
+        current_date_time = dateparse.parse_datetime(date)
+        date = date.split("T")[0]
+        
+        isWorkExist = models.Work.objects.filter(pk=work_pk).exists()
+        if(isWorkExist == False):
+            return Response({ "detail": "Not found village or zone"},status=status.HTTP_404_NOT_FOUND)
+        else:
+            work = models.Work.objects.get(pk=work_pk)
+    
+            ### checking if date need to alternate to datebefore (because pointObservation use date as composite key)
+            
+            if(work.work_start_time.hour >= work.work_end_time.hour):
+                if(current_date_time.hour>=0):
+                    current_date_time = current_date_time - datetime.timedelta(hours=24)
+                    date = str(current_date_time).split(" ")[0]
+                    
+
+                    
+
+            
+
+            # workStartTime = dateparse.parse_datetime(workData['work_start_time'])
+            # workEndTime = dateparse.parse_datetime(workData['work_end_time'])
+
+         
+
+            # print(workStartTime)
+            # print(workEndTime)
+
+           
+        ##test pass 
+        # test_time_str = "2020-3-1T08:00:00+07:00"
+        # test_time = dateparse.parse_datetime(test_time_str) - datetime.timedelta(hours=24)
+        # print(test_time)
+
+        isExistVillage = models.Village.objects.filter(pk = village_pk).exists()
+        isExistZone = models.Zone.objects.filter(pk = zone_pk).exists()
+
+        if(isExistVillage == False or isExistZone == False):
+            return Response({ "detail": "Not found village or zone"},status=status.HTTP_404_NOT_FOUND)
+        else:
+            
+            village = models.Village.objects.only('pk').get(pk = village_pk)
+            zone = models.Zone.objects.only('pk').get(pk = zone_pk)
+
+            isCheckPointExist = models.Checkpoint.objects.filter(point_village=village, point_zone=zone, point_active = True, is_active=True).exists()
+            if(isCheckPointExist == False):
+                return Response({ "detail": "Not found village or zone"},status=status.HTTP_404_NOT_FOUND)
+            else:
+                
+                checkpoints = models.Checkpoint.objects.filter(point_village=village, point_zone=zone, point_active = True, is_active=True).all()
+                serializer = serializers.CheckpointSerializer(checkpoints,many=True)
+                checkpointsData = serializer.data
+
+                isExistPo = models.PointObservation.objects.filter(observation_village=village_pk, observation_zone=zone_pk, observation_work=work_pk, observation_secure=secure_pk, observation_date=date).exists()
+                
+                
+                if(isExistPo==True):
+                    pointObservation = models.PointObservation.objects.only('pk').get(observation_village=village_pk, observation_zone=zone_pk, observation_work=work_pk, observation_secure=secure_pk, observation_date=date)
+                    for cp in checkpointsData:
+                        
+                        ### no need to check exist checkpoint first, due to already get from loading current checkpoint data already
+                        ### create newCheckpoint object from cp pk 
+                        tempCheckPoint = models.Checkpoint.objects.only('pk').get(pk = cp['pk'])
+
+                        isPorExist = models.PointObservationRecord.objects.filter(observation_pk=pointObservation, checkpoint_pk=tempCheckPoint, observation_checkin_time__range=(start_time,end_time)).exists()
                         if(isPorExist==True):
                             cp['isCheckInTimeSlot'] = True
                         else:

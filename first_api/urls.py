@@ -323,6 +323,10 @@ testObservation = views.PointObservationViewSet.as_view({
     
 })
 
+pointobservation_fetch_record_with_checkpoint_by_start_end_time = views.PointObservationViewSet.as_view({
+    'get': 'pointobservation_fetch_record_with_checkpoint_by_start_end_time'
+})
+
 pointobservation_fetch_record_with_checkpoint =  views.PointObservationViewSet.as_view({
     'get': 'pointobservation_fetch_record_with_checkpoint'
 })
@@ -635,6 +639,7 @@ urlpatterns = [
     path('fetch_pointobservationrecord_updatework/zones/<int:zone_pk>/', fetch_pointobservation_update_zone,name='fetch_pointobservation_update_zone'),
     ##new endpoint for fetchnig pointobservation along with check point in point_observation_screen
     path('fetch_pointobservationrecord/checkpoint_with_timesliot/villages/<int:village_pk>/zones/<int:zone_pk>/works/<int:work_pk>/secures/<int:secure_pk>/dates/<str:date>/timeslots/<int:timeslot>/', pointobservation_fetch_record_with_checkpoint ,name='pointobservation_fetch_record_with_checkpoint'),
+    path('fetch_pointobservationrecord/checkpoint_with_timesliot/villages/<int:village_pk>/zones/<int:zone_pk>/works/<int:work_pk>/secures/<int:secure_pk>/dates/<str:date>/startTime/<str:start_time>/endTime/<str:end_time>/', pointobservation_fetch_record_with_checkpoint_by_start_end_time ,name='pointobservation_fetch_record_with_checkpoint_by_start_end_time'),
     
 
     ## maintenancefeeperiod
