@@ -2353,11 +2353,26 @@ class PointObservationViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=['post'])
     def createObservation(self, request):
         """ A method for create point observation with new technique"""
-        print("createObservation")
         data = request.data
         currentDatetime = datetime.datetime.now()
+        work_pk = data['observation_work']
+        date = timeUtility.getDateStringFromDateTime(datetime.datetime.now())
+        start_time = dateparse.parse_datetime(data['start_time'])
+        end_time = dateparse.parse_datetime(data['end_time'])
+        
+        isWorkExist = models.Work.objects.filter(pk=work_pk).exists()
+        if(isWorkExist == False):
+            return Response({ "detail": "Not found village or zone"},status=status.HTTP_404_NOT_FOUND)
+        else:
+            work = models.Work.objects.get(pk=work_pk)
+    
+            ### checking if date need to alternate to datebefore (because pointObservation use date as composite key)
+            
+            if(work.work_start_time.hour >= work.work_end_time.hour):
+                if(currentDatetime.hour>=0 and currentDatetime.hour<work.work_start_time.hour):
+                    date = timeUtility.getDateStringFromDateTime(currentDatetime - datetime.timedelta(hours=24))
 
-        isExistPO = models.PointObservation.objects.filter(observation_village=data['observation_village'], observation_zone=data['observation_zone'], observation_work=data['observation_work'], observation_secure=data['observation_secure'], observation_date=data['observation_date']).exists()
+        isExistPO = models.PointObservation.objects.filter(observation_village=data['observation_village'], observation_zone=data['observation_zone'], observation_work=data['observation_work'], observation_secure=data['observation_secure'], observation_date=date).exists()
 
         #### TODO: check and adjust increase, decrease date 
         adjustedDate = timeUtility.getDateStringFromDateTime(datetime.datetime.now())
@@ -2368,7 +2383,7 @@ class PointObservationViewSet(viewsets.ModelViewSet):
             zone = models.Zone.objects.only('pk').get(pk=data['observation_zone'])
             work = models.Work.objects.only('pk').get(pk=data['observation_work'])
             secure = models.SecureGuard.objects.only('pk').get(pk=data['observation_secure'])
-            pointObservation = models.PointObservation.objects.create(observation_village=village, observation_zone=zone, observation_work=work, observation_secure=secure, observation_date=data['observation_date'])
+            pointObservation = models.PointObservation.objects.create(observation_village=village, observation_zone=zone, observation_work=work, observation_secure=secure, observation_date=date)
             pointObservation.save()
 
             ## record current checkpoint list for this pointobservation 
@@ -2379,15 +2394,15 @@ class PointObservationViewSet(viewsets.ModelViewSet):
                 pointObservationPointList.save()
 
             ## create new PointObservationRecord
-            isExistPOR = models.PointObservationRecord.objects.filter(observation_pk=pointObservation, observation_timeslot=data['observation_timeslot'],checkpoint_pk = data['checkpoint_pk']).exists()
+            isExistPOR = models.PointObservationRecord.objects.filter(observation_pk=pointObservation, observation_checkin_time__range=(start_time,end_time),checkpoint_pk = data['checkpoint_pk']).exists()
             if(isExistPOR==True):
                 ## already have pointObservationRecord
-                pointObservationRecord = models.PointObservationRecord.objects.only('pk').get(observation_pk=pointObservation, observation_timeslot=data['observation_timeslot'],checkpoint_pk = data['checkpoint_pk'])
+                pointObservationRecord = models.PointObservationRecord.objects.only('pk').get(observation_pk=pointObservation, observation_checkin_time__range=(start_time,end_time),checkpoint_pk = data['checkpoint_pk'])
                 return Response({ "detail": 'already have this pointObservationRecord'},status=status.HTTP_200_OK)
             else:
                 ## create new  pointObservationRecord
                 checkpoint = models.Checkpoint.objects.only('pk').get(pk=data['checkpoint_pk'])
-                pointObservationRecord = models.PointObservationRecord.objects.create(observation_checkin_time=data['observation_checkin_time'], observation_checkout_time=currentDatetime,observation_timeslot=data['observation_timeslot'],checkpoint_pk = checkpoint, observation_pk= pointObservation )
+                pointObservationRecord = models.PointObservationRecord.objects.create(observation_checkin_time=data['observation_checkin_time'], observation_checkout_time=currentDatetime,observation_timeslot=0,checkpoint_pk = checkpoint, observation_pk= pointObservation )
                 pointObservationRecord.save()
 
                 serializer = serializers.PointObservationRecordSerializer(pointObservationRecord)
@@ -2395,7 +2410,7 @@ class PointObservationViewSet(viewsets.ModelViewSet):
                 return Response(serializer.data,status.HTTP_201_CREATED)
         else:
             ## already have pointObservation
-            pointObservation = models.PointObservation.objects.only('pk').get(observation_village=data['observation_village'], observation_zone=data['observation_zone'], observation_work=data['observation_work'], observation_secure=data['observation_secure'], observation_date=data['observation_date'])
+            pointObservation = models.PointObservation.objects.only('pk').get(observation_village=data['observation_village'], observation_zone=data['observation_zone'], observation_work=data['observation_work'], observation_secure=data['observation_secure'], observation_date=date)
             
             pointPkList = models.Checkpoint.objects.filter(point_zone=data['observation_zone'],is_active=True, point_active=True).values_list('pk', flat=True)
             for pointPk in pointPkList: ## all point 
@@ -2406,15 +2421,15 @@ class PointObservationViewSet(viewsets.ModelViewSet):
                     pointObservationPointList.save()
 
             ## check the exist PointObservationRecord
-            isExistPOR = models.PointObservationRecord.objects.filter(observation_pk=pointObservation, observation_timeslot=data['observation_timeslot'],checkpoint_pk = data['checkpoint_pk']).exists()
+            isExistPOR = models.PointObservationRecord.objects.filter(observation_pk=pointObservation, observation_checkin_time__range=(start_time,end_time),checkpoint_pk = data['checkpoint_pk']).exists()
             if(isExistPOR==True):
                 ## already have pointObservationRecord
-                pointObservationRecord = models.PointObservationRecord.objects.only('pk').get(observation_pk=pointObservation, observation_timeslot=data['observation_timeslot'],checkpoint_pk = data['checkpoint_pk'])
+                pointObservationRecord = models.PointObservationRecord.objects.only('pk').get(observation_pk=pointObservation, observation_checkin_time__range=(start_time,end_time),checkpoint_pk = data['checkpoint_pk'])
                 return Response({ "detail": 'already have this pointObservation and pointObservationRecord'},status=status.HTTP_200_OK)
             else:
                 ## create new  pointObservationRecord
                 checkpoint = models.Checkpoint.objects.only('pk').get(pk=data['checkpoint_pk'])
-                pointObservationRecord = models.PointObservationRecord.objects.create(observation_checkin_time=data['observation_checkin_time'], observation_checkout_time=currentDatetime,observation_timeslot=data['observation_timeslot'],checkpoint_pk = checkpoint, observation_pk= pointObservation )
+                pointObservationRecord = models.PointObservationRecord.objects.create(observation_checkin_time=data['observation_checkin_time'], observation_checkout_time=currentDatetime,observation_timeslot=0,checkpoint_pk = checkpoint, observation_pk= pointObservation )
                 pointObservationRecord.save()
 
                 serializer = serializers.PointObservationRecordSerializer(pointObservationRecord)
@@ -2422,10 +2437,6 @@ class PointObservationViewSet(viewsets.ModelViewSet):
                 return Response(serializer.data,status.HTTP_201_CREATED)
 
             
-
-
-        return None
-    
     @action(detail=True, methods=['post'])
     def testObservation(self, request):
         """ Test def"""
