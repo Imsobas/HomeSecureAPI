@@ -2232,28 +2232,9 @@ class PointObservationViewSet(viewsets.ModelViewSet):
             ### checking if date need to alternate to datebefore (because pointObservation use date as composite key)
             
             if(work.work_start_time.hour >= work.work_end_time.hour):
-                if(current_date_time.hour>=0):
+                if(current_date_time.hour>=0 and current_date_time.hour<work.work_start_time.hour):
                     current_date_time = current_date_time - datetime.timedelta(hours=24)
                     date = str(current_date_time).split(" ")[0]
-                    
-
-                    
-
-            
-
-            # workStartTime = dateparse.parse_datetime(workData['work_start_time'])
-            # workEndTime = dateparse.parse_datetime(workData['work_end_time'])
-
-         
-
-            # print(workStartTime)
-            # print(workEndTime)
-
-           
-        ##test pass 
-        # test_time_str = "2020-3-1T08:00:00+07:00"
-        # test_time = dateparse.parse_datetime(test_time_str) - datetime.timedelta(hours=24)
-        # print(test_time)
 
         isExistVillage = models.Village.objects.filter(pk = village_pk).exists()
         isExistZone = models.Zone.objects.filter(pk = zone_pk).exists()
