@@ -2356,6 +2356,7 @@ class PointObservationViewSet(viewsets.ModelViewSet):
         data = request.data
         currentDatetime = datetime.datetime.now()
         work_pk = data['observation_work']
+        work = models.Work.objects.get(pk=work_pk)
         date = timeUtility.getDateStringFromDateTime(datetime.datetime.now())
         start_time = dateparse.parse_datetime(data['start_time'])
         end_time = dateparse.parse_datetime(data['end_time'])
@@ -2364,8 +2365,6 @@ class PointObservationViewSet(viewsets.ModelViewSet):
         if(isWorkExist == False):
             return Response({ "detail": "Not found village or zone"},status=status.HTTP_404_NOT_FOUND)
         else:
-            work = models.Work.objects.get(pk=work_pk)
-    
             ### checking if date need to alternate to datebefore (because pointObservation use date as composite key)
             
             if(work.work_start_time.hour >= work.work_end_time.hour):
@@ -2381,9 +2380,8 @@ class PointObservationViewSet(viewsets.ModelViewSet):
             ## create new  pointObservation
             village = models.Village.objects.only('pk').get(pk=data['observation_village'])
             zone = models.Zone.objects.only('pk').get(pk=data['observation_zone'])
-            work = models.Work.objects.only('pk').get(pk=data['observation_work'])
             secure = models.SecureGuard.objects.only('pk').get(pk=data['observation_secure'])
-            pointObservation = models.PointObservation.objects.create(observation_village=village, observation_zone=zone, observation_work=work, observation_secure=secure, observation_date=date)
+            pointObservation = models.PointObservation.objects.create(observation_village=village, observation_zone=zone, observation_work=work, observation_secure=secure, observation_date=date, observation_work_start_time=work.work_start_time, observation_work_end_time=work.work_end_time)
             pointObservation.save()
 
             ## record current checkpoint list for this pointobservation 
