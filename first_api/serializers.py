@@ -95,7 +95,7 @@ class SettingSerializer(serializers.ModelSerializer):
 class PointObservationSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.PointObservation
-        fields = ('pk', 'observation_village', 'observation_zone','observation_work','observation_secure','observation_date')
+        fields = ('pk', 'observation_village', 'observation_zone','observation_work','observation_secure','observation_date','observation_work_start_time','observation_work_end_time')
 
 class PointObservationPointListSerializer(serializers.ModelSerializer):
     class Meta:

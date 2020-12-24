@@ -350,6 +350,9 @@ class PointObservation(models.Model):
     observation_work = models.ForeignKey(Work,null=True, blank=True, on_delete=models.DO_NOTHING)
     observation_secure = models.ForeignKey(SecureGuard,null=True, blank=True, on_delete=models.DO_NOTHING)
     observation_date = models.CharField(max_length=10)
+    observation_work_start_time = models.TimeField(null=True, blank=True)
+    observation_work_end_time = models.TimeField(null=True, blank=True)
+
     
     class Meta:
         unique_together = ('observation_village', 'observation_zone','observation_work','observation_secure','observation_date')
