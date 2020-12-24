@@ -1,7 +1,7 @@
 from django.db.models.fields import DateField
 from django.http.response import HttpResponseServerError
 from django.utils import dateparse
-from first_api.serializers import ZoneSerializer
+from first_api.serializers import WorkSerializer, ZoneSerializer
 from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -1122,6 +1122,34 @@ class WorkViewSet(viewsets.ModelViewSet):
     queryset = models.Work.objects.all()
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
+
+    @action(detail=True, methods = ['patch'])
+    def patch_work(self, request, pk):
+        work = self.get_object()
+        updateData = request.data
+        workSerializer = serializers.WorkSerializer(work, updateData, partial=True)
+        workSerializer.is_valid(raise_exception=True)
+        workSerializer.save()
+
+        currentDatetime = datetime.datetime.now()
+
+        if(work.work_start_time.hour >= work.work_end_time.hour):
+                if(currentDatetime.hour>=0 and currentDatetime.hour<work.work_start_time.hour):
+                    currentDatetime = currentDatetime - datetime.timedelta(hours=24)
+
+        isPOExist = models.PointObservation.objects.filter(observation_date = currentDatetime.date()).exists()
+        if(isPOExist==True):
+            pointObservation = models.PointObservation.objects.get(observation_date = currentDatetime.date())
+            updateData = {'observation_work_start_time':work.work_start_time, 'observation_work_end_time':work.work_end_time}
+            pointObservationSerializer = serializers.PointObservationSerializer(pointObservation,updateData,partial=True)
+            pointObservationSerializer.is_valid(raise_exception=True)
+            pointObservationSerializer.save()
+
+        result = workSerializer.data
+
+        return Response(result)
+
+   
 
     @action(detail=True, methods = 'GET')
     def get_villages_pk_works(self, request, pk):

@@ -252,7 +252,12 @@ get_villages_pk_checkincheckpoints = views.CheckinCheckpointViewSet.as_view({
 ## work 
 
 get_villages_pk_works = views.WorkViewSet.as_view({
-    'get': 'get_villages_pk_works'
+    'get': 'get_villages_pk_works',
+    
+})
+
+patch_work = views.WorkViewSet.as_view({
+    'patch': 'patch_work',
 })
 
 ## qrcodes 
@@ -602,6 +607,8 @@ urlpatterns = [
 
     ##work 
     path('villages/<int:pk>/works/', get_villages_pk_works ,name='get_villages_pk_works'),
+    path('works/update_work/<int:pk>/', patch_work ,name='patch_work'),
+    
 
     ##qr
     path('qrcodes/village/<int:village_pk>/homedetail/', get_qrcodes_village_pk_home_number_homedetails ,name='get_qrcodes_village_pk_home_number_homedetails'),
