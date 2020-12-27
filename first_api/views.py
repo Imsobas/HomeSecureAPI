@@ -2632,41 +2632,33 @@ class PointObservationRecordViewSet(viewsets.ModelViewSet):
 
             return notFoundHandling(result)
 
+    # @action(detail=True, methods='GET')
+    # def fetch_pointobservationrecord_timeslots_percent(self, request, pointobservation_pk):
+    #     """Get data for front of working history services, get Point Observation PK, and Secure data"""
+    #     # print(pointobservation_pk)
+    #     # print(timeslot)
+    #     # pointObservation = models.PointObservation.objects.only('pk').get(pk=pointobservation_pk)
+    #     isExistPO = models.PointObservation.objects.filter(pk=pointobservation_pk).exists()
+
+    #     if(isExistPO==False):
+    #         return Response({ "detail": "Not found point observation."},status=status.HTTP_404_NOT_FOUND)
+    #     else:
+    #         pointNum = models.PointObservationPointList.objects.filter(observation_pk=pointobservation_pk ).count()
+
+    #         pointObservationRecord = models.PointObservationRecord.objects.filter(observation_pk=pointobservation_pk).values('observation_timeslot').order_by().annotate(Count('checkpoint_pk'))
+
+    #         result = []
+    #         for item in pointObservationRecord:
+    #             temp = dict()
+    #             temp['timeslot'] = item['observation_timeslot']
+    #             temp['percent'] =  int((item['checkpoint_pk__count']/pointNum)*100)
+    #             result.append(temp)
+
+    #         return notFoundHandling(result)
+
     @action(detail=True, methods='GET')
-    def fetch_pointobservationrecord_timeslots_percent(self, request, pointobservation_pk):
-        """Get data for front of working history services, get Point Observation PK, and Secure data"""
-        # print(pointobservation_pk)
-        # print(timeslot)
-        # pointObservation = models.PointObservation.objects.only('pk').get(pk=pointobservation_pk)
-        isExistPO = models.PointObservation.objects.filter(pk=pointobservation_pk).exists()
-
-        if(isExistPO==False):
-            return Response({ "detail": "Not found point observation."},status=status.HTTP_404_NOT_FOUND)
-        else:
-            pointNum = models.PointObservationPointList.objects.filter(observation_pk=pointobservation_pk ).count()
-
-            pointObservationRecord = models.PointObservationRecord.objects.filter(observation_pk=pointobservation_pk).values('observation_timeslot').order_by().annotate(Count('checkpoint_pk'))
-
-            result = []
-            for item in pointObservationRecord:
-                temp = dict()
-                temp['timeslot'] = item['observation_timeslot']
-                temp['percent'] =  int((item['checkpoint_pk__count']/pointNum)*100)
-                result.append(temp)
-
-            return notFoundHandling(result)
-
-    @action(detail=True, methods='POST')
     def fetch_pointobservationrecord_percent_by_set_of_starttime_endtime(self, request, pointobservation_pk):
         """Get data for front of working history services, get Point Observation PK, and Secure data"""
-        # print(pointobservation_pk)
-        # print(timeslot)
-        # pointObservation = models.PointObservation.objects.only('pk').get(pk=pointobservation_pk)
-
-        data = request.data
-        print(data)
-        # dateTimePair = []
-        # for timeSlot in data:
 
         isExistPO = models.PointObservation.objects.filter(pk=pointobservation_pk).exists()
 
@@ -2677,17 +2669,17 @@ class PointObservationRecordViewSet(viewsets.ModelViewSet):
             por = models.PointObservationRecord.objects.filter(observation_pk=pointobservation_pk).all()
             serializer = serializers.PointObservationRecordSerializer(por,many=True)
             serializedPO = serializer.data
-            print(serializedPO)
-            # pointObservationRecord = models.PointObservationRecord.objects.filter(observation_pk=pointobservation_pk).values('observation_timeslot').order_by().annotate(Count('checkpoint_pk'))
-        
+
+            poRecord = []
+            for po in serializedPO:
+                temp = dict()
+                temp['observation_checkin_time'] = po['observation_checkin_time']
+                temp['checkpoint_pk'] = po['checkpoint_pk']
+                poRecord.append(temp)
+
             result = dict()
             result['checkpoint_count'] = pointNum
-            result['pointobservation_record'] = serializedPO
-            # for item in pointObservationRecord:
-            #     temp = dict()
-            #     temp['timeslot'] = item['observation_timeslot']
-            #     temp['percent'] =  int((item['checkpoint_pk__count']/pointNum)*100)
-            #     result.append(temp)
+            result['pointobservation_record'] = poRecord
 
             return notFoundHandling(result)
 

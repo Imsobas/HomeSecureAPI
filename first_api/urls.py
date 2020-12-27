@@ -370,8 +370,7 @@ fetch_pointobservationrecord_percent = views.PointObservationRecordViewSet.as_vi
 })
 
 fetch_pointobservationrecord_timeslots_percent = views.PointObservationRecordViewSet.as_view({
-    'get': 'fetch_pointobservationrecord_timeslots_percent',
-    'post': 'fetch_pointobservationrecord_percent_by_set_of_starttime_endtime'
+    'get': 'fetch_pointobservationrecord_percent_by_set_of_starttime_endtime'
 })
 
 fetch_pointobservationrecord_pointlist = views.PointObservationPointListViewSet.as_view({
