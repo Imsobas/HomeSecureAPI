@@ -2664,9 +2664,9 @@ class PointObservationRecordViewSet(viewsets.ModelViewSet):
         # pointObservation = models.PointObservation.objects.only('pk').get(pk=pointobservation_pk)
 
         data = request.data
+        print(data)
         # dateTimePair = []
         # for timeSlot in data:
-    
 
         isExistPO = models.PointObservation.objects.filter(pk=pointobservation_pk).exists()
 
@@ -2674,15 +2674,20 @@ class PointObservationRecordViewSet(viewsets.ModelViewSet):
             return Response({ "detail": "Not found point observation."},status=status.HTTP_404_NOT_FOUND)
         else:
             pointNum = models.PointObservationPointList.objects.filter(observation_pk=pointobservation_pk ).count()
-
-            pointObservationRecord = models.PointObservationRecord.objects.filter(observation_pk=pointobservation_pk).values('observation_timeslot').order_by().annotate(Count('checkpoint_pk'))
-
-            result = []
-            for item in pointObservationRecord:
-                temp = dict()
-                temp['timeslot'] = item['observation_timeslot']
-                temp['percent'] =  int((item['checkpoint_pk__count']/pointNum)*100)
-                result.append(temp)
+            por = models.PointObservationRecord.objects.filter(observation_pk=pointobservation_pk).all()
+            serializer = serializers.PointObservationRecordSerializer(por,many=True)
+            serializedPO = serializer.data
+            print(serializedPO)
+            # pointObservationRecord = models.PointObservationRecord.objects.filter(observation_pk=pointobservation_pk).values('observation_timeslot').order_by().annotate(Count('checkpoint_pk'))
+        
+            result = dict()
+            result['checkpoint_count'] = pointNum
+            result['pointobservation_record'] = serializedPO
+            # for item in pointObservationRecord:
+            #     temp = dict()
+            #     temp['timeslot'] = item['observation_timeslot']
+            #     temp['percent'] =  int((item['checkpoint_pk__count']/pointNum)*100)
+            #     result.append(temp)
 
             return notFoundHandling(result)
 
