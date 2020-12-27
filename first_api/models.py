@@ -374,8 +374,8 @@ class PointObservationRecord(models.Model):
     observation_timeslot = models.IntegerField(default=0)
     checkpoint_pk = models.ForeignKey(Checkpoint, null=True, blank=True, on_delete=models.DO_NOTHING)
 
-    class Meta:
-        unique_together = ('observation_pk', 'observation_timeslot','checkpoint_pk')
+    # class Meta:
+    #     unique_together = ('observation_pk', 'observation_timeslot','checkpoint_pk')
     
 class MaintenanceFeePeriod(models.Model):
     fee_village = models.ForeignKey(Village,null=True, blank=True, on_delete=models.DO_NOTHING)

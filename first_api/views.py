@@ -2239,6 +2239,9 @@ class PointObservationViewSet(viewsets.ModelViewSet):
         end_time = dateparse.parse_datetime(end_time)
         current_date_time = dateparse.parse_datetime(date)
         date = date.split("T")[0]
+
+        print("date")
+        print(date)
         
         isWorkExist = models.Work.objects.filter(pk=work_pk).exists()
         if(isWorkExist == False):
@@ -2252,6 +2255,9 @@ class PointObservationViewSet(viewsets.ModelViewSet):
                 if(current_date_time.hour>=0 and current_date_time.hour<work.work_start_time.hour):
                     current_date_time = current_date_time - datetime.timedelta(hours=24)
                     date = str(current_date_time).split(" ")[0]
+
+                    print("meet condition")
+                    print(date)
 
         isExistVillage = models.Village.objects.filter(pk = village_pk).exists()
         isExistZone = models.Zone.objects.filter(pk = zone_pk).exists()
@@ -2383,16 +2389,13 @@ class PointObservationViewSet(viewsets.ModelViewSet):
             return Response({ "detail": "Not found village or zone"},status=status.HTTP_404_NOT_FOUND)
         else:
             ### checking if date need to alternate to datebefore (because pointObservation use date as composite key)
-            
             if(work.work_start_time.hour >= work.work_end_time.hour):
                 if(currentDatetime.hour>=0 and currentDatetime.hour<work.work_start_time.hour):
-                    date = timeUtility.getDateStringFromDateTime(currentDatetime - datetime.timedelta(hours=24))
+                    currentDatetime = currentDatetime - datetime.timedelta(hours=24)
+                    date = timeUtility.getDateStringFromDateTime(currentDatetime)
 
         isExistPO = models.PointObservation.objects.filter(observation_village=data['observation_village'], observation_zone=data['observation_zone'], observation_work=data['observation_work'], observation_secure=data['observation_secure'], observation_date=date).exists()
-
-        #### TODO: check and adjust increase, decrease date 
-        adjustedDate = timeUtility.getDateStringFromDateTime(datetime.datetime.now())
-
+    
         if(isExistPO==False):
             ## create new  pointObservation
             village = models.Village.objects.only('pk').get(pk=data['observation_village'])
@@ -2437,6 +2440,8 @@ class PointObservationViewSet(viewsets.ModelViewSet):
 
             ## check the exist PointObservationRecord
             isExistPOR = models.PointObservationRecord.objects.filter(observation_pk=pointObservation, observation_checkin_time__range=(start_time,end_time),checkpoint_pk = data['checkpoint_pk']).exists()
+            print("isExistPOR")
+            print(isExistPOR)
             if(isExistPOR==True):
                 ## already have pointObservationRecord
                 pointObservationRecord = models.PointObservationRecord.objects.only('pk').get(observation_pk=pointObservation, observation_checkin_time__range=(start_time,end_time),checkpoint_pk = data['checkpoint_pk'])
@@ -2634,6 +2639,36 @@ class PointObservationRecordViewSet(viewsets.ModelViewSet):
         # print(pointobservation_pk)
         # print(timeslot)
         # pointObservation = models.PointObservation.objects.only('pk').get(pk=pointobservation_pk)
+        isExistPO = models.PointObservation.objects.filter(pk=pointobservation_pk).exists()
+
+        if(isExistPO==False):
+            return Response({ "detail": "Not found point observation."},status=status.HTTP_404_NOT_FOUND)
+        else:
+            pointNum = models.PointObservationPointList.objects.filter(observation_pk=pointobservation_pk ).count()
+
+            pointObservationRecord = models.PointObservationRecord.objects.filter(observation_pk=pointobservation_pk).values('observation_timeslot').order_by().annotate(Count('checkpoint_pk'))
+
+            result = []
+            for item in pointObservationRecord:
+                temp = dict()
+                temp['timeslot'] = item['observation_timeslot']
+                temp['percent'] =  int((item['checkpoint_pk__count']/pointNum)*100)
+                result.append(temp)
+
+            return notFoundHandling(result)
+
+    @action(detail=True, methods='POST')
+    def fetch_pointobservationrecord_percent_by_set_of_starttime_endtime(self, request, pointobservation_pk):
+        """Get data for front of working history services, get Point Observation PK, and Secure data"""
+        # print(pointobservation_pk)
+        # print(timeslot)
+        # pointObservation = models.PointObservation.objects.only('pk').get(pk=pointobservation_pk)
+
+        data = request.data
+        # dateTimePair = []
+        # for timeSlot in data:
+    
+
         isExistPO = models.PointObservation.objects.filter(pk=pointobservation_pk).exists()
 
         if(isExistPO==False):
