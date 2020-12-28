@@ -2256,9 +2256,6 @@ class PointObservationViewSet(viewsets.ModelViewSet):
                     current_date_time = current_date_time - datetime.timedelta(hours=24)
                     date = str(current_date_time).split(" ")[0]
 
-                    print("meet condition")
-                    print(date)
-
         isExistVillage = models.Village.objects.filter(pk = village_pk).exists()
         isExistZone = models.Zone.objects.filter(pk = zone_pk).exists()
 
@@ -2553,13 +2550,6 @@ class PointObservationPointListViewSet(viewsets.ModelViewSet):
 
         start_time = dateparse.parse_datetime(start_time)
         end_time = dateparse.parse_datetime(end_time)
-
-        print("debuging from fetch_pointobservationrecord_pointlist")
-        print(start_time)
-        print(end_time)
-        print(start_time.time)
-        print(end_time.time)
-
       
         isExistPO = models.PointObservation.objects.filter(pk=pointobservation_pk).exists()
 
@@ -2585,15 +2575,15 @@ class PointObservationPointListViewSet(viewsets.ModelViewSet):
                 pointDict['point_lat'] = checkpoint[0]['point_lat']
                 pointDict['point_lon']= checkpoint[0]['point_lon']
                 
-                isExistPOR = models.PointObservationRecord.objects.filter(observation_pk=pointobservation_pk, observation_checkin_time__time__range=(datetime.time(start_time.hour,start_time.minute), datetime.time(end_time.hour,end_time.minute)), checkpoint_pk = pointPk).exists()
-
+                isExistPOR = models.PointObservationRecord.objects.filter(observation_pk=pointobservation_pk, observation_checkin_time__range=(start_time, end_time), checkpoint_pk = pointPk).exists()
+                # observation_checkin_time__time__range=(datetime.time(start_time.hour,start_time.minute)
                 if(isExistPOR==False):
                     pointDict['checked_status'] = False
                     pointDict['checkin_time']= None
                     pointDict['checkout_time'] = None
                     result.append(pointDict)
                 else: 
-                    porQuerySet = models.PointObservationRecord.objects.filter(observation_pk=pointobservation_pk, observation_checkin_time__time__range=(datetime.time(start_time.hour,start_time.minute), datetime.time(end_time.hour,end_time.minute))).all()
+                    porQuerySet = models.PointObservationRecord.objects.filter(observation_pk=pointobservation_pk, observation_checkin_time__range=(start_time, end_time), checkpoint_pk = pointPk).all()
                     serializer = serializers.PointObservationRecordSerializer(porQuerySet,many=True)
                     porData = serializer.data
                     
