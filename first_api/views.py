@@ -2548,8 +2548,17 @@ class PointObservationPointListViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,)
 
     @action(detail=True, methods='GET')
-    def fetch_pointobservationrecord_pointlist(self, request, pointobservation_pk, timeslot):
+    def fetch_pointobservationrecord_pointlist(self, request, pointobservation_pk, start_time, end_time):
         """Get data for detail of working history services"""
+
+        start_time = dateparse.parse_datetime(start_time)
+        end_time = dateparse.parse_datetime(end_time)
+
+        print("debuging from fetch_pointobservationrecord_pointlist")
+        print(start_time)
+        print(end_time)
+        print(start_time.time)
+        print(end_time.time)
 
       
         isExistPO = models.PointObservation.objects.filter(pk=pointobservation_pk).exists()
@@ -2576,7 +2585,7 @@ class PointObservationPointListViewSet(viewsets.ModelViewSet):
                 pointDict['point_lat'] = checkpoint[0]['point_lat']
                 pointDict['point_lon']= checkpoint[0]['point_lon']
                 
-                isExistPOR = models.PointObservationRecord.objects.filter(observation_pk=pointobservation_pk, observation_timeslot= timeslot, checkpoint_pk = pointPk).exists()
+                isExistPOR = models.PointObservationRecord.objects.filter(observation_pk=pointobservation_pk, observation_checkin_time__time__range=(datetime.time(start_time.hour,start_time.minute), datetime.time(end_time.hour,end_time.minute)), checkpoint_pk = pointPk).exists()
 
                 if(isExistPOR==False):
                     pointDict['checked_status'] = False
@@ -2584,7 +2593,7 @@ class PointObservationPointListViewSet(viewsets.ModelViewSet):
                     pointDict['checkout_time'] = None
                     result.append(pointDict)
                 else: 
-                    porQuerySet = models.PointObservationRecord.objects.filter(observation_pk=pointobservation_pk, observation_timeslot= timeslot).all()
+                    porQuerySet = models.PointObservationRecord.objects.filter(observation_pk=pointobservation_pk, observation_checkin_time__time__range=(datetime.time(start_time.hour,start_time.minute), datetime.time(end_time.hour,end_time.minute))).all()
                     serializer = serializers.PointObservationRecordSerializer(porQuerySet,many=True)
                     porData = serializer.data
                     
@@ -2595,13 +2604,6 @@ class PointObservationPointListViewSet(viewsets.ModelViewSet):
                     result.append(pointDict)
 
             return notFoundHandling(result)
-            
-            # pointNum = models.PointObservationPointList.objects.filter(observation_pk=pointobservation_pk ).count()
-            # checkedPointNum = models.PointObservationRecord.objects.filter(observation_pk=pointobservation_pk, observation_timeslot=timeslot).count()
-            
-            # result = {'percent':int((checkedPointNum/pointNum)*100)}
-
-            # return notFoundHandling(result)
 
 
     
