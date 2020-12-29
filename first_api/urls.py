@@ -631,7 +631,7 @@ urlpatterns = [
     
 
     ##work 
-    path('villages/<int:pk>/works/', get_villages_pk_works ,name='get_villages_pk_works'),
+    path('villages/<str:pk>/works/', get_villages_pk_works ,name='get_villages_pk_works'),
     path('works/update_work/<int:pk>/', patch_work ,name='patch_work'),
     
 

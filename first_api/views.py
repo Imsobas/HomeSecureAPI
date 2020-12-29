@@ -1189,6 +1189,14 @@ class WorkViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods = 'GET')
     def get_villages_pk_works(self, request, pk):
         """ Return all work to specific village"""
+
+        try:
+            int(pk)
+        except:
+            return Response({ "detail": "Not found."},status=status.HTTP_404_NOT_FOUND)
+
+        pk = int(pk)
+        
         querySet = models.Work.objects.filter(work_village=pk,is_active=True).all()
         serializer = serializers.WorkSerializer(querySet,many=True)
         result = serializer.data
