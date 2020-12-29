@@ -435,6 +435,10 @@ class VillageViewSet(viewsets.ModelViewSet):
             # isExistCheckPoint
             # isExistCheckInCheckPoint
             # isExistWork
+            
+            # isExistMaintenance
+            # isExistVote
+            # isExistProblemReport
 
 
             village = models.Village.objects.get(pk=village_pk)
@@ -1174,11 +1178,12 @@ class WorkViewSet(viewsets.ModelViewSet):
 
         isPOExist = models.PointObservation.objects.filter(observation_date = currentDatetime.date()).exists()
         if(isPOExist==True):
-            pointObservation = models.PointObservation.objects.get(observation_date = currentDatetime.date())
-            updateData = {'observation_work_start_time':work.work_start_time, 'observation_work_end_time':work.work_end_time}
-            pointObservationSerializer = serializers.PointObservationSerializer(pointObservation,updateData,partial=True)
-            pointObservationSerializer.is_valid(raise_exception=True)
-            pointObservationSerializer.save()
+            pointObservation = models.PointObservation.objects.filter(observation_date = currentDatetime.date()).update(observation_work_start_time=work.work_start_time,observation_work_end_time=work.work_end_time)
+            # pointObservation = models.PointObservation.objects.filter(observation_date = currentDatetime.date())
+            # updateData = {'observation_work_start_time':work.work_start_time, 'observation_work_end_time':work.work_end_time}
+            # pointObservationSerializer = serializers.PointObservationSerializer(pointObservation,updateData,partial=True)
+            # pointObservationSerializer.is_valid(raise_exception=True)
+            # pointObservationSerializer.save() 
 
         result = workSerializer.data
 
@@ -1196,7 +1201,7 @@ class WorkViewSet(viewsets.ModelViewSet):
             return Response({ "detail": "Not found."},status=status.HTTP_404_NOT_FOUND)
 
         pk = int(pk)
-        
+
         querySet = models.Work.objects.filter(work_village=pk,is_active=True).all()
         serializer = serializers.WorkSerializer(querySet,many=True)
         result = serializer.data
@@ -1990,7 +1995,7 @@ class PointObservationViewSet(viewsets.ModelViewSet):
         if(isExistPO==False):
             return Response({ "detail": "Not found."},status=status.HTTP_404_NOT_FOUND)
         else:
-            pointObservation = models.PointObservation.objects.filter(observation_village=village_pk, observation_date=date).values_list('pk','observation_work','observation_secure','observation_work_start_time','observation_work_end_time')
+            pointObservation = models.PointObservation.objects.filter(observation_village=village_pk, observation_date=date).values_list('pk','observation_work','observation_secure','observation_work_start_time','observation_work_end_time','observation_zone')
             
             result = []
 
@@ -2001,6 +2006,7 @@ class PointObservationViewSet(viewsets.ModelViewSet):
                 securePk = po[2]
                 startTimeFromPO = po[3]
                 endTimeFromP0 = po[4]
+                zonePk = po[5]
                 workQuerySet = models.Work.objects.filter(pk=workPk).last()
                 serializer = serializers.WorkSerializer(workQuerySet)
                 workData = serializer.data
@@ -2019,7 +2025,7 @@ class PointObservationViewSet(viewsets.ModelViewSet):
                 newSecureData['secure_firstname'] = secureData['secure_firstname']
                 newSecureData['secure_lastname'] = secureData['secure_lastname']
                 newSecureData['secure_type'] = secureData['secure_type']
-                zonePk = secureData['secure_zone']
+                # zonePk = secureData['secure_zone']
                 
                 zoneQuerySet = models.Zone.objects.filter(pk=zonePk).last()
                 serializer = serializers.ZoneSerializer(zoneQuerySet)
@@ -2044,7 +2050,7 @@ class PointObservationViewSet(viewsets.ModelViewSet):
         if(isExistPO==False):
             return Response({ "detail": "Not found."},status=status.HTTP_404_NOT_FOUND)
         else:
-            pointObservation = models.PointObservation.objects.filter(observation_village=village_pk, observation_work=work_pk, observation_date=date).values_list('pk','observation_work','observation_secure','observation_work_start_time','observation_work_end_time')
+            pointObservation = models.PointObservation.objects.filter(observation_village=village_pk, observation_work=work_pk, observation_date=date).values_list('pk','observation_work','observation_secure','observation_work_start_time','observation_work_end_time','observation_zone')
             
             result = []
 
@@ -2056,6 +2062,7 @@ class PointObservationViewSet(viewsets.ModelViewSet):
                 securePk = po[2]
                 startTimeFromPO = po[3]
                 endTimeFromP0 = po[4]
+                zonePk = po[5]
                 workQuerySet = models.Work.objects.filter(pk=workPk).last()
                 serializer = serializers.WorkSerializer(workQuerySet)
                 workData = serializer.data
@@ -2075,7 +2082,7 @@ class PointObservationViewSet(viewsets.ModelViewSet):
                 newSecureData['secure_firstname'] = secureData['secure_firstname']
                 newSecureData['secure_lastname'] = secureData['secure_lastname']
                 newSecureData['secure_type'] = secureData['secure_type']
-                zonePk = secureData['secure_zone']
+                # zonePk = secureData['secure_zone']
                 
                 zoneQuerySet = models.Zone.objects.filter(pk=zonePk).last()
                 serializer = serializers.ZoneSerializer(zoneQuerySet)
@@ -2102,7 +2109,7 @@ class PointObservationViewSet(viewsets.ModelViewSet):
         if(isExistPO==False):
             return Response({ "detail": "Not found."},status=status.HTTP_404_NOT_FOUND)
         else:
-            pointObservation = models.PointObservation.objects.filter(observation_village=village_pk, observation_zone=zone_pk, observation_date=date).values_list('pk','observation_work','observation_secure','observation_work_start_time','observation_work_end_time')
+            pointObservation = models.PointObservation.objects.filter(observation_village=village_pk, observation_zone=zone_pk, observation_date=date).values_list('pk','observation_work','observation_secure','observation_work_start_time','observation_work_end_time','observation_zone')
 
             result = []
 
@@ -2114,6 +2121,7 @@ class PointObservationViewSet(viewsets.ModelViewSet):
                 securePk = po[2]
                 startTimeFromPO = po[3]
                 endTimeFromP0 = po[4]
+                zonePk = po[5]
                 workQuerySet = models.Work.objects.filter(pk=workPk).last()
                 serializer = serializers.WorkSerializer(workQuerySet)
                 workData = serializer.data
@@ -2132,7 +2140,7 @@ class PointObservationViewSet(viewsets.ModelViewSet):
                 newSecureData['secure_firstname'] = secureData['secure_firstname']
                 newSecureData['secure_lastname'] = secureData['secure_lastname']
                 newSecureData['secure_type'] = secureData['secure_type']
-                zonePk = secureData['secure_zone']
+                # zonePk = secureData['secure_zone']
                 
                 zoneQuerySet = models.Zone.objects.filter(pk=zonePk).last()
                 serializer = serializers.ZoneSerializer(zoneQuerySet)
@@ -2159,7 +2167,7 @@ class PointObservationViewSet(viewsets.ModelViewSet):
         if(isExistPO==False):
             return Response({ "detail": "Not found."},status=status.HTTP_404_NOT_FOUND)
         else:
-            pointObservation = models.PointObservation.objects.filter(observation_village=village_pk, observation_zone=zone_pk, observation_work=work_pk, observation_date=date).values_list('pk','observation_work','observation_secure','observation_work_start_time','observation_work_end_time')
+            pointObservation = models.PointObservation.objects.filter(observation_village=village_pk, observation_zone=zone_pk, observation_work=work_pk, observation_date=date).values_list('pk','observation_work','observation_secure','observation_work_start_time','observation_work_end_time','observation_zone')
             
             result = []
 
@@ -2171,6 +2179,7 @@ class PointObservationViewSet(viewsets.ModelViewSet):
                 securePk = po[2]
                 startTimeFromPO = po[3]
                 endTimeFromP0 = po[4]
+                zonePk = po[5]
                 workQuerySet = models.Work.objects.filter(pk=workPk).last()
                 serializer = serializers.WorkSerializer(workQuerySet)
                 workData = serializer.data
@@ -2189,7 +2198,7 @@ class PointObservationViewSet(viewsets.ModelViewSet):
                 newSecureData['secure_firstname'] = secureData['secure_firstname']
                 newSecureData['secure_lastname'] = secureData['secure_lastname']
                 newSecureData['secure_type'] = secureData['secure_type']
-                zonePk = secureData['secure_zone']
+                # zonePk = secureData['secure_zone']
         
                 zoneQuerySet = models.Zone.objects.filter(pk=zonePk).last()
                 serializer = serializers.ZoneSerializer(zoneQuerySet)
