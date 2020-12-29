@@ -2242,7 +2242,7 @@ class PointObservationViewSet(viewsets.ModelViewSet):
 
         isWorkExist = models.Work.objects.filter(pk=work_pk).exists()
         if(isWorkExist == False):
-            return Response({ "detail": "Not found village or zone"},status=status.HTTP_404_NOT_FOUND)
+            return Response({ "detail": "Not found work"},status=status.HTTP_404_NOT_FOUND)
         else:
             work = models.Work.objects.get(pk=work_pk)
     
@@ -2265,7 +2265,7 @@ class PointObservationViewSet(viewsets.ModelViewSet):
 
             isCheckPointExist = models.Checkpoint.objects.filter(point_village=village, point_zone=zone, point_active = True, is_active=True).exists()
             if(isCheckPointExist == False):
-                return Response({ "detail": "Not found village or zone"},status=status.HTTP_404_NOT_FOUND)
+                return Response({ "detail": "Not found any checkpoints"},status=status.HTTP_404_NOT_FOUND)
             else:
                 
                 checkpoints = models.Checkpoint.objects.filter(point_village=village, point_zone=zone, point_active = True, is_active=True).all()
