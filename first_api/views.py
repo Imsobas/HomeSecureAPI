@@ -1825,6 +1825,11 @@ class QrCodeViewSet(viewsets.ModelViewSet):
             
         return notFoundHandling(result)
 
+    @action(detail=True, methods = 'GET')
+    def get_historyservice_list_villages_null_dates_year_month_day_qrcodes(self, request, year, month, day):
+        """ Return all qr codeinformation specific for qr history list service """
+        return Response({ "detail": "Not found."},status=status.HTTP_404_NOT_FOUND)
+
     ## qr_history_screen_services
     @action(detail=True, methods = 'GET')
     def get_historyservice_list_villages_pk_dates_year_month_day_qrcodes(self, request, village_pk, year, month, day):

@@ -303,6 +303,11 @@ get_villages_pk_contents_content_qrcodes = views.QrCodeViewSet.as_view({
      'post': 'get_villages_pk_contents_content_qrcodes'
 })
 
+## qr_history_screen services (for null village) ## using
+get_historyservice_list_villages_null_dates_year_month_day_qrcodes = views.QrCodeViewSet.as_view({
+     'get': 'get_historyservice_list_villages_null_dates_year_month_day_qrcodes'
+})
+
 ## qr_history_screen services (filter by village, zone, date) ## using
 get_historyservice_list_villages_pk_zones_pk_dates_year_month_day_qrcodes = views.QrCodeViewSet.as_view({
      'get': 'get_historyservice_list_villages_pk_zones_pk_dates_year_month_day_qrcodes'
@@ -645,9 +650,10 @@ urlpatterns = [
     path('historyservice/list/villages/<int:village_pk>/zones/<int:zone_pk>/qrcodes/', get_historyservice_list_villages_pk_zones_pk_qrcodes, name = 'get_historyservice_list_villages_pk_zones_pk_qrcodes'),
     ## currently use this
     path('historyservice/list/villages/<int:village_pk>/dates/<int:year>/<int:month>/<int:day>/qrcodes/', get_historyservice_list_villages_pk_dates_year_month_day_qrcodes, name = 'get_historyservice_list_villages_pk_dates_year_month_day_qrcodes'),
+    ## currently use this
+    path('historyservice/list/villages/null/dates/<int:year>/<int:month>/<int:day>/qrcodes/',get_historyservice_list_villages_null_dates_year_month_day_qrcodes,name='get_historyservice_list_villages_null_dates_year_month_day_qrcodes'),
     path('historyservice/list/villages/<int:village_pk>/qrcodes/', get_historyservice_list_villages_pk_qrcodes, name = 'get_historyservice_list_villages_pk_qrcodes'),
     path('qrcodes/create_qrcodes_nocoupon/', create_qrcodes_home_pk_nocopon, name = 'create_qrcodes_home_pk_nocopon'),
-
 
     #point observation
     path('testDateCreation/',testDateCreation, name='testDateCreation'),
