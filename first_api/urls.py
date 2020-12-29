@@ -75,6 +75,11 @@ delete_device = views.CustomFCMDeviceViewSet.as_view({
 
 
 ## village
+ 
+temporary_delete_village = views.VillageViewSet.as_view({
+    'patch':'temporary_delete_village'
+})
+
 get_villages_active = views.VillageViewSet.as_view({
     'get': 'get_villages_active'
 })
@@ -123,6 +128,11 @@ get_villages_pk_zone_pk_single_villages_single_zones = views.ZoneViewSet.as_view
 
 
 ## home
+
+temporary_delete_home = views.HomeViewSet.as_view({
+    'patch': 'temporary_delete_home'
+})
+
 create_home_and_check_duplicate = views.HomeViewSet.as_view({
     'post': 'create_home_and_check_duplicate'
 })
@@ -365,6 +375,10 @@ fetch_pointobservation_null_zone_null_work = views.PointObservationViewSet.as_vi
     'get': 'fetch_pointobservation_null_zone_null_work'
 })
 
+fetch_pointobservation_null_village_null_zone_null_work = views.PointObservationViewSet.as_view({
+    'get': 'fetch_pointobservation_null_village_null_zone_null_work'
+})
+
 fetch_pointobservationrecord_percent = views.PointObservationRecordViewSet.as_view({
     'get': 'fetch_pointobservationrecord_percent'
 })
@@ -496,6 +510,10 @@ fetch_workingrecord_null_zone_null_work = views.WorkingRecordViewSet.as_view({
     'get': 'fetch_workingrecord_null_zone_null_work'
 })
 
+fetch_workingrecord_null_village_null_zone_null_work = views.WorkingRecordViewSet.as_view({
+    'get': 'fetch_workingrecord_null_village_null_zone_null_work'
+})
+
 fetch_detailed_workingrecord = views.WorkingRecordViewSet.as_view({
     'get': 'fetch_detailed_workingrecord'
 })
@@ -537,6 +555,7 @@ urlpatterns = [
     
 
     ## village end point 
+    path('villages/<int:village_pk>/temporary_delete/',temporary_delete_village,name="temporary_delete_village"),
     path('villages_active/',get_villages_active,name='get_villages_active'),
     path('companys/<int:pk>/villages/',  get_companys_pk_villages, name='  get_companys_pk_villages'), ## conpany adapted
     path('villages/location/<int:villagePk>', get_villages_location_pk, name='get_villages_location_pk'),
@@ -555,6 +574,7 @@ urlpatterns = [
     
     
     ##home end point
+    path('home/<int:home_pk>/temporary_delete/',temporary_delete_home, name='temporary_delete_home'),
     path('homes/create_home_and_check_duplicate', create_home_and_check_duplicate, name='create_home_and_check_duplicate'),
     path('homes_active/', get_homes_active, name='get_homes_active'),
     path('villages/<int:village_pk>/homes/',get_villages_pk_homes, name='get_villages_pk_homes'),
@@ -639,6 +659,7 @@ urlpatterns = [
     path('fetch_pointobservation/villages/<int:village_pk>/zones/<int:zone_pk>/works/null/dates/<str:date>/', fetch_pointobservation_null_work ,name='fetch_pointobservation_null_work'),
     path('fetch_pointobservation/villages/<int:village_pk>/zones/null/works/<int:work_pk>/dates/<str:date>/', fetch_pointobservation_null_zone ,name='fetch_pointobservation_null_zone'),
     path('fetch_pointobservation/villages/<int:village_pk>/zones/null/works/null/dates/<str:date>/', fetch_pointobservation_null_zone_null_work ,name='fetch_pointobservation_null_zone_null_work'),
+    path('fetch_pointobservation/villages/null/zones/null/works/null/dates/<str:date>/',     fetch_pointobservation_null_village_null_zone_null_work ,name='    fetch_pointobservation_null_village_null_zone_null_work'),
     path('fetch_pointobservationrecord/pointobservation/<int:pointobservation_pk>/timeslots/<int:timeslot>/percent/',fetch_pointobservationrecord_percent,name='fetch_pointobservationrecord_percent'),
     path('fetch_pointobservationrecord/pointobservation/<int:pointobservation_pk>/timeslots/percent/', fetch_pointobservationrecord_timeslots_percent,name='fetch_pointobservationrecord_timeslots_percent'),
     path('fetch_pointobservationrecord_pointlist/pointobservation/<int:pointobservation_pk>/start_time/<str:start_time>/end_time/<str:end_time>/', fetch_pointobservationrecord_pointlist,name='fetch_pointobservationrecord_pointlist'),
@@ -689,6 +710,7 @@ urlpatterns = [
     path('fetch_workingrecord/villages/<int:village_pk>/zones/null/works/<int:work_pk>/dates/<str:date_str>/', fetch_workingrecord_null_zone, name='fetch_workingrecord_null_zone'),
     path('fetch_workingrecord/villages/<int:village_pk>/zones/<int:zone_pk>/works/null/dates/<str:date_str>/', fetch_workingrecord_null_work, name='fetch_workingrecord_null_work'),
     path('fetch_workingrecord/villages/<int:village_pk>/zones/null/works/null/dates/<str:date_str>/', fetch_workingrecord_null_zone_null_work, name='fetch_workingrecord_null_zone_null_work'),
+    path('fetch_workingrecord/villages/null/zones/null/works/null/dates/<str:date_str>/', fetch_workingrecord_null_village_null_zone_null_work, name='fetch_workingrecord_null_village_null_zone_null_work'),
     path('detailed_fetch_workingrecord/villages/<int:village_pk>/zones/<int:zone_pk>/works/<int:work_pk>/dates/<str:date_str>/secure_guard/<int:secure_pk>/', fetch_detailed_workingrecord, name='fetch_detailed_workingrecord'),
 
     ##notification 

@@ -419,6 +419,34 @@ class VillageViewSet(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
 
+    @action(detail=True, methods = ['patch'])
+    def temporary_delete_village(self, request, village_pk):
+        "temporary delete village by patch is_active = false, and checkin foreign key constraint"
+
+        isExistVillage = models.Village.objects.filter(pk=village_pk).exists()
+        if(isExistVillage==False):
+            return Response({"detail": "Not found village"},status=status.HTTP_400_BAD_REQUEST)
+        else:
+
+            # isExistZone
+            # isExistHome
+            # isExistGenUser
+            # isExistSecure
+            # isExistCheckPoint
+            # isExistCheckInCheckPoint
+            # isExistWork
+
+
+            village = models.Village.objects.get(pk=village_pk)
+            updateData = {'is_active':False}
+            serializer = serializers.VillageSerializer(village,updateData,partial=True)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+
+            
+
+            return Response(serializer.data)
+
     
 
     @action(detail=True, methods=['post'])
@@ -671,23 +699,28 @@ class HomeViewSet(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
 
+    @action(detail=True, methods = ['patch'])
+    def temporary_delete_home(self, request, home_pk):
+        "temporary delete home by patch is_active = false, and checkin foreign key constraint"
+
+        isExistHome = models.Home.objects.filter(pk=home_pk).exists()
+        if(isExistHome==False):
+            return Response({"detail": "Not found home"},status=status.HTTP_400_BAD_REQUEST)
+        else:
+            home = models.Home.objects.get(pk=home_pk)
+            updateData = {'is_active':False}
+            serializer = serializers.HomeSerializer(home,updateData,partial=True)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+
+            return Response(serializer.data)
+
+
     @action(detail=True, methods=['post'])
     def create_home_and_check_duplicate(self, request):
         "create home and check is it have duplicate home"
 
         data = request.data 
-
-        # "home_number": home.number,
-        #   "home_address": home.address,
-        #   "home_company": auth.companyPk,
-        #   "home_village": home.homeVillagePk,
-        #   "home_zone": home.homeZonePk,
-        #   "home_lat": home.lat,
-        #   "home_lon": home.lon,
-        #   "house_space": home.space,
-        #   "home_vote_qouta": home.voteQuota,
-
-        
 
         isExistHome = models.Home.objects.filter(home_number=data["home_number"],home_village=data["home_village"], is_active=True).exists()
         if(isExistHome==True):
@@ -1953,6 +1986,10 @@ class PointObservationViewSet(viewsets.ModelViewSet):
         newZoneData['zone_number'] = zoneData['zone_number']
         return notFoundHandling(newZoneData)
 
+    @action(detail=True, methods='GET')
+    def fetch_pointobservation_null_village_null_zone_null_work(self, request, date):
+        """Get data for front of working history services, get Point Observation PK, and Secure data"""
+        return Response({ "detail": "Not found."},status=status.HTTP_404_NOT_FOUND)
 
     @action(detail=True, methods='GET')
     def fetch_pointobservation_null_zone_null_work(self, request, village_pk, date):
@@ -3601,6 +3638,12 @@ class WorkingRecordViewSet(viewsets.ModelViewSet):
             
 
             return notFoundHandling(result)
+
+    @action(detail=True, methods = 'GET')
+    def fetch_workingrecord_null_village_null_zone_null_work(self, request, date_str):
+        """ Return all votetopics according to specific village """
+        return Response({ "detail": "Not found."},status=status.HTTP_404_NOT_FOUND)
+
 
 
     @action(detail=True, methods = 'GET')
