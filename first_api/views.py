@@ -916,25 +916,27 @@ class ManagerViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods = ['delete'])
     def permanent_delete_manager_with_delete_username(self, request, user_pk):
         
-        isExist = models.UserProfile.objects.filter(pk=user_pk).exists()
-        if(isExist==False):
-           return Response({ "detail": "Not found user"},status=status.HTTP_404_NOT_FOUND)
+        if(request.user.pk==user_pk):
+            return Response({ "detail": "Cannot delete own user"},status=status.HTTP_502_BAD_GATEWAY)
         else:
-
-            username = models.UserProfile.objects.get(pk=user_pk)
-            
-            isManagerExist = models.Manager.objects.filter(manager_username=username).exists()
-            if(isManagerExist==False):
-                 return Response({ "detail": "Not found manager user"},status=status.HTTP_404_NOT_FOUND)
+            isExist = models.UserProfile.objects.filter(pk=user_pk).exists()
+            if(isExist==False):
+                return Response({ "detail": "Not found user"},status=status.HTTP_404_NOT_FOUND)
             else:
-                manager = models.Manager.objects.get(manager_username=username)
-                manager.delete()
-                manager.save
+                username = models.UserProfile.objects.get(pk=user_pk)
+                
+                isManagerExist = models.Manager.objects.filter(manager_username=username).exists()
+                if(isManagerExist==False):
+                    return Response({ "detail": "Not found manager user"},status=status.HTTP_404_NOT_FOUND)
+                else:
+                    manager = models.Manager.objects.get(manager_username=username)
+                    manager.delete()
+                    manager.save
 
-            username.delete()
-            username.save
+                username.delete()
+                username.save
 
-            return Response(status=status.HTTP_204_NO_CONTENT)
+                return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(detail=True, methods = 'GET')
     def get_villages_manager(self, request,village_pk):
