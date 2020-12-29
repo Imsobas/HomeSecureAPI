@@ -3423,7 +3423,7 @@ class WorkingRecordViewSet(viewsets.ModelViewSet):
         if(isExistWR==False):
             return Response({ "detail": "Not found."},status=status.HTTP_404_NOT_FOUND)
         else:
-            workingRecord = models.WorkingRecord.objects.filter(working_village=village_pk, working_zone=zone_pk, working_work=work_pk,working_date__date=datetime.date(int(newdate[0]),int(newdate[1]),int(newdate[2]))).values('working_secure','working_work').distinct()
+            workingRecord = models.WorkingRecord.objects.filter(working_village=village_pk, working_zone=zone_pk, working_work=work_pk,working_date__date=datetime.date(int(newdate[0]),int(newdate[1]),int(newdate[2]))).values('working_secure','working_work','working_zone').distinct()
             
             result = []
 
@@ -3433,6 +3433,7 @@ class WorkingRecordViewSet(viewsets.ModelViewSet):
 
                 workPk = wr['working_work']
                 securePk = wr['working_secure']
+                zonePk = wr['working_zone']
 
                 workQuerySet = models.Work.objects.filter(pk=workPk).last()
                 serializer = serializers.WorkSerializer(workQuerySet)
@@ -3450,7 +3451,7 @@ class WorkingRecordViewSet(viewsets.ModelViewSet):
                 newSecureData['secure_firstname'] = secureData['secure_firstname']
                 newSecureData['secure_lastname'] = secureData['secure_lastname']
                 newSecureData['secure_type'] = secureData['secure_type']
-                zonePk = secureData['secure_zone']
+                
 
                 zoneQuerySet = models.Zone.objects.filter(pk=zonePk).last()
                 serializer = serializers.ZoneSerializer(zoneQuerySet)
@@ -3479,7 +3480,7 @@ class WorkingRecordViewSet(viewsets.ModelViewSet):
         if(isExistWR==False):
             return Response({ "detail": "Not found."},status=status.HTTP_404_NOT_FOUND)
         else:
-            workingRecord = models.WorkingRecord.objects.filter(working_village=village_pk, working_zone=zone_pk, working_date__date=datetime.date(int(newdate[0]),int(newdate[1]),int(newdate[2]))).values('working_secure','working_work').distinct()
+            workingRecord = models.WorkingRecord.objects.filter(working_village=village_pk, working_zone=zone_pk, working_date__date=datetime.date(int(newdate[0]),int(newdate[1]),int(newdate[2]))).values('working_secure','working_work','working_zone').distinct()
             
             result = []
 
@@ -3489,6 +3490,7 @@ class WorkingRecordViewSet(viewsets.ModelViewSet):
 
                 workPk = wr['working_work']
                 securePk = wr['working_secure']
+                zonePk = wr['working_zone']
 
                 workQuerySet = models.Work.objects.filter(pk=workPk).last()
                 serializer = serializers.WorkSerializer(workQuerySet)
@@ -3506,7 +3508,7 @@ class WorkingRecordViewSet(viewsets.ModelViewSet):
                 newSecureData['secure_firstname'] = secureData['secure_firstname']
                 newSecureData['secure_lastname'] = secureData['secure_lastname']
                 newSecureData['secure_type'] = secureData['secure_type']
-                zonePk = secureData['secure_zone']
+                
 
                 zoneQuerySet = models.Zone.objects.filter(pk=zonePk).last()
                 serializer = serializers.ZoneSerializer(zoneQuerySet)
@@ -3536,7 +3538,7 @@ class WorkingRecordViewSet(viewsets.ModelViewSet):
         if(isExistWR==False):
             return Response({ "detail": "Not found."},status=status.HTTP_404_NOT_FOUND)
         else:
-            workingRecord = models.WorkingRecord.objects.filter(working_village=village_pk, working_work=work_pk,working_date__date=datetime.date(int(newdate[0]),int(newdate[1]),int(newdate[2]))).values('working_secure','working_work').distinct()
+            workingRecord = models.WorkingRecord.objects.filter(working_village=village_pk, working_work=work_pk,working_date__date=datetime.date(int(newdate[0]),int(newdate[1]),int(newdate[2]))).values('working_secure','working_work','working_zone').distinct()
             
             result = []
 
@@ -3554,6 +3556,7 @@ class WorkingRecordViewSet(viewsets.ModelViewSet):
                 newWorkData = dict()
                 newWorkData['pk'] = workData['pk']
                 newWorkData['work_name'] = workData['work_name']
+                zonePk = wr['working_zone']
 
                 secureQuerySet = models.SecureGuard.objects.filter(pk=securePk).last()
                 serializer = serializers.SecureGuardSerializer(secureQuerySet)
@@ -3563,7 +3566,7 @@ class WorkingRecordViewSet(viewsets.ModelViewSet):
                 newSecureData['secure_firstname'] = secureData['secure_firstname']
                 newSecureData['secure_lastname'] = secureData['secure_lastname']
                 newSecureData['secure_type'] = secureData['secure_type']
-                zonePk = secureData['secure_zone']
+                
 
                 zoneQuerySet = models.Zone.objects.filter(pk=zonePk).last()
                 serializer = serializers.ZoneSerializer(zoneQuerySet)
@@ -3593,7 +3596,7 @@ class WorkingRecordViewSet(viewsets.ModelViewSet):
         if(isExistWR==False):
             return Response({ "detail": "Not found."},status=status.HTTP_404_NOT_FOUND)
         else:
-            workingRecord = models.WorkingRecord.objects.filter(working_village=village_pk,working_date__date=datetime.date(int(newdate[0]),int(newdate[1]),int(newdate[2]))).values('working_secure','working_work').distinct()
+            workingRecord = models.WorkingRecord.objects.filter(working_village=village_pk,working_date__date=datetime.date(int(newdate[0]),int(newdate[1]),int(newdate[2]))).values('working_secure','working_work','working_zone').distinct()
             
             result = []
 
@@ -3603,6 +3606,7 @@ class WorkingRecordViewSet(viewsets.ModelViewSet):
 
                 workPk = wr['working_work']
                 securePk = wr['working_secure']
+                zonePk = wr['working_zone']
 
                 workQuerySet = models.Work.objects.filter(pk=workPk).last()
                 serializer = serializers.WorkSerializer(workQuerySet)
@@ -3620,7 +3624,6 @@ class WorkingRecordViewSet(viewsets.ModelViewSet):
                 newSecureData['secure_firstname'] = secureData['secure_firstname']
                 newSecureData['secure_lastname'] = secureData['secure_lastname']
                 newSecureData['secure_type'] = secureData['secure_type']
-                zonePk = secureData['secure_zone']
 
                 zoneQuerySet = models.Zone.objects.filter(pk=zonePk).last()
                 serializer = serializers.ZoneSerializer(zoneQuerySet)
