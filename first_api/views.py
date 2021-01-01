@@ -33,6 +33,7 @@ from django.utils.timezone import localtime, now
 from fcm_django.models import FCMDevice
 from first_api import timeUtility
 import django.utils.dateparse
+from first_api import error_constant
 
 ## helper function
 
@@ -425,8 +426,23 @@ class VillageViewSet(viewsets.ModelViewSet):
 
         isExistVillage = models.Village.objects.filter(pk=village_pk).exists()
         if(isExistVillage==False):
-            return Response({"detail": "Not found village"},status=status.HTTP_400_BAD_REQUEST)
+            return Response({"detail": "Not found village"},status=status.HTTP_404_NOT_FOUND)
         else:
+
+            isExistGenUser = models.GeneralUser.objects.filter(gen_user_village=village_pk).exists()
+            isExistSecure = models.SecureGuard.objects.filter(secure_village=village_pk).exists()
+            isExistManager = models.Manager.objects.filter(manager_village=village_pk).exists()
+
+            if(isExistGenUser==True or isExistSecure==True or isExistManager==True):
+                return Response({"detail": error_constant.cannotDeleteDuetoUser },status=status.HTTP_502_BAD_GATEWAY)
+
+
+            isExistZone = models.Zone.objects.filter(zone_village=village_pk).exists()
+            if(isExistZone == True):
+                return Response({"detail": error_constant.cannotDeleteDuetoZone },status=status.HTTP_502_BAD_GATEWAY)
+
+            # isExistWork = models.Work.objects.filter
+
 
             # isExistZone
             # isExistHome
@@ -435,6 +451,8 @@ class VillageViewSet(viewsets.ModelViewSet):
             # isExistCheckPoint
             # isExistCheckInCheckPoint
             # isExistWork
+            
+            # iExistVillageManager
             
             # isExistMaintenance
             # isExistVote
@@ -1282,15 +1300,11 @@ class SecureGuardViewSet(viewsets.ModelViewSet):
             secureDict = dict()
             secureDict['pk'] = secure['pk']
             secureDict['secure_firstname'] = secure['secure_firstname']
-            secureDict['secure_lastname'] = secure['secure_lastname']
+            secureDict['secure_lastname'] = secure['secure_lastname'] 
             secureDict['secure_type'] = secure['secure_type']
             secureDict['secure_village'] = secure['secure_village']
-            secureDict['secure_zone'] = secure['secure_zone']
-
-            # secureDict['secure_now_latitude'] = secure['secure_now_latitude']
-            # secureDict['secure_now_lontitude'] = secure['secure_now_lontitude']
-            # secureDict['secure_now_lontitude'] = secure['secure_now_lontitude']
-            # secureDict['secure_now_location_time'] = secureDict['secure_now_location_time']
+            secureDict['secure_zone'] = secure['secure_zone'] 
+           
 
             workPk = secure['secure_work_shift']
             
