@@ -1264,6 +1264,10 @@ class SecureGuardViewSet(viewsets.ModelViewSet):
             ### update value of left date  = datetime.now and username == null
             secure = models.SecureGuard.objects.get(pk=secure_pk)
             secure.secure_left_date = datetime.datetime.now()
+
+            ## delete current secure work 
+            secureWork = models.SecureWork.objects.filter(secure_pk = secure_pk).delete()
+            # secureWork.save
             
             
             ### update is_active == false
