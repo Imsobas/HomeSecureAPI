@@ -429,6 +429,14 @@ class VillageViewSet(viewsets.ModelViewSet):
             return Response({"detail": "Not found village"},status=status.HTTP_404_NOT_FOUND)
         else:
 
+            isExistZone = models.Zone.objects.filter(zone_village=village_pk).exists()
+            if(isExistZone == True):
+                return Response({"detail": error_constant.cannotDeleteDuetoZone },status=status.HTTP_502_BAD_GATEWAY)
+
+            isExistHome = models.Home.objects.filter(home_village=village_pk).exists()
+            if(isExistHome == True):
+                return Response({"detail": error_constant.cannotDeleteDuetoHome},status=status.HTTP_502_BAD_GATEWAY)
+
             isExistGenUser = models.GeneralUser.objects.filter(gen_user_village=village_pk).exists()
             isExistSecure = models.SecureGuard.objects.filter(secure_village=village_pk).exists()
             isExistManager = models.Manager.objects.filter(manager_village=village_pk).exists()
@@ -437,35 +445,11 @@ class VillageViewSet(viewsets.ModelViewSet):
                 return Response({"detail": error_constant.cannotDeleteDuetoUser },status=status.HTTP_502_BAD_GATEWAY)
 
 
-            isExistZone = models.Zone.objects.filter(zone_village=village_pk).exists()
-            if(isExistZone == True):
-                return Response({"detail": error_constant.cannotDeleteDuetoZone },status=status.HTTP_502_BAD_GATEWAY)
-
-            # isExistWork = models.Work.objects.filter
-
-
-            # isExistZone
-            # isExistHome
-            # isExistGenUser
-            # isExistSecure
-            # isExistCheckPoint
-            # isExistCheckInCheckPoint
-            # isExistWork
-            
-            # iExistVillageManager
-            
-            # isExistMaintenance
-            # isExistVote
-            # isExistProblemReport
-
-
             village = models.Village.objects.get(pk=village_pk)
             updateData = {'is_active':False}
             serializer = serializers.VillageSerializer(village,updateData,partial=True)
             serializer.is_valid(raise_exception=True)
             serializer.save()
-
-            
 
             return Response(serializer.data)
 
