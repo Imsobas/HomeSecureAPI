@@ -530,6 +530,34 @@ class ZoneViewSet(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
 
+    @action(detail=True, methods = ['patch'])
+    def temporary_delete_zone(self, request, zone_pk):
+        "temporary delete zone by patch is_active = false, and checkin foreign key constraint"
+
+        isExistZone = models.Zone.objects.filter(zone_village=zone_pk).exists()
+        if(isExistZone==False):
+            return Response({"detail": "Not found zone"},status=status.HTTP_404_NOT_FOUND)
+        else:
+
+            isExistHome = models.Home.objects.filter(home_zone=zone_pk).exists()
+            if(isExistHome == True):
+                return Response({"detail": error_constant.cannotDeleteDuetoHome},status=status.HTTP_502_BAD_GATEWAY)
+
+            isExistGenUser = models.GeneralUser.objects.filter(gen_user_zone=zone_pk).exists()
+            isExistSecure = models.SecureGuard.objects.filter(secure_zone=zone_pk).exists()
+
+            if(isExistGenUser==True or isExistSecure==True):
+                return Response({"detail": error_constant.cannotDeleteDuetoUser },status=status.HTTP_502_BAD_GATEWAY)
+
+            
+            zone = models.Zone.objects.get(pk= zone_pk)
+            updateData = {'is_active':False}
+            serializer = serializers.ZoneSerializer(zone,updateData,partial=True)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+
+            return Response(serializer.data)
+
     @action(detail=True, methods = 'GET')
     def get_villages_pk_zone_pk_single_villages_single_zones(self, request, village_pk, zone_pk):
         """ Return single village and single zone according to village, zone  """
@@ -713,6 +741,12 @@ class HomeViewSet(viewsets.ModelViewSet):
         if(isExistHome==False):
             return Response({"detail": "Not found home"},status=status.HTTP_400_BAD_REQUEST)
         else:
+
+            isExistGenUser = models.GeneralUser.objects.filter(gen_user_home=home_pk).exists()
+
+            if(isExistGenUser==True):
+                return Response({"detail": error_constant.cannotDeleteDuetoUser },status=status.HTTP_502_BAD_GATEWAY)
+
             home = models.Home.objects.get(pk=home_pk)
             updateData = {'is_active':False}
             serializer = serializers.HomeSerializer(home,updateData,partial=True)
@@ -721,6 +755,8 @@ class HomeViewSet(viewsets.ModelViewSet):
 
             return Response(serializer.data)
 
+
+    
 
     @action(detail=True, methods=['post'])
     def create_home_and_check_duplicate(self, request):

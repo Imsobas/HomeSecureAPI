@@ -112,6 +112,11 @@ get_village_pk_setting = views.SettingViewSet.as_view({
 })
 
 ## zone
+
+temporary_delete_zone = views.ZoneViewSet.as_view({
+    'patch': 'temporary_delete_zone'
+})
+
 get_villages_pk_zones = views.ZoneViewSet.as_view({
     'get': 'get_villages_pk_zones'
 })
@@ -123,8 +128,6 @@ get_villages_pk_zones_pk = views.ZoneViewSet.as_view({
 get_villages_pk_zone_pk_single_villages_single_zones = views.ZoneViewSet.as_view({
     'get': 'get_villages_pk_zone_pk_single_villages_single_zones'
 })
-
-
 
 
 ## home
@@ -568,6 +571,8 @@ urlpatterns = [
 
 
     ##zone end point
+    path('zones/<int:zone_pk>/temporary_delete/',temporary_delete_zone,name="temporary_delete_zone"),
+    path('companys/<int:company_pk>/villages/zones/', get_companys_pk_villages_zones ,name='get_companys_pk_villages_zones'),
     path('companys/<int:company_pk>/villages/zones/', get_companys_pk_villages_zones ,name='get_companys_pk_villages_zones'),
     path('villages/<int:village_pk>/villages/zones/', get_villages_pk_villages_zones ,name='get_villages_pk_villages_zones'),
     path('villages/<int:village_pk>/zones/<int:zone_pk>/villages/zones/', get_villages_pk_zone_pk_single_villages_single_zones ,name='get_villages_pk_zone_pk_single_villages_single_zones'),
