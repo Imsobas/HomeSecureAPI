@@ -1213,6 +1213,8 @@ class WorkViewSet(viewsets.ModelViewSet):
             if(isWorkSecureExist==True):
                 return Response({"detail": error_constant.cannotDeleteDuetoSecureWork},status=status.HTTP_502_BAD_GATEWAY)
 
+            models.SecureGuard.objects.filter(secure_work_shift=work_pk).update(secure_work_shift=None)
+
             work = models.Work.objects.get(pk= work_pk)
             updateData = {'is_active':False}
             serializer = serializers.WorkSerializer(work,updateData,partial=True)
@@ -1495,6 +1497,9 @@ class SecureWorkViewSet(viewsets.ModelViewSet):
         """ Delete a record according to specific secure_guard, work """
        
         delQuerySet = models.SecureWork.objects.filter(secure_pk=secureguard_pk, work_pk=work_pk).all().delete()
+        isExistSecureForUpdate = models.SecureGuard.objects.filter(pk=secureguard_pk, secure_work_shift=work_pk).exists()
+        if(isExistSecureForUpdate==True):
+            models.SecureGuard.objects.filter(pk=secureguard_pk).update(secure_work_shift=None)
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
