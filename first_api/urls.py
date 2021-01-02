@@ -502,6 +502,10 @@ delete_secureguards_pk_works_pk = views.SecureWorkViewSet.as_view({
 
 ## WorkingRecord
 
+create_workingrecord_with_secure_checkout = views.WorkingRecordViewSet.as_view({
+    'post': 'create_workingrecord_with_secure_checkout'
+})
+
 create_workingrecord_with_secure_checkin = views.WorkingRecordViewSet.as_view({
     'post': 'create_workingrecord_with_secure_checkin'
 })
@@ -723,6 +727,8 @@ urlpatterns = [
     path('secure_guards/<int:secureguard_pk>/works/<int:work_pk>/delete/',  delete_secureguards_pk_works_pk,name='delete_secureguards_pk_works_pk'),
     
     ## workingrecord
+   
+    path('secure_guards/checkout/',create_workingrecord_with_secure_checkout,name="create_workingrecord_with_secure_checkout"),
     path('secure_guards/checkin/',create_workingrecord_with_secure_checkin,name="create_workingrecord_with_secure_checkin"),
     path('secure_guards/<int:secureguard_pk>/lasted_checkin/',  get_secure_pk_workingrecord_lasted,name='get_secure_pk_workingrecord_lasted'),
     path('fetch_workingrecord/villages/<int:village_pk>/zones/<int:zone_pk>/works/<int:work_pk>/dates/<str:date_str>/', fetch_workingrecord ,name='fetch_workingrecord'),

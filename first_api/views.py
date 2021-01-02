@@ -3464,35 +3464,58 @@ class WorkingRecordViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,)
 
     @action(detail=True, methods = 'POST')
+    def create_workingrecord_with_secure_checkout(self,request):
+        """ create new working record and remove current work shift from this secure"""
+        data = request.data
+
+        isExistSecure = models.SecureGuard.objects.filter(pk=data['working_secure']).exists()
+        if(isExistSecure==False):
+            return Response({ "detail": "Not found secure."},status=status.HTTP_404_NOT_FOUND)
+        else:
+            ## remove current work shift from this secure
+
+            securePk= data['working_secure']
+            models.SecureGuard.objects.filter(pk=securePk).update(secure_work_shift=None)
+
+            village = models.Village.objects.get(pk=data['working_village'])
+            zone = models.Zone.objects.get(pk=data['working_zone'])
+            secure = models.SecureGuard.objects.get(pk=data['working_secure'])
+            work = models.Work.objects.get(pk=data['working_work'])
+            checkinCheckpoint = models.CheckinCheckpoint.objects.get(pk=data['work_checkin_checkpoint'])
+            workingInOutData = "ออก"
+            deviceIdData = data['working_device']
+
+            workingRecord = models.WorkingRecord.objects.create(working_village= village, working_zone= zone, working_secure=secure, working_work=work, work_checkin_checkpoint=checkinCheckpoint, working_in_out = workingInOutData, working_device = deviceIdData)
+            workingRecord.save
+            WorkingRecordSerializer = serializers.WorkingRecordSerializer(workingRecord)
+
+            return Response(WorkingRecordSerializer.data,status=status.HTTP_201_CREATED)
+
+    @action(detail=True, methods = 'POST')
     def create_workingrecord_with_secure_checkin(self,request):
         """ create new working record and assign secure checkin (assign current work to secure model )"""
         data = request.data
 
+        isExistSecure = models.SecureGuard.objects.filter(pk=data['working_secure']).exists()
+        if(isExistSecure==False):
+            return Response({ "detail": "Not found secure."},status=status.HTTP_404_NOT_FOUND)
+        else:
+            ## assingn current work to this secure
+            work = models.Work.objects.get(pk=data['working_work'])
+            models.SecureGuard.objects.filter(pk=data['working_secure']).update(secure_work_shift=work)
 
-        # village = models.Village.objects.get(pk=village_pk)
-        # updateData = {'is_active':False}
-        # serializer = serializers.VillageSerializer(village,updateData,partial=True)
-        # serializer.is_valid(raise_exception=True)
-        # serializer.save()
-        
+            village = models.Village.objects.get(pk=data['working_village'])
+            zone = models.Zone.objects.get(pk=data['working_zone'])
+            secure = models.SecureGuard.objects.get(pk=data['working_secure'])
+            checkinCheckpoint = models.CheckinCheckpoint.objects.get(pk=data['work_checkin_checkpoint'])
+            workingInOutData = "เข้า"
+            deviceIdData = data['working_device']
 
-        ## assingn current work to this secure
-        work = models.Work.objects.get(pk=data['working_work'])
-        models.SecureGuard.objects.filter(pk=data['working_secure']).update(secure_work_shift=work)
+            workingRecord = models.WorkingRecord.objects.create(working_village= village, working_zone= zone, working_secure=secure, working_work=work, work_checkin_checkpoint=checkinCheckpoint, working_in_out = workingInOutData, working_device = deviceIdData)
+            workingRecord.save
+            WorkingRecordSerializer = serializers.WorkingRecordSerializer(workingRecord)
 
-        village = models.Village.objects.get(pk=data['working_village'])
-        zone = models.Zone.objects.get(pk=data['working_zone'])
-        secure = models.SecureGuard.objects.get(pk=data['working_secure'])
-        # work = models.Work.objects.get(pk=data['working_work'])
-        checkinCheckpoint = models.CheckinCheckpoint.objects.get(pk=data['work_checkin_checkpoint'])
-        workingInOutData = data['working_in_out']
-        deviceIdData = data['working_device']
-
-        workingRecord = models.WorkingRecord.objects.create(working_village= village, working_zone= zone, working_secure=secure, working_work=work, work_checkin_checkpoint=checkinCheckpoint, working_in_out = workingInOutData, working_device = deviceIdData)
-        workingRecord.save
-        WorkingRecordSerializer = serializers.WorkingRecordSerializer(workingRecord)
-
-        return Response(WorkingRecordSerializer.data,status=status.HTTP_201_CREATED)
+            return Response(WorkingRecordSerializer.data,status=status.HTTP_201_CREATED)
 
     @action(detail=True, methods = 'GET')
     def get_secure_pk_workingrecord_lasted(self, request, secureguard_pk):
