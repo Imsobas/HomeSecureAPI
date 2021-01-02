@@ -534,7 +534,7 @@ class ZoneViewSet(viewsets.ModelViewSet):
     def temporary_delete_zone(self, request, zone_pk):
         "temporary delete zone by patch is_active = false, and checkin foreign key constraint"
 
-        isExistZone = models.Zone.objects.filter(zone_village=zone_pk).exists()
+        isExistZone = models.Zone.objects.filter(pk=zone_pk).exists()
         if(isExistZone==False):
             return Response({"detail": "Not found zone"},status=status.HTTP_404_NOT_FOUND)
         else:
@@ -1199,6 +1199,27 @@ class WorkViewSet(viewsets.ModelViewSet):
     queryset = models.Work.objects.all()
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
+
+    @action(detail=True, methods = ['patch'])
+    def temporary_delete_work(self, request, work_pk):
+        "temporary delete work by patch is_active = false, and checkin foreign key constraint"
+
+        isExistWork = models.Work.objects.filter(pk=work_pk).exists()
+        if(isExistWork==False):
+            return Response({"detail": "Not found work"},status=status.HTTP_404_NOT_FOUND)
+        else:
+
+            isWorkSecureExist = models.SecureWork.objects.filter(work_pk=work_pk).exists()
+            if(isWorkSecureExist==True):
+                return Response({"detail": error_constant.cannotDeleteDuetoSecureWork},status=status.HTTP_502_BAD_GATEWAY)
+
+            work = models.Work.objects.get(pk= work_pk)
+            updateData = {'is_active':False}
+            serializer = serializers.WorkSerializer(work,updateData,partial=True)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+
+            return Response(serializer.data)
 
     @action(detail=True, methods = ['patch'])
     def patch_work(self, request, pk):

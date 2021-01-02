@@ -273,6 +273,10 @@ patch_work = views.WorkViewSet.as_view({
     'patch': 'patch_work',
 })
 
+temporary_delete_work = views.WorkViewSet.as_view({
+    'patch': 'temporary_delete_work',
+})
+
 ## qrcodes 
 
 get_qrcodes_history_additionaldetail = views.QrCodeViewSet.as_view({
@@ -638,6 +642,7 @@ urlpatterns = [
     ##work 
     path('villages/<str:pk>/works/', get_villages_pk_works ,name='get_villages_pk_works'),
     path('works/update_work/<int:pk>/', patch_work ,name='patch_work'),
+    path('work/<int:work_pk>/temporary_delete/',temporary_delete_work,name="temporary_delete_work"),
     
 
     ##qr
