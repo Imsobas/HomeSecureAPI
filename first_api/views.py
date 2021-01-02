@@ -1,7 +1,7 @@
 from django.db.models.fields import DateField
 from django.http.response import HttpResponseServerError
 from django.utils import dateparse
-from first_api.serializers import WorkSerializer, ZoneSerializer
+from first_api.serializers import WorkSerializer, WorkingRecordSerializer, ZoneSerializer
 from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -3462,6 +3462,25 @@ class WorkingRecordViewSet(viewsets.ModelViewSet):
     queryset = models.WorkingRecord.objects.all()
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
+
+    @action(detail=True, methods = 'POST')
+    def create_workingrecord_with_secure_checkin(self,request):
+        """ create new working record and assign secure checkin (assign current work to secure model )"""
+        data = request.data
+
+        village = models.Village.objects.get(pk=data['working_village'])
+        zone = models.Zone.objects.get(pk=data['working_zone'])
+        secure = models.SecureGuard.objects.get(pk=data['working_secure'])
+        work = models.Work.objects.get(pk=data['working_work'])
+        checkinCheckpoint = models.CheckinCheckpoint.objects.get(pk=data['work_checkin_checkpoint'])
+        workingInOutData = data['working_in_out']
+        deviceIdData = data['working_device']
+
+        workingRecord = models.WorkingRecord.objects.create(working_village= village, working_zone= zone, working_secure=secure, working_work=work, work_checkin_checkpoint=checkinCheckpoint, working_in_out = workingInOutData, working_device = deviceIdData)
+        workingRecord.save
+        WorkingRecordSerializer = serializers.WorkingRecordSerializer(workingRecord)
+
+        return Response(WorkingRecordSerializer.data,status=status.HTTP_201_CREATED)
 
     @action(detail=True, methods = 'GET')
     def get_secure_pk_workingrecord_lasted(self, request, secureguard_pk):
