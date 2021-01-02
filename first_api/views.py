@@ -3468,10 +3468,22 @@ class WorkingRecordViewSet(viewsets.ModelViewSet):
         """ create new working record and assign secure checkin (assign current work to secure model )"""
         data = request.data
 
+
+        # village = models.Village.objects.get(pk=village_pk)
+        # updateData = {'is_active':False}
+        # serializer = serializers.VillageSerializer(village,updateData,partial=True)
+        # serializer.is_valid(raise_exception=True)
+        # serializer.save()
+        
+
+        ## assingn current work to this secure
+        work = models.Work.objects.get(pk=data['working_work'])
+        models.SecureGuard.objects.filter(pk=data['working_secure']).update(secure_work_shift=work)
+
         village = models.Village.objects.get(pk=data['working_village'])
         zone = models.Zone.objects.get(pk=data['working_zone'])
         secure = models.SecureGuard.objects.get(pk=data['working_secure'])
-        work = models.Work.objects.get(pk=data['working_work'])
+        # work = models.Work.objects.get(pk=data['working_work'])
         checkinCheckpoint = models.CheckinCheckpoint.objects.get(pk=data['work_checkin_checkpoint'])
         workingInOutData = data['working_in_out']
         deviceIdData = data['working_device']
@@ -3484,12 +3496,31 @@ class WorkingRecordViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, methods = 'GET')
     def get_secure_pk_workingrecord_lasted(self, request, secureguard_pk):
-        """ Return all votetopics according to specific village """
-        querySet = models.WorkingRecord.objects.filter(working_secure=secureguard_pk).last()
-        serializer = serializers.WorkingRecordSerializer(querySet)
-        result = serializer.data 
+        """ Return current work of secureguard """
 
-        return notFoundHandling(result)
+        isExistSecure = models.SecureGuard.objects.filter(pk=secureguard_pk).exists()
+        if(isExistSecure==False):
+            return Response({ "detail": "Not found secure."},status=status.HTTP_404_NOT_FOUND)
+        else:
+            secure = models.SecureGuard.objects.get(pk=secureguard_pk)
+            secureSerializer = serializers.SecureGuardSerializer(secure)
+            secureResult = secureSerializer.data
+            workPk = secureResult['secure_work_shift']
+
+            isWorkExist = models.Work.objects.filter(pk=workPk, is_active=True).exists()
+            if(isWorkExist==False):
+                return Response({ "detail": "Not found work."},status=status.HTTP_404_NOT_FOUND)
+            else:
+                work = models.Work.objects.get(pk=workPk)
+                WorkSerializer = serializers.WorkSerializer(work)
+
+            return Response(WorkSerializer.data,status=status.HTTP_200_OK)
+        
+        # querySet = models.WorkingRecord.objects.filter(working_secure=secureguard_pk).last()
+        # serializer = serializers.WorkingRecordSerializer(querySet)
+        # result = serializer.data 
+
+        # return notFoundHandling(result)
 
     @action(detail=True, methods = 'GET')
     def fetch_workingrecord(self, request, village_pk, zone_pk, work_pk, date_str):
