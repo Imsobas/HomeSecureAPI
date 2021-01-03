@@ -1008,6 +1008,9 @@ class ManagerViewSet(viewsets.ModelViewSet):
                     manager.delete()
                     manager.save
 
+                ### delete fcm device
+                fcmDevice = models.CustomFCMDevice.objects.filter(user=username).delete()
+                ### delete username profile
                 username.delete()
                 username.save
 
@@ -1083,15 +1086,14 @@ class GeneralUserViewSet(viewsets.ModelViewSet):
             genuser.gen_user_username = None
             genuser.save()
             
-
-            result = serializer.data
-            
-            # print("usernamePk")
-            # print(usernamePk)
-
-            username = models.UserProfile.objects.get(pk =usernamePk)
-            username.delete()
-            username.save
+            isUsernameExist = models.UserProfile.objects.filter(pk =usernamePk).exists()
+            if(isUsernameExist==True):
+                username = models.UserProfile.objects.get(pk =usernamePk)
+                ### delete fcm device
+                fcmDevice = models.CustomFCMDevice.objects.filter(user=username).delete()
+                ### delete username profile
+                username.delete()
+                username.save
 
             return Response(serializer.data)
 
