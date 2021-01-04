@@ -1,7 +1,7 @@
 from django.db.models.fields import DateField
 from django.http.response import HttpResponseServerError
 from django.utils import dateparse
-from first_api.serializers import WorkSerializer, WorkingRecordSerializer, ZoneSerializer
+from first_api.serializers import GeneralUserSerializer, WorkSerializer, WorkingRecordSerializer, ZoneSerializer
 from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -1543,6 +1543,105 @@ class QrCodeViewSet(viewsets.ModelViewSet):
     queryset = models.Qrcode.objects.all()
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
+
+    @action(detail=True, methods = 'POST')
+    def patch_qrcodes_insidescan(self, request, pk):
+
+        data = request.data        
+
+        isExistQr = models.Qrcode.objects.filter(pk = pk).exists()
+        if(isExistQr==False):
+            return Response({ "detail": "not have this qrcode "},status=status.HTTP_404_NOT_FOUND)
+        else:
+            isExistSecure = models.SecureGuard.objects.filter(pk = data['qr_inside_secure']).exists()
+            if(isExistSecure==False):
+                return  Response({ "detail": "not have this secure"},status=status.HTTP_404_NOT_FOUND)
+            else:
+                secure = models.SecureGuard.objects.get(pk = data['qr_inside_secure'])
+
+                isChecked = models.Qrcode.objects.filter(pk = pk,qr_inside_status=True).exists()
+                if(isChecked==True):
+                    return Response({ "detail": "Qr inside scan is already checked"},status=status.HTTP_200_OK)
+                else:
+                    models.Qrcode.objects.filter(pk=pk).update(qr_inside_secure=secure)
+
+                    qrCode = self.get_object()
+                    updateData = {"qr_inside_time":datetime.datetime.now(), "qr_inside_status":True, "qr_inside_lat":data["qr_inside_lat"], "qr_inside_lon":data["qr_inside_lon"], "qr_detail":data["qr_detail"], "qr_livehome_status":data["qr_livehome_status"]}
+                    qrCodeSerializer = serializers.QrCodeSerializer(qrCode,updateData,partial=True)
+                    qrCodeSerializer.is_valid(raise_exception=True)
+                    qrCodeSerializer.save()
+                
+                    return Response(qrCodeSerializer.data,status=status.HTTP_200_OK)
+
+
+    @action(detail=True, methods = 'POST')
+    def patch_qrcodes_exitscan(self, request, pk):
+
+        data = request.data        
+
+        isExistQr = models.Qrcode.objects.filter(pk = pk).exists()
+        if(isExistQr==False):
+            return Response({ "detail": "not have this qrcode "},status=status.HTTP_404_NOT_FOUND)
+        else:
+            isExistSecure = models.SecureGuard.objects.filter(pk = data['qr_exit_secure']).exists()
+            if(isExistSecure==False):
+                return  Response({ "detail": "not have this secure"},status=status.HTTP_404_NOT_FOUND)
+            else:
+                secure = models.SecureGuard.objects.get(pk = data['qr_exit_secure'])
+
+                isChecked = models.Qrcode.objects.filter(pk = pk,qr_exit_status=True).exists()
+                if(isChecked==True):
+                    return Response({ "detail": "Qr exit scan is already checked"},status=status.HTTP_200_OK)
+                else:
+                    models.Qrcode.objects.filter(pk=pk).update(qr_inside_secure=secure)
+
+                    qrCode = self.get_object()
+                    updateData = {"qr_exit_time":datetime.datetime.now(), "qr_exit_status":True, "qr_complete_status":True}
+                    qrCodeSerializer = serializers.QrCodeSerializer(qrCode,updateData,partial=True)
+                    qrCodeSerializer.is_valid(raise_exception=True)
+                    qrCodeSerializer.save()
+                
+                    return Response(qrCodeSerializer.data,status=status.HTTP_200_OK)
+
+
+    @action(detail=True, methods = 'POST')
+    def patch_qrcodes_userscan(self, request, pk):
+
+        data = request.data        
+
+        isExistQr = models.Qrcode.objects.filter(pk = pk).exists()
+        if(isExistQr==False):
+            return Response({ "detail": "not have this qrcode "},status=status.HTTP_404_NOT_FOUND)
+        else:
+            isExistGenUser = models.GeneralUser.objects.filter(pk = data['qr_user']).exists()
+            if(isExistGenUser==False):
+                return  Response({ "detail": "not have this general user"},status=status.HTTP_404_NOT_FOUND)
+            else:
+                genUser = models.GeneralUser.objects.get(pk = data['qr_user'])
+                genUserSerializer = serializers.GeneralUserSerializer(genUser)
+                resultGenUser = genUserSerializer.data
+                genUserHomePk = resultGenUser['gen_user_home']
+                
+
+                qrCode = self.get_object()
+                qrCodeSerializer = serializers.QrCodeSerializer(qrCode)
+                qrHomePk = qrCodeSerializer.data['qr_home']
+            
+
+                if(genUserHomePk!=qrHomePk):
+                    return  Response({ "detail": "The user is not belong to this house"},status=status.HTTP_502_BAD_GATEWAY)
+
+                isChecked = models.Qrcode.objects.filter(pk = pk,qr_home_status=True).exists()
+                if(isChecked==True):
+                    return Response({ "detail": "Qr user scan is already checked"},status=status.HTTP_200_OK)
+                else:
+                    models.Qrcode.objects.filter(pk=pk).update(qr_user=genUser)
+                    updateData = {"qr_home_time":datetime.datetime.now(), "qr_home_status":True}
+                    qrCodeSerializer = serializers.QrCodeSerializer(qrCode,updateData,partial=True)
+                    qrCodeSerializer.is_valid(raise_exception=True)
+                    qrCodeSerializer.save()
+                
+                    return Response(qrCodeSerializer.data,status=status.HTTP_200_OK)
 
     @action(detail=True, methods = 'GET')
     def get_qrcodes_history_additionaldetail(self, request, qrcode_pk):
