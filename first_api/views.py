@@ -1544,6 +1544,7 @@ class QrCodeViewSet(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
 
+
     @action(detail=True, methods = 'POST')
     def patch_qrcodes_insidescan(self, request, pk):
 
@@ -3419,30 +3420,12 @@ class VoteRecordViewSet(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
 
-    # @action(detail=True, methods=['post'])
-    # def create_enter_qrcode_and_notificaton(self, request):
-    #     """ Create qr code on enter screen along with generate notification for each user"""
-        
-    #     data = request.data 
-
-    #     isExistHome = models.Home.objects.filter(pk=data['qr_home'], is_active=True).exists()
-    #     if(isExistHome==False):
-    #         return Response({ "detail": "not have this home number "},status=status.HTTP_404_NOT_FOUND)
-    #     else:
-    #         home = models.Home.objects.filter(pk=data['qr_home'], is_active=True).last()
-    #         serializer = serializers.HomeSerializer(home)
-    #         homeData = serializer.data
-
 
     @action(detail=True, methods = 'POST')
     def post_add_multiple_voterecord(self, request):
         """ add multiple set of record  """
 
         data = request.data
-
-        
-        # print("debuging post multiple voterecord")
-        # print(data["vote_selected_choice"])
 
         ## check and get existing model of vote topic, home, user
 
@@ -3996,6 +3979,8 @@ class NotificationViewSet(viewsets.ModelViewSet):
             homeNumber = homeData['home_number']
 
 
+            
+
             ### create enter qrcode 
             ### example models.Village.objects.only('pk').get(pk=village_pk)
             village = models.Village.objects.only('pk').get(pk=homeVillage)
@@ -4004,6 +3989,15 @@ class NotificationViewSet(viewsets.ModelViewSet):
             home = models.Home.objects.only('pk').get(pk=homePk)
             secure = models.SecureGuard.objects.only('pk').get(pk=data['qr_enter_secure'])
 
+
+
+            ###check if old qr code where code qual to this is exist, make it is_active = False
+            isExistOldQrCode = models.Qrcode.objects.filter(qr_content=data['qr_content'],qr_company = company, qr_village = village).exists()
+            if(isExistOldQrCode==True):
+                models.Qrcode.objects.filter(qr_content=data['qr_content'],qr_company = company, qr_village = village).update(is_active=False)
+                
+
+            ### create qr code
             qrcode = models.Qrcode.objects.create(qr_enter_time=datetime.datetime.now(),qr_content=data['qr_content'], qr_type=data['qr_type'], qr_car_number=data['qr_car_number'],qr_home_number=homeNumber, qr_car_color = data['qr_car_color'], qr_car_brand=data['qr_car_brand'], qr_company = company, qr_village = village, qr_zone =zone, qr_home =home, qr_enter_secure=secure, qr_enter_status=True, qr_home_lat=homeLat,qr_home_lon= homeLon)
             qrcode.save
             qrSerializer = serializers.QrCodeSerializer(qrcode)
