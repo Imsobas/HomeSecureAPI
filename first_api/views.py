@@ -1597,7 +1597,7 @@ class QrCodeViewSet(viewsets.ModelViewSet):
                     models.Qrcode.objects.filter(pk=pk).update(qr_inside_secure=secure)
 
                     qrCode = self.get_object()
-                    updateData = {"qr_exit_time":datetime.datetime.now(), "qr_exit_status":True, "qr_complete_status":True}
+                    updateData = {"qr_exit_secure": data['qr_exit_secure'],"qr_exit_time":datetime.datetime.now(), "qr_exit_status":True, "qr_complete_status":True}
                     qrCodeSerializer = serializers.QrCodeSerializer(qrCode,updateData,partial=True)
                     qrCodeSerializer.is_valid(raise_exception=True)
                     qrCodeSerializer.save()
@@ -1647,11 +1647,11 @@ class QrCodeViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods = 'GET')
     def get_qrcodes_history_additionaldetail(self, request, qrcode_pk):
 
-        isExistQrcode = models.Qrcode.objects.filter(pk=qrcode_pk, is_active=True).exists()
+        isExistQrcode = models.Qrcode.objects.filter(pk=qrcode_pk).exists()
         if(isExistQrcode==False):
             return Response({ "detail": "not have this qrcode "},status=status.HTTP_404_NOT_FOUND)
         else:
-            queryset = models.Qrcode.objects.get(pk=qrcode_pk, is_active=True)
+            queryset = models.Qrcode.objects.get(pk=qrcode_pk)
             serializer = serializers.QrCodeSerializer(queryset)
             qrCode = serializer.data
             
@@ -1663,9 +1663,9 @@ class QrCodeViewSet(viewsets.ModelViewSet):
 
             if(qrCode['qr_enter_secure']!=None):
                 pk = qrCode['qr_enter_secure']
-                isExist = models.SecureGuard.objects.filter(pk = pk, is_active = True).exists()
+                isExist = models.SecureGuard.objects.filter(pk = pk).exists()
                 if(isExist==True):
-                    querySet = models.SecureGuard.objects.get(pk = pk, is_active = True)
+                    querySet = models.SecureGuard.objects.get(pk = pk)
                     serializer = serializers.SecureGuardSerializer(querySet)
                     data = serializer.data
                     secureName = data['secure_firstname'] + " "+ data['secure_lastname']
@@ -1673,9 +1673,9 @@ class QrCodeViewSet(viewsets.ModelViewSet):
 
             if(qrCode['qr_inside_secure']!=None):
                 pk = qrCode['qr_inside_secure']
-                isExist = models.SecureGuard.objects.filter(pk = pk, is_active = True).exists()
+                isExist = models.SecureGuard.objects.filter(pk = pk).exists()
                 if(isExist==True):
-                    querySet = models.SecureGuard.objects.get(pk = pk, is_active = True)
+                    querySet = models.SecureGuard.objects.get(pk = pk)
                     serializer = serializers.SecureGuardSerializer(querySet)
                     data = serializer.data
                     secureName = data['secure_firstname'] + " "+ data['secure_lastname']
@@ -1683,9 +1683,9 @@ class QrCodeViewSet(viewsets.ModelViewSet):
 
             if(qrCode['qr_user']!=None):
                 pk = qrCode['qr_user']
-                isExist = models.GeneralUser.objects.filter(pk = pk, is_active = True).exists()
+                isExist = models.GeneralUser.objects.filter(pk = pk).exists()
                 if(isExist==True):
-                    querySet = models.GeneralUser.objects.get(pk = pk, is_active = True)
+                    querySet = models.GeneralUser.objects.get(pk = pk)
                     serializer = serializers.GeneralUserSerializer(querySet)
                     data = serializer.data
                     scannedUserName = data['gen_user_firstname'] + " "+ data['gen_user_lastname']
@@ -1693,9 +1693,9 @@ class QrCodeViewSet(viewsets.ModelViewSet):
 
             if(qrCode['qr_exit_secure']!=None):
                 pk = qrCode['qr_exit_secure']
-                isExist = models.SecureGuard.objects.filter(pk = pk, is_active = True).exists()
+                isExist = models.SecureGuard.objects.filter(pk = pk).exists()
                 if(isExist==True):
-                    querySet = models.SecureGuard.objects.get(pk = pk, is_active = True)
+                    querySet = models.SecureGuard.objects.get(pk = pk)
                     serializer = serializers.SecureGuardSerializer(querySet)
                     data = serializer.data
                     secureName = data['secure_firstname'] + " "+ data['secure_lastname']
