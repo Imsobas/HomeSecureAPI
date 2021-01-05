@@ -168,8 +168,11 @@ class UserProfileViewSet(viewsets.ModelViewSet):
         # return Response(serializer.data,status.HTTP_201_CREATED)
 
     @action(detail=True, methods = 'GET')
-    def get_profiles_check(self, request, new_username):
+    def get_profiles_check(self, request):
         """ Return all active company"""
+
+        data = request.data 
+        new_username = data['username']
         querySet = models.UserProfile.objects.filter(username=new_username)
         serializer = serializers.UserProfileSerializer(querySet,many=True)
         result = serializer.data

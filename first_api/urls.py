@@ -242,7 +242,7 @@ get_secureguards_pk_securelocation = views.SecureLocationViewSet.as_view({
 ## user
 
 get_profiles_check  = views.UserProfileViewSet.as_view({
-    'get': 'get_profiles_check'
+    'post': 'get_profiles_check'
 })
 
 
@@ -633,7 +633,7 @@ urlpatterns = [
     
     
     ##user
-    path('profiles_check/<str:new_username>/', get_profiles_check, name='get_profiles_check'),
+    path('profiles_check/', get_profiles_check, name='get_profiles_check'),
 
     ##secure guard 
     path('villages/<int:village_pk>/secure_guards/', get_villages_pk_secureguards, name='get_villages_pk_secureguards'),
