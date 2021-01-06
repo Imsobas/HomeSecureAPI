@@ -52,7 +52,7 @@ class UserProfile(AbstractBaseUser, PermissionsMixin):
     )
 
 
-    username = models.CharField(max_length=20,unique=True)
+    username = models.CharField(max_length=25,unique=True)
     user_role = models.CharField(max_length=20,choices=USER_ROLE_CHOICE)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
