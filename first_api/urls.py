@@ -279,6 +279,14 @@ temporary_delete_work = views.WorkViewSet.as_view({
 
 ## qrcodes 
 
+get_villages_pk_qrcodes_non_exit = views.QrCodeViewSet.as_view({
+    'get': 'get_villages_pk_qrcodes_non_exit'
+})
+
+temporary_delete_qrcode = views.QrCodeViewSet.as_view({
+    'patch': 'temporary_delete_qrcode'
+})
+
 patch_qrcodes_userscan = views.QrCodeViewSet.as_view({
     'patch': 'patch_qrcodes_userscan'
 })
@@ -666,6 +674,7 @@ urlpatterns = [
     
 
     ##qr
+    path('qrcodes/temporary_delete_qrcode/<int:pk>/',temporary_delete_qrcode,name="temporary_delete_qrcode"),
     path('qrcodes/<int:pk>/insidescan/', patch_qrcodes_insidescan ,name='patch_qrcodes_insidescan'),
     path('qrcodes/<int:pk>/exitscan/', patch_qrcodes_exitscan ,name='patch_qrcodes_exitscan'),
     path('qrcodes/<int:pk>/userscan/', patch_qrcodes_userscan ,name='patch_qrcodes_userscan'),
@@ -673,6 +682,7 @@ urlpatterns = [
     path('qrcodes/village/<int:village_pk>/homedetail/', get_qrcodes_village_pk_home_number_homedetails ,name='get_qrcodes_village_pk_home_number_homedetails'),
     path('villages/<int:village_pk>/qrcodes/', get_villages_pk_qrcodes, name = 'get_villages_pk_qrcodes'),
     path('villages/<int:village_pk>/zones/<int:zone_pk>/qrcodes/', get_villages_pk_zone_pk_qrcodes, name = 'get_villages_pk_zone_pk_qrcodes'),
+    path('villages/<int:village_pk>/qrcodes/non_exit/', get_villages_pk_qrcodes_non_exit, name = 'get_villages_pk_qrcodes_non_exit'),
     path('historyservice/qrcodes/<int:qrcode_pk>/additional_detail/', get_qrcodes_history_additionaldetail, name = 'get_qrcodes_history_additionaldetail'),
     
 
