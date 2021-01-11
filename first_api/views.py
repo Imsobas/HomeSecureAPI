@@ -1,7 +1,7 @@
 from django.db.models.fields import DateField
 from django.http.response import HttpResponseServerError
 from django.utils import dateparse
-from first_api.serializers import GeneralUserSerializer, WorkSerializer, WorkingRecordSerializer, ZoneSerializer
+from first_api.serializers import GeneralUserSerializer, QrCodeSerializer, WorkSerializer, WorkingRecordSerializer, ZoneSerializer
 from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -878,71 +878,71 @@ class HomeViewSet(viewsets.ModelViewSet):
         return notFoundHandling(result)
 
 
-    @action(detail=True, methods = 'GET')
-    def get_villages_zones_homes(self, request):
-        """ Return all homes correspond to each zone corespond to each village """
-        querySet = models.Zone.objects.filter(zone_village=village_pk, pk=zone_pk).all()
-        serializer = serializers.ZoneSerializer(querySet,many=True)
-        result = serializer.data
+    # @action(detail=True, methods = 'GET')
+    # def get_villages_zones_homes(self, request):
+    #     """ Return all homes correspond to each zone corespond to each village """
+    #     querySet = models.Zone.objects.filter(zone_village=village_pk, pk=zone_pk).all()
+    #     serializer = serializers.ZoneSerializer(querySet,many=True)
+    #     result = serializer.data
             
-        return notFoundHandling(result)
+    #     return notFoundHandling(result)
 
-        # querySet = models.Home.objects.all().values()
-        # result = list(querySet)        
+    #     # querySet = models.Home.objects.all().values()
+    #     # result = list(querySet)        
 
-        result_list = []
+    #     result_list = []
 
-        villageQuerySet = models.Village.objects.all()
-        villageSerializer = serializers.VillageSerializer(villageQuerySet,many=True)
-        villageData = villageSerializer.data
+    #     villageQuerySet = models.Village.objects.all()
+    #     villageSerializer = serializers.VillageSerializer(villageQuerySet,many=True)
+    #     villageData = villageSerializer.data
 
-        for village in villageData:
-            village_dict = dict()
-            village_dict["pk"] = village["pk"]
-            village_dict["village_name"] = village["village_name"]
+    #     for village in villageData:
+    #         village_dict = dict()
+    #         village_dict["pk"] = village["pk"]
+    #         village_dict["village_name"] = village["village_name"]
 
-            zone_list = []
-            zoneQuerySet = models.Zone.objects.filter(zone_village=village_dict["pk"]).all()
-            zoneSerializer = serializers.ZoneSerializer(zoneQuerySet,many=True)
-            zoneData = zoneSerializer.data
+    #         zone_list = []
+    #         zoneQuerySet = models.Zone.objects.filter(zone_village=village_dict["pk"]).all()
+    #         zoneSerializer = serializers.ZoneSerializer(zoneQuerySet,many=True)
+    #         zoneData = zoneSerializer.data
             
-            for zone in zoneData:
-                zone_dict = dict()
-                zone_dict["pk"] = zone["pk"]
-                zone_dict["zone_name"] = zone["zone_name"]
-                zone_dict["zone_number"] = zone["zone_number"]
+    #         for zone in zoneData:
+    #             zone_dict = dict()
+    #             zone_dict["pk"] = zone["pk"]
+    #             zone_dict["zone_name"] = zone["zone_name"]
+    #             zone_dict["zone_number"] = zone["zone_number"]
 
-                home_list = []
-                homeQuerySet = models.Home.objects.filter(home_zone=zone_dict["pk"]).all()
-                homeSerializer = serializers.HomeSerializer(homeQuerySet,many=True)
-                homeData = homeSerializer.data
+    #             home_list = []
+    #             homeQuerySet = models.Home.objects.filter(home_zone=zone_dict["pk"]).all()
+    #             homeSerializer = serializers.HomeSerializer(homeQuerySet,many=True)
+    #             homeData = homeSerializer.data
                 
-                for home in homeData:
-                    home_dict = dict()
-                    home_dict["pk"] = home["pk"]
-                    home_dict["home_number"] = home["home_number"]
-                    home_dict["home_address"] = home["home_address"]
-                    home_dict["home_zone"] = home["home_zone"]
-                    home_dict["home_lat"] = home["home_lat"]
-                    home_dict["home_lon"] = home["home_lon"]
-                    home_dict["is_active"] = ["is_active"]
-                    home_list.append(home_dict)
+    #             for home in homeData:
+    #                 home_dict = dict()
+    #                 home_dict["pk"] = home["pk"]
+    #                 home_dict["home_number"] = home["home_number"]
+    #                 home_dict["home_address"] = home["home_address"]
+    #                 home_dict["home_zone"] = home["home_zone"]
+    #                 home_dict["home_lat"] = home["home_lat"]
+    #                 home_dict["home_lon"] = home["home_lon"]
+    #                 home_dict["is_active"] = ["is_active"]
+    #                 home_list.append(home_dict)
 
-                zone_dict['home'] = home_list      
-                zone_list.append(zone_dict)
+    #             zone_dict['home'] = home_list      
+    #             zone_list.append(zone_dict)
 
-            village_dict['zone'] = zone_list
-            result_list.append(village_dict)
+    #         village_dict['zone'] = zone_list
+    #         result_list.append(village_dict)
 
-        ##workkk
-        # querySet = models.Home.objects.all()
-        # serializer = serializers.HomeSerializer(querySet,many=True)
-        # result = serializer.data
-        ##workkk
+    #     ##workkk
+    #     # querySet = models.Home.objects.all()
+    #     # serializer = serializers.HomeSerializer(querySet,many=True)
+    #     # result = serializer.data
+    #     ##workkk
 
 
-        # return Response(temp_list)
-        return notFoundHandling(result_list)
+    #     # return Response(temp_list)
+    #     return notFoundHandling(result_list)
 
 
 class ManagerViewSet(viewsets.ModelViewSet):
@@ -1547,6 +1547,18 @@ class QrCodeViewSet(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
 
+    @action(detail=True, methods = ['patch'])
+    def temporary_delete_qrcode(self, request, pk):
+        "temporary delete qrcode"
+
+        qrCode = self.get_object()
+        updateData = {"is_active":False}
+        serializer = serializers.QrCodeSerializer(qrCode,updateData,partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        
+        return Response(serializer.data,status=status.HTTP_200_OK)
+
 
     @action(detail=True, methods = 'POST')
     def patch_qrcodes_insidescan(self, request, pk):
@@ -1815,12 +1827,45 @@ class QrCodeViewSet(viewsets.ModelViewSet):
             return notFoundHandling(result[0])
                 
 
+    
+      ## get all qr code in village that not exit yet 
+    @action(detail=True, methods = 'GET')
+    def get_villages_pk_qrcodes_non_exit(self, request, village_pk):
+        """ Return all information specific to qr_inside_screen services """
+        querySet = models.Qrcode.objects.filter(qr_village=village_pk, is_active=True, qr_exit_status =False,qr_complete_status=False, qr_exit_without_enter=False).all()[::-1]
+        serializer = serializers.QrCodeSerializer(querySet,many=True)
+        qrData = serializer.data
+        ### note: if error in this method please delete below and use common way of return result from serializer.data directly
+        result = []
+        for qr in qrData:
+            qrDict = dict()
+            qrDict['pk'] =  qr['pk']
+            qrDict['qr_content'] = qr['qr_content']
+            qrDict['qr_type'] = qr['qr_type']
+            qrDict['qr_car_number'] = qr['qr_car_number']
+            qrDict['qr_home_number'] = qr['qr_home_number']
+            qrDict['qr_car_color'] = qr['qr_car_color']
+            qrDict['qr_car_brand'] = qr['qr_car_brand']
+            qrDict['qr_home'] = qr['qr_home']
+            qrDict['qr_enter_time'] = qr['qr_enter_time']
+            qrDict['qr_home_lat'] = qr['qr_home_lat']
+            qrDict['qr_home_lon'] =  qr['qr_home_lon']
+            qrDict['is_active'] = qr['is_active']
 
-    ## qr_inside_screen_services 
+            zone = models.Zone.objects.filter(pk=qr['qr_zone']).last()
+            serializer = serializers.ZoneSerializer(zone)
+            zoneData = serializer.data
+            qrDict['qr_zone_name'] = zoneData['zone_name']
+
+            result.append(qrDict)
+            
+        return notFoundHandling(result)
+
+    ## qr_inside_screen_services -> get all qr code in village that not inside scan yet
     @action(detail=True, methods = 'GET')
     def get_villages_pk_qrcodes(self, request, village_pk):
         """ Return all information specific to qr_inside_screen services """
-        querySet = models.Qrcode.objects.filter(qr_village=village_pk, is_active=True, qr_inside_status=False, qr_complete_status=False, qr_exit_without_enter=False).all()[::-1]
+        querySet = models.Qrcode.objects.filter(qr_village=village_pk, is_active=True, qr_inside_status=False, qr_exit_status=False, qr_complete_status=False, qr_exit_without_enter=False).all()[::-1]
         serializer = serializers.QrCodeSerializer(querySet,many=True)
         qrData = serializer.data
         ### note: if error in this method please delete below and use common way of return result from serializer.data directly
