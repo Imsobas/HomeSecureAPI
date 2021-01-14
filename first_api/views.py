@@ -64,7 +64,7 @@ class UserProfileViewSet(viewsets.ModelViewSet):
         """Update password of this user"""
         username = request.user
         data = request.data
-        # print(username)
+      
         if(data['old_password']==None or data['new_password']==None):
             return Response({ "detail": "old password or new password should not blank"},status=status.HTTP_404_NOT_FOUND)
 
@@ -84,7 +84,7 @@ class UserProfileViewSet(viewsets.ModelViewSet):
         """ Create username along with generaluser, secureguard model"""
         data = request.data
 
-        # print(data)
+       
         
         ### create username model 
         isUsernameExist = models.UserProfile.objects.filter(username=data['username']).exists()
@@ -138,7 +138,7 @@ class UserProfileViewSet(viewsets.ModelViewSet):
 
              ## create company manager user model 
             elif(data['userRole']=='Manager' and data['managerLevel'] =='VILLAGELEVEL'):
-                # print("visithere")
+            
                 company = models.Company.objects.only('pk').get(pk=data['company'])
                 village = models.Village.objects.only('pk').get(pk=data['village'])
                 manager = models.Manager.objects.create(manager_username=username, manager_company = company, manager_village=  village, manager_level='VILLAGELEVEL')
@@ -316,7 +316,7 @@ class CustomFCMDeviceViewSet(viewsets.ModelViewSet):
             d.save()
         device = models.CustomFCMDevice.objects.all()
         device = models.CustomFCMDevice.objects.all().send_message(title="Hello From FCM Django",body= "มีรถเข้าไปบ้าน",sound="default")
-        # print(device)
+       
         # serializer = serializers.FCMDeviceSerializer(device)
 
         
@@ -331,7 +331,7 @@ class CustomFCMDeviceViewSet(viewsets.ModelViewSet):
         username = request.user
         data = request.data
 
-        # print(data['registration_id'])
+       
 
         if(data['registration_id']==None):
             return Response({ "detail": "Incomplete Sign-out"},status=status.HTTP_404_NOT_FOUND)
@@ -339,7 +339,7 @@ class CustomFCMDeviceViewSet(viewsets.ModelViewSet):
         isFCMExist = models.CustomFCMDevice.objects.filter(registration_id=data['registration_id']).exists()
         if(isFCMExist==False):
             ### in case not log-out with same fcmToken eg. token is changeed
-            # print("enter isFCMExist==False")
+          
             if(data['device_id']!=None):
                 ### if fcmToken is changed, delete from FCM device instead
                 deleteFCM = models.CustomFCMDevice.objects.filter(device_id=data['device_id']).all().delete()
@@ -349,7 +349,7 @@ class CustomFCMDeviceViewSet(viewsets.ModelViewSet):
                 return Response(status=status.HTTP_204_NO_CONTENT)
 
         else:
-            # print("Enter isFCMExist==True")
+           
             ### incase exit with same registration_id as normally 
             deleteFCM = models.CustomFCMDevice.objects.filter(registration_id=data['registration_id']).all().delete()
        
@@ -806,7 +806,7 @@ class HomeViewSet(viewsets.ModelViewSet):
             querySet = models.Home.objects.filter(pk=home_pk, is_active=True).last()
             serializer = serializers.HomeSerializer(querySet)
             result = serializer.data
-            # print(result)
+          
             
             return Response({"home_number":result['home_number']})
 
@@ -815,9 +815,7 @@ class HomeViewSet(viewsets.ModelViewSet):
     def get_homespk_number(self, request, home_number):
         """ Return pk and home_number of homes according to request homeNumber"""
         
-        print("dubugging check exist home number")
-        print(request.data)
-        # print(home_number)
+      
         isExist = models.Home.objects.filter(home_number=home_number, is_active=True).exists()
         if(isExist==False):
             return Response({ "detail": "Not have this home number"},status=status.HTTP_404_NOT_FOUND)
@@ -825,7 +823,7 @@ class HomeViewSet(viewsets.ModelViewSet):
             querySet = models.Home.objects.filter(home_number=home_number, is_active=True).last()
             serializer = serializers.HomeSerializer(querySet)
             result = serializer.data
-            # print(result)
+           
             
             return Response({"pk":result['pk'],"home_number":result['home_number']})
     
@@ -1186,14 +1184,11 @@ class CheckinCheckpointViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods = 'GET')
     def get_villages_pk_checkincheckpoints(self, request, village_pk):
         """ Return all checkpoints correspond to specific village """
-        # print("get here")
-        # print(village_pk)
+       
         village = models.Village.objects.only('pk').get(pk=village_pk)
         
         querySet = models.CheckinCheckpoint.objects.filter(point_village=village, is_active=True).all()
-        # print(querySet)
-        # for q in querySet:
-        #     print(q)
+      
         serializer = serializers.CheckinCheckpointSerializer(querySet,many=True)
         result = serializer.data
             
@@ -1757,12 +1752,7 @@ class QrCodeViewSet(viewsets.ModelViewSet):
             qrcode.save
             serializer = serializers.QrCodeSerializer(qrcode)
 
-            # ## create notification 
-            # genUserQuerySet = models.GeneralUser.objects.filter(gen_user_home= home, is_active=True).all()
-            # for user in genUserQuerySet:
-            #     print(user)
-            #     notification = models.Notification.objects.create(noti_home=home,noti_general_user=user, noti_qr = qrcode)
-            #     notification.save()
+      
 
             return Response(serializer.data,status.HTTP_201_CREATED)
         
@@ -1770,9 +1760,7 @@ class QrCodeViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods = 'POST')
     def get_qrcodes_village_pk_home_number_homedetails(self, request, village_pk):
 
-        # models.PointObservation.objects.only('pk').get(observation_village=village_pk, observation_zone=zone_pk, observation_work=work_pk, observation_secure=secure_pk, observation_date=date)
-        # print("debugging homedetail")
-        # print(request.data)
+     
 
         home_number = request.data['homedetail']
 
@@ -2457,8 +2445,6 @@ class PointObservationViewSet(viewsets.ModelViewSet):
                 serializer = serializers.CheckpointSerializer(checkpoints,many=True)
                 checkpointsData = serializer.data
 
-                # print(checkpointsData)
-
                 isExistPo = models.PointObservation.objects.filter(observation_village=village_pk, observation_zone=zone_pk, observation_work=work_pk, observation_secure=secure_pk, observation_date=date).exists()
                 
                 
@@ -2583,33 +2569,11 @@ class PointObservationViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=['post'])
     def testDateCreation(self, request):
         """ A method for testing anything else related to datetime and point observation"""
-        ### test getting date char from dateTime
-
-        # dateTime = datetime.datetime.now()
-        # dateTimeStr = str(dateTime)
-
-        # print("debuging testDateCreation")
-        # print(dateTimeStr)
-
-        # splits = dateTimeStr.split(" ") 
-        # print(splits[0])
-        # print(splits[1])
-
-        print(timeUtility.getDateStringFromDateTime(datetime.datetime.now()))
-
-        ### test increasing date of dateTime
-
-        # dateTime = datetime.datetime(2020, 10, 31)
-        # print(dateTime)
-        # dateTime = dateTime + datetime.timedelta(days=1)
-        # print(dateTime)
-
-        ### test getting work to observe working time 
-
+       
         work = models.Work.objects.get(pk=26)
         serializer = serializers.WorkSerializer(work)
         result = serializer.data
-        print(result)
+       
 
         return notFoundHandling(result)
 
@@ -2686,8 +2650,7 @@ class PointObservationViewSet(viewsets.ModelViewSet):
 
             ## check the exist PointObservationRecord
             isExistPOR = models.PointObservationRecord.objects.filter(observation_pk=pointObservation, observation_checkin_time__range=(start_time,end_time),checkpoint_pk = data['checkpoint_pk']).exists()
-            print("isExistPOR")
-            print(isExistPOR)
+           
             if(isExistPOR==True):
                 ## already have pointObservationRecord
                 pointObservationRecord = models.PointObservationRecord.objects.only('pk').get(observation_pk=pointObservation, observation_checkin_time__range=(start_time,end_time),checkpoint_pk = data['checkpoint_pk'])
@@ -2859,9 +2822,7 @@ class PointObservationRecordViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods='GET')
     def fetch_pointobservationrecord_percent(self, request, pointobservation_pk, timeslot):
         """Get data for front of working history services, get Point Observation PK, and Secure data"""
-        # print(pointobservation_pk)
-        # print(timeslot)
-        # pointObservation = models.PointObservation.objects.only('pk').get(pk=pointobservation_pk)
+        
         isExistPO = models.PointObservation.objects.filter(pk=pointobservation_pk).exists()
 
         if(isExistPO==False):
@@ -2874,29 +2835,7 @@ class PointObservationRecordViewSet(viewsets.ModelViewSet):
 
             return notFoundHandling(result)
 
-    # @action(detail=True, methods='GET')
-    # def fetch_pointobservationrecord_timeslots_percent(self, request, pointobservation_pk):
-    #     """Get data for front of working history services, get Point Observation PK, and Secure data"""
-    #     # print(pointobservation_pk)
-    #     # print(timeslot)
-    #     # pointObservation = models.PointObservation.objects.only('pk').get(pk=pointobservation_pk)
-    #     isExistPO = models.PointObservation.objects.filter(pk=pointobservation_pk).exists()
-
-    #     if(isExistPO==False):
-    #         return Response({ "detail": "Not found point observation."},status=status.HTTP_404_NOT_FOUND)
-    #     else:
-    #         pointNum = models.PointObservationPointList.objects.filter(observation_pk=pointobservation_pk ).count()
-
-    #         pointObservationRecord = models.PointObservationRecord.objects.filter(observation_pk=pointobservation_pk).values('observation_timeslot').order_by().annotate(Count('checkpoint_pk'))
-
-    #         result = []
-    #         for item in pointObservationRecord:
-    #             temp = dict()
-    #             temp['timeslot'] = item['observation_timeslot']
-    #             temp['percent'] =  int((item['checkpoint_pk__count']/pointNum)*100)
-    #             result.append(temp)
-
-    #         return notFoundHandling(result)
+    
 
     @action(detail=True, methods='GET')
     def fetch_pointobservationrecord_percent_by_set_of_starttime_endtime(self, request, pointobservation_pk):
@@ -2945,8 +2884,7 @@ class MaintenanceFeePeriodViewSet(viewsets.ModelViewSet):
             paidHomeNum = models.MaintenanceFeeRecord.objects.filter(fee_period=maintenancefeeperiod,fee_paid_status=True,is_active=True).count()
             totalAmount = models.MaintenanceFeeRecord.objects.filter(fee_period=maintenancefeeperiod,fee_paid_status=True,is_active=True).aggregate(Sum('fee_amount'))['fee_amount__sum']
             
-            # print(paidHomeNum)
-            # print(totalAmount)
+          
             result = {"total_amount": totalAmount, "paid_home_number":paidHomeNum}
     
             return notFoundHandling(result)
@@ -3023,8 +2961,6 @@ class MaintenanceFeePeriodViewSet(viewsets.ModelViewSet):
             ## create maintenance fee record for all home in this village 
             homes = models.Home.objects.filter(home_village=village,is_active=True)
             for home in homes:
-                # print(home)
-                # print(type(home))
                 
                 maintenanceFeeRecord = models.MaintenanceFeeRecord.objects.create(fee_period=maintenanceFeePeriod, fee_home=home,fee_paid_date=None, fee_house_space=None, fee_amount=None, fee_paid_status=False, is_active=True)
                 maintenanceFeeRecord.save()
@@ -3054,7 +2990,6 @@ class MaintenanceFeeRecordViewSet(viewsets.ModelViewSet):
             querySet = models.Home.objects.filter(home_number=home_number, is_active=True).last()
             serializer = serializers.HomeSerializer(querySet)
             result = serializer.data
-            # print(result) 
            
 
             isExistMtp = models.MaintenanceFeePeriod.objects.filter(pk=mfp_pk, is_active=True).exists()
@@ -3122,13 +3057,13 @@ class VoteTopicViewSet(viewsets.ModelViewSet):
         
         
         votechoice = models.VoteChoice.objects.get(pk = data['selected_confirm_choice_pk'],is_active=True)
-        # print(votechoice)
+     
         updateData = {'vote_is_result':True}
         choiceSerializer = serializers.VoteChoiceSerializer(votechoice, updateData,partial=True)
         choiceSerializer.is_valid(raise_exception=True)
         choiceSerializer.save()
 
-        # print(voteSerializer.data)
+       
         result = voteSerializer.data
         result['votechoice_pk'] = data['selected_confirm_choice_pk']
         result['vote_is_result'] = True
@@ -3158,7 +3093,7 @@ class VoteTopicViewSet(viewsets.ModelViewSet):
             ### find vote topic
             voteTopic = models.VoteTopic.objects.filter(pk=votetopic_pk,is_active=True).last()
             voteTopicTitle = models.VoteTopic.objects.filter(pk=votetopic_pk,is_active=True).values('vote_thai_topic').last()
-            # print(voteTopicTitle)
+           
             result.append({"voteTopicTitle":voteTopicTitle['vote_thai_topic']})
             
             ### -----------------------------
@@ -3269,7 +3204,7 @@ class VoteTopicViewSet(viewsets.ModelViewSet):
             ### find vote topic
             voteTopic = models.VoteTopic.objects.filter(pk=votetopic_pk,is_active=True).last()
             voteTopicTitle = models.VoteTopic.objects.filter(pk=votetopic_pk,is_active=True).values('vote_thai_topic').last()
-            # print(voteTopicTitle)
+           
             result.append({"voteTopicTitle":voteTopicTitle['vote_thai_topic']})
 
             ### find vote record in percent
@@ -3358,7 +3293,7 @@ class VoteTopicViewSet(viewsets.ModelViewSet):
 
             home = models.Home.objects.get(pk=home_pk,is_active=True)
             serializer = serializers.HomeSerializer(home)
-            # print()
+            
             voteQuota = serializer.data['home_vote_qouta']
 
             result = []
@@ -3415,7 +3350,7 @@ class VoteTopicViewSet(viewsets.ModelViewSet):
                     feeRecordData = serializer.data
                     ### loop for each record that is this home 
                     for feeRec in feeRecordData:
-                        # print(feeRec)
+                       
                         if(feeRec['fee_paid_status']==False):
                             isVoteAble= False
                             break
@@ -3571,10 +3506,10 @@ class ProblemViewSet(viewsets.ModelViewSet):
 
 
         result = []
-        # print(problemData)
+     
         for problem in problemData:
             newDict = dict()
-            # print(problem)
+          
             homePk = problem['problem_home']
             home = models.Home.objects.filter(pk = homePk).last()
             serializer = serializers.HomeSerializer(home,)
@@ -3684,9 +3619,9 @@ class WorkingRecordViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods = 'GET')
     def fetch_workingrecord(self, request, village_pk, zone_pk, work_pk, date_str):
         """ Return all votetopics according to specific village """
-        # print(date_str)
+        
         newdate = date_str.split("-")
-        # print(newdate[0])
+     
         isExistWR = models.WorkingRecord.objects.filter(working_village=village_pk, working_zone=zone_pk, working_work=work_pk,working_date__date=datetime.date(int(newdate[0]),int(newdate[1]),int(newdate[2]))).exists()
         if(isExistWR==False):
             return Response({ "detail": "Not found."},status=status.HTTP_404_NOT_FOUND)
@@ -3696,7 +3631,7 @@ class WorkingRecordViewSet(viewsets.ModelViewSet):
             result = []
 
             for wr in workingRecord:
-                # print(wr)
+             
                 wrDict = dict()
 
                 workPk = wr['working_work']
@@ -3741,9 +3676,9 @@ class WorkingRecordViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods = 'GET')
     def fetch_workingrecord_null_work(self, request, village_pk, zone_pk, date_str):
         """ Return all votetopics according to specific village """
-        # print(date_str)
+      
         newdate = date_str.split("-")
-        # print(newdate[0])
+       
         isExistWR = models.WorkingRecord.objects.filter(working_village=village_pk, working_zone=zone_pk, working_date__date=datetime.date(int(newdate[0]),int(newdate[1]),int(newdate[2]))).exists()
         if(isExistWR==False):
             return Response({ "detail": "Not found."},status=status.HTTP_404_NOT_FOUND)
@@ -3753,7 +3688,7 @@ class WorkingRecordViewSet(viewsets.ModelViewSet):
             result = []
 
             for wr in workingRecord:
-                # print(wr)
+               
                 wrDict = dict()
 
                 workPk = wr['working_work']
@@ -3799,9 +3734,9 @@ class WorkingRecordViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods = 'GET')
     def fetch_workingrecord_null_zone(self, request, village_pk, work_pk, date_str):
         """ Return all votetopics according to specific village """
-        # print(date_str)
+      
         newdate = date_str.split("-")
-        # print(newdate[0])
+       
         isExistWR = models.WorkingRecord.objects.filter(working_village=village_pk, working_work=work_pk,working_date__date=datetime.date(int(newdate[0]),int(newdate[1]),int(newdate[2]))).exists()
         if(isExistWR==False):
             return Response({ "detail": "Not found."},status=status.HTTP_404_NOT_FOUND)
@@ -3811,7 +3746,7 @@ class WorkingRecordViewSet(viewsets.ModelViewSet):
             result = []
 
             for wr in workingRecord:
-                # print(wr)
+              
                 wrDict = dict()
 
                 workPk = wr['working_work']
@@ -3857,9 +3792,9 @@ class WorkingRecordViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods = 'GET')
     def fetch_workingrecord_null_zone_null_work(self, request, village_pk, date_str):
         """ Return all votetopics according to specific village """
-        # print(date_str)
+      
         newdate = date_str.split("-")
-        # print(newdate[0])
+       
         isExistWR = models.WorkingRecord.objects.filter(working_village=village_pk,working_date__date=datetime.date(int(newdate[0]),int(newdate[1]),int(newdate[2]))).exists()
         if(isExistWR==False):
             return Response({ "detail": "Not found."},status=status.HTTP_404_NOT_FOUND)
@@ -3869,7 +3804,7 @@ class WorkingRecordViewSet(viewsets.ModelViewSet):
             result = []
 
             for wr in workingRecord:
-                # print(wr)
+           
                 wrDict = dict()
 
                 workPk = wr['working_work']
@@ -3921,9 +3856,9 @@ class WorkingRecordViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods = 'GET')
     def fetch_detailed_workingrecord(self, request, village_pk, zone_pk, work_pk, date_str, secure_pk):
         """ Return all votetopics according to specific village """
-        # print(date_str)
+      
         newdate = date_str.split("-")
-        # print(newdate[0])
+      
         isExistWR = models.WorkingRecord.objects.filter(working_village=village_pk, working_zone=zone_pk, working_work=work_pk,working_date__date=datetime.date(int(newdate[0]),int(newdate[1]),int(newdate[2])),working_secure=secure_pk).exists()
         if(isExistWR==False):
             return Response({ "detail": "Not found."},status=status.HTTP_404_NOT_FOUND)
@@ -3964,8 +3899,7 @@ class NotificationViewSet(viewsets.ModelViewSet):
     
         count = models.Notification.objects.filter(noti_general_user=user,noti_read_status=False).count()
         result = [count]
-            # print(result)
-        
+          
         return notFoundHandling(result)
 
     @action(detail=True, methods = 'GET')
@@ -3982,8 +3916,7 @@ class NotificationViewSet(viewsets.ModelViewSet):
         for noti in notiData:
             
             qrPk = noti['noti_qr']
-            # print(qrPk)
-
+          
             qrcode = models.Qrcode.objects.filter(pk=qrPk).last()
             serializer = serializers.QrCodeSerializer(qrcode)
             qrcodeData = serializer.data
@@ -3998,7 +3931,7 @@ class NotificationViewSet(viewsets.ModelViewSet):
             qrDict['noti_read_status'] = noti['noti_read_status']
             result.append(qrDict)
 
-            # print(result)
+        
         
         return notFoundHandling(result)
 
@@ -4063,16 +3996,12 @@ class NotificationViewSet(viewsets.ModelViewSet):
                 genuserSerializer = serializers.GeneralUserSerializer(genuser)
                 genUserData = genuserSerializer.data
 
-                # print(genUserData)
-
-                # print("visit here after create notification")
+              
                 ### create fcm message 
                 isUserNameExist = models.UserProfile.objects.filter(pk=genUserData['gen_user_username']).exists()
                 if(isUserNameExist==True):
                     username = models.UserProfile.objects.get(pk=genUserData['gen_user_username'])
                     
-                    # print("username")
-                    # print(username)
                     
                     ### fcm for user
                     isDeviceExist = models.CustomFCMDevice.objects.filter(user=username).exists()
@@ -4091,7 +4020,7 @@ class NotificationViewSet(viewsets.ModelViewSet):
 
             ## fcm for secure
             zoneName = serializers.ZoneSerializer(zone).data['zone_name']
-            # print(zoneName)
+          
             secureQuerySet = models.SecureGuard.objects.filter(secure_zone=zone).all()
             secureSerializer = serializers.SecureGuardSerializer(secureQuerySet,many=True)
             secureData = secureSerializer.data
@@ -4123,7 +4052,7 @@ class NotificationViewSet(viewsets.ModelViewSet):
             # for secure in secureGuardData:
             #     secure_list.append(secure['pk'])
 
-            # print(secure_list)
+          
 
             return Response(qrSerializer.data,status.HTTP_201_CREATED)
         
