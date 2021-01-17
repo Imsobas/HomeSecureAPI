@@ -1477,8 +1477,11 @@ class SecureLocationViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods = 'GET')
     def get_secureguards_pk_securelocation(self, request, secure_guard_pk):
         """ Return all secure location correspond to specific secure guard and also delete old set  """
+        
+        ### keep data for last 48 hours
+        two_day_ago = datetime.date.now() - datetime.timedelta(hours=48)
        
-        delQuerySet = models.SecureLocation.objects.filter(secure_location_time__lt=datetime.date.today()).all().delete()
+        delQuerySet = models.SecureLocation.objects.filter(secure_location_time__lt=two_day_ago).all().delete()
         querySet = models.SecureLocation.objects.filter(secure_pk=secure_guard_pk).order_by('secure_location_time').all()[::-1]
         serializer = serializers.SecureLocationSerializer(querySet,many=True)
         result = serializer.data
