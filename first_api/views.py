@@ -1479,7 +1479,7 @@ class SecureLocationViewSet(viewsets.ModelViewSet):
         """ Return all secure location correspond to specific secure guard and also delete old set  """
         
         ### keep data for last 48 hours
-        two_day_ago = datetime.date.now() - datetime.timedelta(hours=48)
+        two_day_ago = datetime.datetime.now() - datetime.timedelta(hours=48)
        
         delQuerySet = models.SecureLocation.objects.filter(secure_location_time__lt=two_day_ago).all().delete()
         querySet = models.SecureLocation.objects.filter(secure_pk=secure_guard_pk).order_by('secure_location_time').all()[::-1]
