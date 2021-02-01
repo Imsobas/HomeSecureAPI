@@ -438,8 +438,8 @@ fetch_pointobservation_update_zone = views.PointObservationViewSet.as_view({
 
 ## MaintenanceFeePeriod
 
-get_villages_pk_maintenance_fee_period = views.MaintenanceFeePeriodViewSet.as_view({
-    'get': 'get_villages_pk_maintenance_fee_period'
+get_maintenance_fee_period_filterby_villagePk_year = views.MaintenanceFeePeriodViewSet.as_view({
+    'get': 'get_maintenance_fee_period_filterby_villagePk_year'
 })
 
 get_villages_pk_maintenance_fee_period_pk = views.MaintenanceFeePeriodViewSet.as_view({
@@ -739,7 +739,7 @@ urlpatterns = [
     
 
     ## maintenancefeeperiod
-    path('villages/<int:village_pk>/maintenance_fee_period/', get_villages_pk_maintenance_fee_period,name='get_villages_pk_maintenance_fee_period'),
+    path('maintenance_fee_period/villages/<int:village_pk>/year/<int:year>/', get_maintenance_fee_period_filterby_villagePk_year,name='get_maintenance_fee_period_filterby_villagePk_year'),
     path('villages/<int:village_pk>/maintenance_fee_period/<int:mfpPk>/', get_villages_pk_maintenance_fee_period_pk,name='get_villages_pk_maintenance_fee_period_pk'),
     path('maintenance_fee_period/create/maintenance_fee_record/', create_maintenance_fee_period,name='create_maintenance_fee_period'),
     path('maintenance_fee_period/<int:pk>/total_amount_and_paid_home_num/', get_maintenance_fee_period_total_amount_number_paid_home,name='get_maintenance_fee_period_total_amount_number_paid_home'),

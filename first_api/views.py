@@ -2956,9 +2956,9 @@ class MaintenanceFeePeriodViewSet(viewsets.ModelViewSet):
 
   
     @action(detail=True, methods = 'GET')
-    def get_villages_pk_maintenance_fee_period(self, request, village_pk):
+    def get_maintenance_fee_period_filterby_villagePk_year(self, request, village_pk, year):
         """ Return all maintenance fee period according to specific village """
-        querySet = models.MaintenanceFeePeriod.objects.filter(fee_village=village_pk,is_active=True).all()
+        querySet = models.MaintenanceFeePeriod.objects.filter(fee_village=village_pk,is_active=True, fee_start__year = year).all()
         
         result = []
         for maintenancefeeperiod in querySet:
