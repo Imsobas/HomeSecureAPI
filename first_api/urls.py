@@ -456,12 +456,12 @@ get_maintenance_fee_period_total_amount_number_paid_home = views.MaintenanceFeeP
 })
 
 ## VoteTopic 
-get_villages_pk_votetopics = views.VoteTopicViewSet.as_view({
-    'get': 'get_villages_pk_votetopics'
+get_votetopics_filterby_villagepk_month_year = views.VoteTopicViewSet.as_view({
+    'get': 'get_votetopics_filterby_villagepk_month_year'
 })
 
-get_villages_pk_user_pk_votetopics = views.VoteTopicViewSet.as_view({
-    'get': 'get_villages_pk_user_pk_votetopics'
+get_votetopics_filterby_villagepk_homepk_month_year = views.VoteTopicViewSet.as_view({
+    'get': 'get_votetopics_filterby_villagepk_homepk_month_year'
 })
 
 get_votetopics_pk_result_user_home_pk = views.VoteTopicViewSet.as_view({
@@ -511,8 +511,16 @@ get_homes_pk_problems = views.ProblemViewSet.as_view({
     'get': 'get_homes_pk_problems'
 })
 
+get_problems_filterby_homepk_month_year = views.ProblemViewSet.as_view({
+    'get': 'get_problems_filterby_homepk_month_year'
+})
+
 get_problems_with_home_number  = views.ProblemViewSet.as_view({
     'get': 'get_problems_with_home_number'
+})
+
+get_problems_with_home_number_filterby_month_year = views.ProblemViewSet.as_view({
+    'get': 'get_problems_with_home_number_filterby_month_year'
 })
 
 ## Secure Work 
@@ -742,8 +750,8 @@ urlpatterns = [
     path('maintenance_fee_record/checkisexist/checkduplicate/maintenance_fee_period/<int:mfp_pk>/', mtr_check_isexist_and_isduplicate_home, name='mtr_check_isexist_and_isduplicate_home'),
     
     ## votetopic
-    path('villages/<int:village_pk>/votetopics/', get_villages_pk_votetopics,name='get_villages_pk_votetopics'),
-    path('villages/<int:village_pk>/homes/<int:home_pk>/votetopics/', get_villages_pk_user_pk_votetopics,name='get_villages_pk_user_pk_votetopics'),
+    path('votetopics/villages/<int:village_pk>/month/<int:month>/year/<int:year>/', get_votetopics_filterby_villagepk_month_year,name='get_votetopics_filterby_villagepk_month_year'),
+    path('votetopics/villages/<int:village_pk>/homes/<int:home_pk>/month/<int:month>/year/<int:year>/', get_votetopics_filterby_villagepk_homepk_month_year,name='get_votetopics_filterby_villagepk_homepk_month_year'),
     path('votetopics/<int:votetopic_pk>/result/homes/<int:home_pk>/', get_votetopics_pk_result_user_home_pk,name='get_votetopics_pk_result_user_home_pk'),
     path('votetopics/<int:votetopic_pk>/result/admin/', get_votetopics_pk_result_admin,name='get_votetopics_pk_result_admin'),
     path('votetopics/<int:pk>/confirmresult/', patch_votetopics_result,name='patch_votetopics_result'),
@@ -758,7 +766,11 @@ urlpatterns = [
 
     ## problem 
     path('homes/<int:home_pk>/problems/',  get_homes_pk_problems,name='get_homes_pk_problems'),
-    path('problems_with_home_number/<int:village_pk>/',  get_problems_with_home_number,name='get_problems_with_home_number'),
+    path('problems/home/<int:home_pk>/month/<int:month>/year/<int:year>/',get_problems_filterby_homepk_month_year, name='get_problems_filterby_homepk_month_year'),
+    path('problems/<int:village_pk>/',  get_problems_with_home_number,name='get_problems_with_home_number'),
+    path('problems/village/<int:village_pk>/month/<int:month>/year/<int:year>/',  get_problems_with_home_number_filterby_month_year,name=' get_problems_with_home_number_filterby_month_year'),
+
+   
     
     ## securework 
     path('secure_guards/<int:secureguard_pk>/works/',  get_secureguards_pk_works,name='get_secureguards_pk_works'),

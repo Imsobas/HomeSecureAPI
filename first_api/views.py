@@ -3334,19 +3334,19 @@ class VoteTopicViewSet(viewsets.ModelViewSet):
 
     
     @action(detail=True, methods = 'GET')
-    def get_villages_pk_votetopics(self, request, village_pk):
+    def get_votetopics_filterby_villagepk_month_year(self, request, village_pk, month, year):
         """ Return all votetopics according to specific village """
-        querySet = models.VoteTopic.objects.filter(vote_village=village_pk,is_active=True).all()
+        querySet = models.VoteTopic.objects.filter(vote_village=village_pk,is_active=True,vote_start_date__month=month, vote_start_date__year=year).all()
         serializer = serializers.VoteTopicSerializer(querySet, many=True)
         result = serializer.data 
 
         return notFoundHandling(result)
 
     @action(detail=True, methods = 'GET')
-    def get_villages_pk_user_pk_votetopics(self, request, village_pk, home_pk):
-        """ Return all votetopics which the user not vote yet according to specific village """
-        
-        querySet = models.VoteTopic.objects.filter(vote_village=village_pk, vote_end_date__gte=datetime.date.today(), vote_confirm_status=False,is_active=True).all()
+    def get_votetopics_filterby_villagepk_homepk_month_year(self, request, village_pk, home_pk, month, year):
+        """ Return all votetopics which the user not vote yet according to specific village, home  """
+        print("debugging")
+        querySet = models.VoteTopic.objects.filter(vote_village=village_pk, vote_end_date__gte=datetime.date.today(), vote_confirm_status=False,is_active=True,vote_start_date__month=month, vote_start_date__year=year).all()
         serializer = serializers.VoteTopicSerializer(querySet, many=True)
         result = serializer.data 
 
@@ -3559,6 +3559,53 @@ class ProblemViewSet(viewsets.ModelViewSet):
             result = serializer.data 
 
             return notFoundHandling(result)
+
+    @action(detail=True, methods = 'GET')
+    def get_problems_filterby_homepk_month_year(self, request, home_pk, month, year):
+        """ Return all votetopics according to specific village """
+
+        isExist = models.Home.objects.filter(pk= home_pk, is_active=True).exists()
+        if(isExist==False):
+            return Response({ "detail": "Not have this home in system"},status=status.HTTP_404_NOT_FOUND)
+        else:
+            home = models.Home.objects.only('pk').get(pk=home_pk)
+            querySet = models.Problem.objects.filter( problem_home=home, is_active=True,problem_date__month = month, problem_date__year=year).all()
+            serializer = serializers.ProblemSerializer(querySet, many=True)
+            result = serializer.data 
+
+            return notFoundHandling(result)
+
+    @action(detail=True, methods = 'GET')
+    def get_problems_with_home_number_filterby_month_year(self, request, village_pk, month,year ):
+
+        """ Return all problems with home numnber filtered by month and year"""
+        querySet = models.Problem.objects.filter(problem_village = village_pk,is_active=True, problem_date__month = month, problem_date__year=year).all()
+        serializer = serializers.ProblemSerializer(querySet, many=True)
+        problemData = serializer.data 
+
+
+        result = []
+     
+        for problem in problemData:
+            newDict = dict()
+          
+            homePk = problem['problem_home']
+            home = models.Home.objects.filter(pk = homePk).last()
+            serializer = serializers.HomeSerializer(home,)
+            homeData = serializer.data
+            newDict['pk'] = problem['pk']
+            newDict['problem_village'] = problem['problem_village']
+            newDict['problem_home'] = problem['problem_home']
+            newDict['problem_home_number'] = homeData['home_number']
+            newDict['problem_date'] = problem['problem_date']
+            newDict['problem_type'] = problem['problem_type']
+            newDict['problem_detail'] = problem['problem_detail']
+            newDict['problem_feedback'] = problem['problem_feedback']
+            newDict['is_active'] = problem['is_active']
+            newDict['is_active_admin'] = problem['is_active_admin']
+            result.append(newDict)
+
+        return notFoundHandling(result)
 
     @action(detail=True, methods = 'GET')
     def get_problems_with_home_number(self, request, village_pk ):
