@@ -3042,7 +3042,7 @@ class MaintenanceFeeRecordViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,)
 
     @action(detail=True, methods = 'GET')
-    def get_unpaid_maintenance_fee_record_filterby_home_pk(self, request,home_pk):
+    def get_maintenance_fee_record_filterby_home_pk_year(self, request,home_pk,year):
         """ Return all maintenance fee record filter by home pk"""
 
         isHomeExist = models.Home.objects.filter(pk=home_pk).exists()
@@ -3059,14 +3059,18 @@ class MaintenanceFeeRecordViewSet(viewsets.ModelViewSet):
 
             for mfr in mfr:
                 tempDict = dict()
-                maintenanceFeePeriodPk = mfr['fee_period']
-                maintenanceFeePeriod = models.MaintenanceFeePeriod.objects.get(pk=maintenanceFeePeriodPk, is_active=True)
                 tempDict['fee_amount'] = mfr['fee_amount']
+                tempDict['fee_paid_date'] = mfr['fee_paid_date']
+                tempDict['fee_amount'] = mfr['fee_amount']
+                tempDict['fee_paid_status'] = mfr['fee_paid_status']
                 tempDict['fee_period_name'] = None;
                 tempDict['fee_start'] = None
                 tempDict['fee_end'] = None
                 tempDict['fee_deadline'] = None
-                if(maintenanceFeePeriod!=None):
+                maintenanceFeePeriodPk = mfr['fee_period']
+                isExistMaintenanceFeePeriod = models.MaintenanceFeePeriod.objects.filter(pk=maintenanceFeePeriodPk,is_active=True, fee_start__year=year).exists()
+                if(isExistMaintenanceFeePeriod==True):
+                    maintenanceFeePeriod = models.MaintenanceFeePeriod.objects.get(pk=maintenanceFeePeriodPk,is_active=True, fee_start__year=year)
                     serializer = serializers.MaintenanceFeePeriodSerializer(maintenanceFeePeriod)
                     mfp = serializer.data
                     tempDict['fee_period_name'] = mfp['fee_period_name']
@@ -3074,7 +3078,7 @@ class MaintenanceFeeRecordViewSet(viewsets.ModelViewSet):
                     tempDict['fee_end'] = mfp['fee_end']
                     tempDict['fee_deadline'] = mfp['fee_deadline']
 
-                result.append(tempDict)
+                    result.append(tempDict)
  
             return notFoundHandling(result)
 

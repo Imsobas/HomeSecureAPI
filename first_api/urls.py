@@ -497,8 +497,8 @@ post_add_multiple_voterecord  = views.VoteRecordViewSet.as_view({
 
 ## MaintenanceFeeRecord
 
-get_unpaid_maintenance_fee_record_filterby_home_pk = views.MaintenanceFeeRecordViewSet.as_view({
-    'get': 'get_unpaid_maintenance_fee_record_filterby_home_pk'
+get_maintenance_fee_record_filterby_home_pk_year = views.MaintenanceFeeRecordViewSet.as_view({
+    'get': 'get_maintenance_fee_record_filterby_home_pk_year'
 })
 
 get_maintenance_fee_period_pk_maintenance_fee_record = views.MaintenanceFeeRecordViewSet.as_view({
@@ -743,7 +743,7 @@ urlpatterns = [
     
 
     ## maintenancefeeperiod
-    path('maintenance_fee_period/homes/<int:home_pk>/',get_unpaid_maintenance_fee_record_filterby_home_pk,name="get_unpaid_maintenance_fee_record_filterby_home_pk"),
+    path('maintenance_fee_period/homes/<int:home_pk>/year/<int:year>/',get_maintenance_fee_record_filterby_home_pk_year,name="get_maintenance_fee_record_filterby_home_pk_year"),
     path('maintenance_fee_period/villages/<int:village_pk>/year/<int:year>/', get_maintenance_fee_period_filterby_villagePk_year,name='get_maintenance_fee_period_filterby_villagePk_year'),
     path('villages/<int:village_pk>/maintenance_fee_period/<int:mfpPk>/', get_villages_pk_maintenance_fee_period_pk,name='get_villages_pk_maintenance_fee_period_pk'),
     path('maintenance_fee_period/create/maintenance_fee_record/', create_maintenance_fee_period,name='create_maintenance_fee_period'),
