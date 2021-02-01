@@ -2090,6 +2090,68 @@ class QrCodeViewSet(viewsets.ModelViewSet):
                 
             return notFoundHandling(result)
 
+
+     ## qr_history_screen_services for general user
+    @action(detail=True, methods = 'GET')
+    def get_historyservice_list_home_pk_dates_year_month_day_qrcodes(self, request, home_pk, year, month, day):
+        """ Return all qr codeinformation specific for qr history list service """
+
+        isExistHome = models.Home.objects.filter(pk = home_pk).exists()
+
+        if(isExistHome==False):
+            return Response({ "detail": "not have this home to for creating maintenance_fee_period "},status=status.HTTP_404_NOT_FOUND)
+        else:
+            home = models.Home.objects.get(pk = home_pk)
+
+            querySet = models.Qrcode.objects.filter(qr_home=home, qr_enter_time__date= datetime.date(year,month,day)).order_by('qr_enter_time').all()[::-1]
+            serializer = serializers.QrCodeSerializer(querySet,many=True)
+            result = serializer.data
+
+
+            ## add zone name in response data
+
+            for re in result:
+                zonePk = re['qr_zone']
+                isExistZone = models.Zone.objects.filter(pk=zonePk).exists()
+                if(isExistZone==False):
+                    return Response({ "detail": "not have zone "},status=status.HTTP_404_NOT_FOUND)
+                else:
+                    zone = models.Zone.objects.only('pk').get(pk=zonePk)
+                    zoneSerializer = serializers.ZoneSerializer(zone)
+                    zoneResult = zoneSerializer.data
+                    re['qr_zone_name'] = zoneResult['zone_name']
+
+            homeSerializer = serializers.HomeSerializer(home)
+            homeData = homeSerializer.data
+            villagePk =  homeData['home_village'] 
+
+            isVillageExist = models.Village.objects.filter(pk=villagePk).exists()
+            if(isVillageExist==False):
+                                    return Response({ "detail": "not have village for this home"},status=status.HTTP_404_NOT_FOUND)
+            else:
+                village = models.Village.objects.get(pk=villagePk)
+
+                ### create new setting 
+                isSettingExist = models.Setting.objects.filter(setting_village=village).exists()
+                if(isSettingExist==False):
+                    return Response({ "detail": "not found setting "},status=status.HTTP_404_NOT_FOUND)
+                    # setting = models.Setting.objects.create(setting_village=village)
+                    # setting.save
+                    # serializer = serializers.SettingSerializer(setting)
+                    # settingData = serializer.data
+
+                    # result['village_qr_scan_intime'] =  settingData['qr_scaninTime_duration']
+
+                else:
+                    querySet = models.Setting.objects.get(setting_village=village)
+                    serializer = serializers.SettingSerializer(querySet)
+                    settingData = serializer.data
+
+                    for re in result :
+                        re['village_qr_scan_intime'] =  settingData['qr_scaninTime_duration']
+                    
+                return notFoundHandling(result)
+
 class SettingViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.SettingSerializer
     queryset = models.Setting.objects.all()

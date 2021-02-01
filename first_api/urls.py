@@ -354,6 +354,11 @@ get_historyservice_list_villages_pk_qrcodes = views.QrCodeViewSet.as_view({
      'get': 'get_historyservice_list_villages_pk_qrcodes'
 })
 
+get_historyservice_list_home_pk_dates_year_month_day_qrcodes = views.QrCodeViewSet.as_view({
+    'get': 'get_historyservice_list_home_pk_dates_year_month_day_qrcodes'
+})
+
+
 ## create code with no coupon condition
 create_qrcodes_home_pk_nocopon = views.QrCodeViewSet.as_view({
      'post': 'create_qrcodes_home_pk_nocopon'
@@ -696,6 +701,9 @@ urlpatterns = [
     ## currently use this
     path('historyservice/list/villages/null/dates/<int:year>/<int:month>/<int:day>/qrcodes/',get_historyservice_list_villages_null_dates_year_month_day_qrcodes,name='get_historyservice_list_villages_null_dates_year_month_day_qrcodes'),
     path('qrcodes/create_qrcodes_nocoupon/', create_qrcodes_home_pk_nocopon, name = 'create_qrcodes_home_pk_nocopon'),
+    path('historyservice/list/homes/<int:home_pk>/dates/<int:year>/<int:month>/<int:day>/qrcodes/',  get_historyservice_list_home_pk_dates_year_month_day_qrcodes, name = ' get_historyservice_list_home_pk_dates_year_month_day_qrcodes'),
+   
+
 
     #point observation
     path('testDateCreation/',testDateCreation, name='testDateCreation'),
