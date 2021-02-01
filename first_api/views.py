@@ -3968,6 +3968,42 @@ class NotificationViewSet(viewsets.ModelViewSet):
         return notFoundHandling(result)
 
     @action(detail=True, methods = 'GET')
+    def get_notification_generaluser_pk_month_year(self, request, user_pk, month,year):
+        """ Return all notification according to user filtered by month, year """
+        user = models.GeneralUser.objects.only('pk').get(pk=user_pk)
+
+        notification = models.Notification.objects.filter(noti_general_user=user, noti_date__month = month, noti_date__year = year).all()[::-1]
+        serializer = serializers.NotificationSerializer(notification,many=True)
+        notiData = serializer.data
+
+        #  querySet = models.Qrcode.objects.filter(qr_home=home, qr_enter_time__date= datetime.date(year,month,day)).order_by('qr_enter_time').all()[::-1]
+            # serializer = serializers.QrCodeSerializer(querySet,many=True)
+            # result = serializer.data
+
+        result =[]
+        for noti in notiData:
+            
+            qrPk = noti['noti_qr']
+          
+            qrcode = models.Qrcode.objects.filter(pk=qrPk).last()
+            serializer = serializers.QrCodeSerializer(qrcode)
+            qrcodeData = serializer.data
+            
+            qrDict = dict()
+            qrDict['noti_pk'] = noti['pk']
+            qrDict['qr_enter_time'] = qrcodeData['qr_enter_time']
+            qrDict['qr_home_number'] = qrcodeData['qr_home_number']
+            qrDict['qr_car_number'] = qrcodeData['qr_car_number']
+            qrDict['qr_car_brand'] = qrcodeData['qr_car_brand']
+            qrDict['qr_car_color'] = qrcodeData['qr_car_color']
+            qrDict['noti_read_status'] = noti['noti_read_status']
+            result.append(qrDict)
+
+        
+        
+        return notFoundHandling(result)    
+
+    @action(detail=True, methods = 'GET')
     def get_notification_generaluser_pk(self, request, user_pk):
         """ Return all votetopics according to specific village """
         user = models.GeneralUser.objects.only('pk').get(pk=user_pk)

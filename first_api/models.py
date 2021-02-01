@@ -494,6 +494,7 @@ class Notification(models.Model):
     noti_general_user = models.ForeignKey(GeneralUser,null=True, blank=True, on_delete=models.DO_NOTHING)
     noti_qr = models.ForeignKey(Qrcode,null=True, blank=True, on_delete=models.DO_NOTHING)
     noti_read_status = models.BooleanField(default=False)
+    noti_date = models.DateTimeField(null=True, blank=True,auto_now_add=True)
 
     def __str__(self):
         """Return the model as a string"""

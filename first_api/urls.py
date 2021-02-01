@@ -573,6 +573,10 @@ get_notification_generaluser_pk = views.NotificationViewSet.as_view({
     'get': 'get_notification_generaluser_pk'
 })
 
+get_notification_generaluser_pk_month_year = views.NotificationViewSet.as_view({
+    'get': 'get_notification_generaluser_pk_month_year'
+})
+
 get_unread_notification_count = views.NotificationViewSet.as_view({
     'get': 'get_unread_notification_count'
 })
@@ -777,7 +781,10 @@ urlpatterns = [
     
     path('qrcodes/create_enter_and_notification/',  create_enter_qrcode_and_notificaton,name='create_enter_qrcode_and_notificaton'),
     path('general_users/<int:user_pk>/notification/',  get_notification_generaluser_pk,name='get_notification_generaluser_pk'),
+    path('general_users/<int:user_pk>/month/<int:month>/year/<int:year>/notification/',get_notification_generaluser_pk_month_year,name='get_notification_generaluser_pk_month_year'),
     path('general_users/<int:user_pk>/unread_notification/count/',  get_unread_notification_count,name='get_unread_notification_count'),
+
+
     
     ## setting
     path('villages/<int:village_pk>/setting/',  get_village_pk_setting,name='get_village_pk_setting'),
