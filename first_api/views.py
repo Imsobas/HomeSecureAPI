@@ -2953,8 +2953,7 @@ class MaintenanceFeePeriodViewSet(viewsets.ModelViewSet):
             result = {"total_amount": totalAmount, "paid_home_number":paidHomeNum}
     
             return notFoundHandling(result)
-
-  
+                    
     @action(detail=True, methods = 'GET')
     def get_maintenance_fee_period_filterby_villagePk_year(self, request, village_pk, year):
         """ Return all maintenance fee period according to specific village """
@@ -3041,6 +3040,43 @@ class MaintenanceFeeRecordViewSet(viewsets.ModelViewSet):
     queryset = models.MaintenanceFeeRecord.objects.all()
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
+
+    @action(detail=True, methods = 'GET')
+    def get_unpaid_maintenance_fee_record_filterby_home_pk(self, request,home_pk):
+        """ Return all maintenance fee record filter by home pk"""
+
+        isHomeExist = models.Home.objects.filter(pk=home_pk).exists()
+        if(isHomeExist==False):
+            return Response({ "detail": "Not have this home"},status=status.HTTP_404_NOT_FOUND)
+        else:
+            home = models.Home.objects.get(pk=home_pk)
+
+            maintenanceFeeRecord = models.MaintenanceFeeRecord.objects.filter(fee_home = home,is_active=True,fee_paid_status=False)
+            serializer = serializers.MaintenanceFeeRecordSerializer(maintenanceFeeRecord,many=True)
+            mfr = serializer.data
+
+            result = []
+
+            for mfr in mfr:
+                tempDict = dict()
+                maintenanceFeePeriodPk = mfr['fee_period']
+                maintenanceFeePeriod = models.MaintenanceFeePeriod.objects.get(pk=maintenanceFeePeriodPk, is_active=True)
+                tempDict['fee_amount'] = mfr['fee_amount']
+                tempDict['fee_period_name'] = None;
+                tempDict['fee_start'] = None
+                tempDict['fee_end'] = None
+                tempDict['fee_deadline'] = None
+                if(maintenanceFeePeriod!=None):
+                    serializer = serializers.MaintenanceFeePeriodSerializer(maintenanceFeePeriod)
+                    mfp = serializer.data
+                    tempDict['fee_period_name'] = mfp['fee_period_name']
+                    tempDict['fee_start'] = mfp['fee_start']
+                    tempDict['fee_end'] = mfp['fee_end']
+                    tempDict['fee_deadline'] = mfp['fee_deadline']
+
+                result.append(tempDict)
+ 
+            return notFoundHandling(result)
 
     @action(detail=True, methods = 'POST')
     def mtr_check_isexist_and_isduplicate_home(self, request, mfp_pk):
