@@ -390,7 +390,7 @@ class MaintenanceFeeRecord(models.Model):
     fee_home = models.ForeignKey(Home,null=True, blank=True, on_delete=models.DO_NOTHING)
     fee_paid_date = models.DateField(null=True, blank=True)
     fee_house_space = models.FloatField(null=True, blank=True)
-    fee_amount = models.FloatField(null=True, blank=True)
+    fee_amount = models.FloatField(default=0,null=True, blank=True)
     fee_paid_status = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
 
