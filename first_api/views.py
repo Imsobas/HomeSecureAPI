@@ -3026,7 +3026,7 @@ class MaintenanceFeePeriodViewSet(viewsets.ModelViewSet):
             homes = models.Home.objects.filter(home_village=village,is_active=True)
             for home in homes:
                 
-                maintenanceFeeRecord = models.MaintenanceFeeRecord.objects.create(fee_period=maintenanceFeePeriod, fee_home=home,fee_paid_date=None, fee_house_space=None, fee_amount=None, fee_paid_status=False, is_active=True)
+                maintenanceFeeRecord = models.MaintenanceFeeRecord.objects.create(fee_period=maintenanceFeePeriod, fee_home=home,fee_paid_date=None, fee_house_space=None, fee_paid_status=False, is_active=True)
                 maintenanceFeeRecord.save()
 
             
